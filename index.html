@@ -202,6 +202,9 @@ const BEHAVIOURS = {
   running:  { asked: "1/1000", verb: "Running",  note: "All four feet off the ground at once, more than once." },
   feeding:  { asked: "1/500",  verb: "Feeding",  note: "Heads down at the carcass, a wing thrown open, the squabble." },
   flight:   { asked: "1/2000", verb: "Flight",   note: "Wings loaded. The head is the still point." },
+  // trees and the country: nothing moves but the light
+  standing: { asked: "1/30",   verb: "Standing", note: "Nothing moves but the light. The floor is the hand-held rule, one over the focal length and a half; at the wide end, about 1/30." },
+  wind:     { asked: "1/125",  verb: "In wind",  note: "The trunk stands, the leaves do not. 1/125 holds the canopy." },
   // the night sky, on the sky scale
   sunlit:   { asked: "1/250",  verb: "Sunlit",   note: "A rock in full sun, however dark the night. Meter it like a daylight scene or it goes to a white disc." },
   points:   { asked: "15s",    verb: "Points",   note: "Five hundred over the focal length, in seconds, before the Earth turns them into lines. At 30 mm on this body, about fifteen." },
@@ -229,6 +232,8 @@ const ANIMALS = {
   giraffe:  { name: "Masai Giraffe",     latin: "Giraffa tippelskirchi", size: 170, shape: "giraffe", colour: "#9a6a36", states: { sentinel: 3, walking: 3, grazing: 2 }, spook: 0 },
   hyena:    { name: "Spotted Hyena",     latin: "Crocuta crocuta",      size: 100, shape: "cat",      colour: "#6e5a44", states: { resting: 5, walking: 2 }, spook: 0 },
   vulture:  { name: "Vulture",           latin: "Gyps africanus",       size: 75,  shape: "bird",     colour: "#3a302a", states: { flight: 4, feeding: 3, sentinel: 1 }, fly: 1, spook: 0 },
+  // The country itself: a subject that does not move, and does not run.
+  acacia:   { name: "Flat-topped Acacia", latin: "Vachellia tortilis", size: 300, shape: "tree",     colour: "#2f2a1e", states: { standing: 4, wind: 2 }, spook: 0 },
   // South Luangwa. `prize` marks the small hard subjects that are the point
   // of that range; `night` marks an animal that only comes out on a night drive.
   leopard:  { name: "Leopard",           latin: "Panthera pardus",      size: 120, shape: "cat",      colour: "#9a7a3e", states: { resting: 4, stalking: 2, walking: 2 }, spook: 0 },
@@ -332,6 +337,12 @@ const PLATES = [
   { file: "vulture-landing.jpg", animal: "vulture", behaviours: ["flight", "sentinel"], title: "Vulture Landing",
     alt: "A vulture with both wings still raised, settling onto the crown of a thorn bush against a pale sky",
     caption: "Both wings still up as it settles on the thorn. The frame was got on the shooting-birds setting, not the walking-around one." },
+  { file: "acacia-in-the-dawn-haze.jpg", animal: "acacia", behaviours: ["standing"], title: "Acacia in the Dawn Haze",
+    alt: "A flat-topped acacia silhouetted in golden dawn haze, with wildebeest and zebra grazing beneath it",
+    caption: "Amboseli at dawn, the tree a shape in the haze and the herd small beneath it. Nothing moved but the light; the shutter had all the time it wanted." },
+  { file: "acacias-under-a-storm-sky.jpg", animal: "acacia", behaviours: ["wind", "standing"], title: "Acacias Under a Storm Sky",
+    alt: "Three widely spaced flat-topped acacias standing on open green grassland beneath a heavy dark blue-grey sky",
+    caption: "Three trees on the Mara with the storm coming. Filed as landscape; the sky is the subject and the trees are its scale." },
   { file: "lappet-faced-vultures.jpg", animal: "vulture", behaviours: ["feeding"], title: "Lappet-faced Vultures",
     alt: "Lappet-faced and white-backed vultures squabbling over a carcass, one with a wing fully spread",
     caption: "Two species at the carcass, one wing thrown open. Feeding is a bout, and the bout is what the plate is for." }
@@ -345,13 +356,13 @@ const PLATES = [
 const RANGES = {
   amber:   { name: "Amber Range",  place: "Maasai Mara, Kenya", seat: "drive", sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
              note: "Open grassland. The pride, the cheetah on the mound, the meerkat on sentry. Stay in the vehicle.",
-             cast: { zebra: 5, topi: 3, gazelle: 4, buffalo: 2, elephant: 2, giraffe: 2, lion: 2, cheetah: 2, hyena: 2, vulture: 2, meerkat: 2 } },
+             cast: { zebra: 5, topi: 3, gazelle: 4, buffalo: 2, elephant: 2, giraffe: 2, lion: 2, cheetah: 2, hyena: 2, vulture: 2, meerkat: 2, acacia: 3 } },
   zambezi: { name: "Zambezi Hide", place: "Lower Zambezi, Zambia", seat: "hide", sky: ["#d9c9a8", "#b9a684"], ground: "#8fa0a4", far: "#6f7f5a",
              note: "A floating hide, eye level with the drinking line. Nothing to drive. Wait, and the water brings them.",
              cast: { puku: 5, hippo: 3, elephant: 2, buffalo: 2, eagle: 3 } },
   luangwa: { name: "South Luangwa", place: "South Luangwa, Zambia", seat: "walk", sky: ["#e8d6a8", "#c9a86a"], ground: "#a8905c", far: "#6a6a3a",
              note: "Walking country, single file behind the guide. Stop when he stops. After the gate, a night drive: the small ones are the plate.",
-             cast: { puku: 3, elephant: 2, hippo: 2, leopard: 2, serval: 3, hyrax: 3, genet: 3, beeeater: 3 },
+             cast: { puku: 3, elephant: 2, hippo: 2, leopard: 2, serval: 3, hyrax: 3, genet: 3, beeeater: 3, acacia: 2 },
              lights: ["first", "heat", "last", "night"] },
   sky:     { name: "Night Sky",     place: "South Luangwa, Zambia, after the fire", seat: "tripod", scale: "sky", sky: ["#070a1c", "#1a1f3a"], ground: "#0b0a10", far: "#14121c",
              note: "A tripod on the airstrip, the camp behind you. Nothing to drive. The Earth turns; that is the movement. Wait for your eyes.",
@@ -403,6 +414,7 @@ const WORDS = {
   slow2:    "Two stops slow. The movement smeared.",
   fast1:    "Faster than it needed. ISO paid for it.",
   fast2:    "Two stops faster than it needed. Noise for nothing.",
+  fastfree: "Faster than it needed, and the light paid for it, not the ISO.",
   cut:      "Cut by the frame edge.",
   small:    "A speck. Pull tighter or drive closer.",
   filling:  "It fills the plate.",
@@ -440,6 +452,7 @@ function score(shutter, behaviour, framing, light, animal, scale) {
   else if (d === -1) { stars -= 1; lines.push(W.slow1); }
   else if (d <= -2)  { stars -= 2; lines.push(W.slow2); }
   else if (d === 1)  { lines.push(W.fast1); }
+  else if (LIGHTS[light].iso[shutter] <= 400) { lines.push(W.fastfree); }
   else               { stars -= 1; lines.push(W.fast2); }
   if (framing.cut)   { stars -= 1; lines.push(W.cut); }
   else if (framing.fill < 0.10) { stars -= 1; lines.push(W.small); }
@@ -612,7 +625,7 @@ function say(who, text) {
 
 // Behaviour speeds in scene units per second at the near line.
 const SPEED = { resting: 0, sentinel: 0, grazing: 8, drinking: 0, walking: 40, stalking: 22, running: 220, feeding: 0, flight: 140,
-                sunlit: 0, points: 0, core: 0, wheel: 0, streak: 320 };
+                sunlit: 0, points: 0, core: 0, wheel: 0, streak: 320, standing: 0, wind: 0 };
 
 function step(dt) {
   const R = RANGES[state.range];
@@ -684,7 +697,7 @@ function boxOf(a) {
     const w = A.size, h = A.shape === "core" ? A.size * 0.45 : A.shape === "meteor" ? A.size * 0.3 : A.size;
     return { x: a.x - state.worldX + JEEP_X - w / 2, y: H * a.depth, w, h, scale: 1 };
   }
-  const w = A.size * scale, h = (A.shape === "bird" ? A.size * 0.5 : A.shape === "upright" ? A.size * 1.6 : A.shape === "giraffe" ? A.size * 1.3 : A.shape === "blob" ? A.size * 1.1 : A.size * 0.6) * scale;
+  const w = A.size * scale, h = (A.shape === "bird" ? A.size * 0.5 : A.shape === "upright" ? A.size * 1.6 : A.shape === "giraffe" ? A.size * 1.3 : A.shape === "blob" ? A.size * 1.1 : A.shape === "tree" ? A.size * 0.95 : A.size * 0.6) * scale;
   const x = a.x - state.worldX + JEEP_X - w / 2;
   let y;
   if (A.fly) y = HORIZON - 140 * scale - 40 * Math.sin(a.phase * 0.5);
@@ -988,6 +1001,15 @@ function drawAnimal(a) {
     ctx.beginPath(); ctx.moveTo(-sz * 0.05, -sz * 0.27); ctx.lineTo(-sz * 0.5, -sz * 0.27 - sz * 0.3 * flap); ctx.lineTo(-sz * 0.1, -sz * 0.2); ctx.fill();
     ctx.beginPath(); ctx.moveTo(sz * 0.05, -sz * 0.27); ctx.lineTo(sz * 0.5, -sz * 0.27 - sz * 0.3 * flap); ctx.lineTo(sz * 0.1, -sz * 0.2); ctx.fill();
     ctx.fillStyle = "#f5f0e4"; ctx.beginPath(); ctx.arc(sz * 0.2, -sz * 0.3, sz * 0.06, 0, 6.28); ctx.fill();
+  } else if (A.shape === "tree") {
+    // a flat-topped acacia: trunk, three limbs, a wide shallow canopy
+    const sway = a.behaviour === "wind" ? Math.sin(state.t * 3 + a.phase) * sz * 0.02 : 0;
+    ctx.fillStyle = A.colour;
+    ctx.fillRect(-sz * 0.03, -sz * 0.5, sz * 0.06, sz * 0.5);
+    ctx.lineWidth = sz * 0.03; ctx.strokeStyle = A.colour; ctx.lineCap = "round";
+    for (const [dx, dy] of [[-0.22, -0.72], [0.02, -0.8], [0.24, -0.74]]) { ctx.beginPath(); ctx.moveTo(0, -sz * 0.45); ctx.lineTo(dx * sz + sway, dy * sz); ctx.stroke(); }
+    ctx.fillStyle = "#3d5a2a"; ctx.beginPath(); ctx.ellipse(sway, -sz * 0.8, sz * 0.5, sz * 0.13, 0, 0, 6.28); ctx.fill();
+    ctx.fillStyle = "#4d6b2f"; ctx.beginPath(); ctx.ellipse(sway * 1.3, -sz * 0.86, sz * 0.4, sz * 0.09, 0, 0, 6.28); ctx.fill();
   } else if (A.shape === "blob") {
     // a hyrax on its rock
     ctx.fillStyle = "#8a8070"; ctx.beginPath(); ctx.ellipse(0, -sz * 0.1, sz * 0.9, sz * 0.35, 0, 0, 6.28); ctx.fill();

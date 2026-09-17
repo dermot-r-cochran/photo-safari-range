@@ -52,6 +52,11 @@ Cats and elephants do not run from a jeep. Nothing is killed on the range.
   a star; an animal that fills the working pull is the plate you wanted.
   Tighter is head and shoulders, and the note is the field's: long glass
   stacks the background, which is compression, not walking closer.
+- **The country is a subject too.** A flat-topped acacia stands on the
+  range like anything else and asks for the hand-held floor, about 1/30 at
+  the wide end on this body, or 1/125 when the wind is in the canopy. A
+  fast shutter on a still subject in good light costs nothing and the
+  verdict says so; it only costs a star when the ISO paid for it.
 - **Stay in the vehicle.** The guide's one hard rule, and the game's. On
   foot the rule is the walking guide's: single file, stop when he stops,
   because nothing runs from a still person and everything runs from a
