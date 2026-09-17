@@ -595,13 +595,13 @@ function begin() {
 function makeAnimal(p) {
   const A = ANIMALS[p.key];
   return { key: p.key, x: p.x, depth: p.depth, behaviour: p.behaviour, dir: p.dir,
-           vx: 0, until: 3 + state.rnd() * 6, phase: state.rnd() * 6.28, spooked: 0, gone: false };
+           vx: 0, until: 3 + state.rnd() * 6, phase: state.rnd() * 6.28, spooked: 0, gone: false, called: false };
 }
 
 function packUp() {
   state.playing = false; state.camera = false; state.animals = [];
   $("camp").hidden = false; $("radio").hidden = true; $("focus").innerHTML = "";
-  $("asked").textContent = "Raise the camera on an animal and the spotter names what it is doing and the shutter that needs.";
+  $("asked").textContent = "On the range the spotter calls each animal as it comes into view. Raise the camera on one and the panel names what it is doing and the shutter that needs.";
   buildCamp(); drawHud();
 }
 
@@ -654,10 +654,25 @@ function step(dt) {
       continue;
     }
     // the range has no edge: an animal far behind respawns far ahead
-    if (sx < -900) { const p = spawnPlan(state.range, 1, state.rnd, state.light)[0]; a.key = p.key; a.behaviour = p.behaviour; a.depth = p.depth; a.x = state.worldX + W + 600 + state.rnd() * 800; a.spooked = 0; }
+    if (sx < -900) { const p = spawnPlan(state.range, 1, state.rnd, state.light)[0]; a.key = p.key; a.behaviour = p.behaviour; a.depth = p.depth; a.x = state.worldX + W + 600 + state.rnd() * 800; a.spooked = 0; a.called = false; }
   }
-  // focus list
+  // the spotter calls each animal as it comes into view, one call at a time
+  if (state.t > (state.nextCall || 0)) {
+    for (const a of state.animals) {
+      if (a.gone || a.called) continue;
+      const b = boxOf(a);
+      if (b.x + b.w < 40 || b.x > W - 40 || !inLamp(a)) continue;
+      const A = ANIMALS[a.key], B = BEHAVIOURS[a.behaviour];
+      a.called = true;
+      say(R.seat === "walk" || R.seat === "tripod" ? "Guide" : "Spotter",
+          A.name + ", " + (A.sky ? (b.y < H * 0.25 ? "high" : "low") : (b.x + b.w / 2 > JEEP_X ? "right" : "left")) + ". " + B.verb + ".");
+      state.nextCall = state.t + 2.5;
+      break;
+    }
+  }
+  // focus list, or what is on the range
   if (state.camera) refreshFocus();
+  else if (state.t > (state.nextRange || 0)) { refreshRange(); state.nextRange = state.t + 0.5; }
 }
 
 // Screen box for an animal.
@@ -713,6 +728,40 @@ function refreshFocus() {
       B.verb + " — " + B.asked + "<br><span class='dim'>" + B.note + "</span>";
   } else $("asked").textContent = "Nothing in the frame. Move the aim, or drive closer.";
   drawHud();
+}
+
+// What is on the range, nearest first, for the Asked panel with the camera
+// down; the spotter's view, not the finder's.
+function onRange() {
+  return state.animals.filter(a => { if (a.gone || !inLamp(a)) return false; const b = boxOf(a); return b.x + b.w > 0 && b.x < W; })
+    .sort((a, b) => boxOf(b).w - boxOf(a).w);
+}
+function refreshRange() {
+  const list = onRange();
+  const el = $("asked");
+  if (!list.length) { el.textContent = "Nothing on the range yet. Drive on."; return; }
+  el.innerHTML = "<span class='dim'>On the range, nearest first:</span><br>" + list.map(a => {
+    const A = ANIMALS[a.key], B = BEHAVIOURS[a.behaviour], b = boxOf(a);
+    const side = A.sky ? "" : (b.x + b.w / 2 > JEEP_X ? ", right" : ", left");
+    return "<b>" + A.name + "</b>" + side + " · " + B.verb.toLowerCase() + " · " + B.asked;
+  }).join("<br>");
+}
+
+// A name tag over the animal under the pointer, camera up or down.
+function drawHoverTag() {
+  if (!state.playing) return;
+  const a = state.animals.find(x => { if (x.gone || !inLamp(x)) return false; const b = boxOf(x); return state.aim.x >= b.x - 6 && state.aim.x <= b.x + b.w + 6 && state.aim.y >= b.y - 6 && state.aim.y <= b.y + b.h + 6; });
+  if (!a) return;
+  const A = ANIMALS[a.key], B = BEHAVIOURS[a.behaviour], b = boxOf(a);
+  const text = A.name + " · " + B.verb.toLowerCase();
+  ctx.save();
+  ctx.font = "15px Georgia, serif";
+  const tw = ctx.measureText(text).width + 14;
+  let tx = b.x + b.w / 2 - tw / 2, ty = b.y - 26;
+  tx = Math.max(6, Math.min(W - tw - 6, tx)); if (ty < 6) ty = b.y + b.h + 8;
+  ctx.fillStyle = "rgba(20,15,8,0.78)"; ctx.fillRect(tx, ty, tw, 22);
+  ctx.fillStyle = "#f5f0e4"; ctx.textBaseline = "middle"; ctx.fillText(text, tx + 7, ty + 11);
+  ctx.restore();
 }
 
 function cycleFocus() {
@@ -826,6 +875,7 @@ function draw(withFinder = true) {
     g.addColorStop(0, "rgba(8,10,24,0)"); g.addColorStop(1, "rgba(8,10,24,0.92)");
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   }
+  if (withFinder) drawHoverTag();
   if (state.camera && withFinder) drawFinder();
 }
 
@@ -854,6 +904,7 @@ function drawSkyScene(withFinder) {
     ctx.fillRect(x - 3, NEAR - 40, 6, 36);
   }
   drawTripod();
+  if (withFinder) drawHoverTag();
   if (state.camera && withFinder) drawFinder();
 }
 
@@ -1043,7 +1094,7 @@ function stepShutter(dir) {
 function toggleCamera() {
   if (!state.playing) return;
   state.camera = !state.camera;
-  if (state.camera) refreshFocus(); else { state.focus = null; $("focus").innerHTML = ""; $("asked").textContent = "Camera down. Space raises it."; drawHud(); }
+  if (state.camera) refreshFocus(); else { state.focus = null; $("focus").innerHTML = ""; refreshRange(); drawHud(); }
 }
 
 // ---- input ----

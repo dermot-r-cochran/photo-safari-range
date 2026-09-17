@@ -20,6 +20,12 @@ frame the animal, shoot. The plate scores on one rule, the field's rule:
 the shutter follows the animal, not the light meter. A keeper is two stars
 or better; the sheet keeps what you keep.
 
+You know what you are looking at the way you would in the vehicle: the
+spotter calls each animal as it comes into view, with its side and what it
+is doing; the Asked panel lists what is on the range, nearest first, while
+the camera is down; and the pointer over an animal shows its name. The
+silhouettes are a map, not a quiz.
+
 The loop, in four beats:
 
 1. **Drive** to the animals (A and D), or sit still in the hide.
