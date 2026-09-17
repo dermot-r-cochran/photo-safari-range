@@ -202,6 +202,23 @@ for (const k in R.LIGHTS) {
   }
   const macro = R.score(R.exposeFor("M", "1/125", 8, "overcast", "still", "day", R.lensFor("home"), null), "still", { inside: true, cut: false, fill: 0.3 }, "overcast", null, "day", null, R.pullsFor("home")[2]);
   if (!macro.lines.some(l => /millimetre/.test(l))) fail("1:1 at f/8 does not say millimetre");
+  // the bodies: real steps and caps, a known autofocus kind, and the newer mirrorless
+  // holds ISO where the older DSLR has to drop the shutter
+  for (const k in R.BODIES) {
+    const B = R.BODIES[k];
+    if (!B.name || !["centre", "eye"].includes(B.af) || !B.note) fail("body " + k + " is missing name, af or note");
+    if (!Array.isArray(B.isoSteps) || B.isoSteps[0] !== 100 || B.isoSteps[B.isoSteps.length - 1] !== B.cap) fail("body " + k + " ISO steps do not run from 100 to its cap");
+    if (!B.isoSteps.includes(B.noiseFrom)) fail("body " + k + " noise threshold is not an ISO step");
+    if (!(B.diffraction.soft < B.diffraction.plain)) fail("body " + k + " diffraction thresholds are out of order");
+    ok();
+  }
+  for (const k in R.RANGES) { const b = R.bodyFor(k); if (!R.BODIES[b]) fail("range " + k + " defaults to body " + b); if (!R.lensFor(k, b)) fail("range " + k + " has no lens for " + b); }
+  const dz = R.exposeFor("A", "1/250", 8, "night", "walking", "day", lens, null, R.BODIES.newer);
+  if (dz.dropped || dz.iso > R.BODIES.newer.cap) fail("the newer mirrorless dropped the shutter where its cap should have held: " + JSON.stringify(dz));
+  const dd = R.exposeFor("A", "1/250", 8, "night", "walking", "day", lens, null, R.BODIES.older);
+  if (!dd.dropped) fail("the older DSLR did not drop the shutter at night in A");
+  const z16 = R.score(R.exposeFor("M", "1/60", 8, "heat", "resting", "day", lens, null, R.BODIES.newer), "resting", { inside: true, cut: false, fill: 0.3 }, "heat", null, "day", null, null, R.BODIES.newer);
+  if (!z16.lines.some(l => /f\/8: diffraction/.test(l))) fail("the newer mirrorless does not name diffraction from f/8");
   // the guide's advice is always words or nothing
   if (R.ADVICE) for (const mode of ["S", "A", "M"]) for (const light of ["heat", "last", "night"]) for (const b of ["resting", "running", "flight"]) for (const N of R.lensApertures(lens)) {
     const e = R.exposeFor(mode, "1/250", N, light, b, "day", lens, null);

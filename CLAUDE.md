@@ -65,6 +65,17 @@ free except for the ISO it costs, and the verdict names the noise at 1600
 or more. Change a threshold only when the field notes in
 `dermot-cochran-photography` change; say which note.
 
+## No makes or models
+
+Dermot's rule, 2026-09-17: the game (and the tutorial) name no camera or
+lens make or model, so nothing reads as endorsement or criticism. His
+photography site is transparent about the gear; here the bodies are "the
+older DSLR" and "the newer mirrorless", the lenses "the long zoom at
+400 mm" and "the 70 mm macro", and the numbers are stated as one camera's
+without the name. The frames under `images/` carry no EXIF, so nothing
+leaks that way either. Keep it that way in data, verdicts, comments, the
+README and the check's messages.
+
 ## Tone
 
 - Nothing is killed on the range. Predators stalk and rush; prey runs;
@@ -146,6 +157,22 @@ diffraction from f/11, plain at f/16; ISO 1600 noise, 3200 cap. The
 things ruled out of the range on the same day, as the tutorial's job:
 manual ISO, picture control and the vivid trap, focus modes, burst,
 exposure compensation, white balance.
+
+## The two bodies
+
+Added 2026-09-17 at Dermot's question "what would the newer body do in that
+situation in terms of autofocus?" and his "yes please" to a body option.
+`BODIES` carries the older DSLR (the tutorial's numbers, `af: "centre"`) and
+the newer mirrorless (`af: "eye"`, ISO steps to 12800, noise from 6400, diffraction
+soft from f/8). A range names its default `body` (Zambia ranges the newer
+body, Kenya and home the older) and may carry a `zlens`, the longer zoom the
+newer body is paired with. `exposeFor`, `isoStep` and `score` take a body and
+default to the older DSLR, so old calls stand; `ISO_STEPS`, `ISO_CAP` and
+`DIFFRACTION` are the older body's by name. Focus: a centre body orders the
+frame by distance from the aim; an eye body by size, and holds the pick
+while it stays in the plate; the finder draws the eye box at the head end
+the animal faces. The bodies are Dermot's own ([[camera-gear]] in his
+memory): don't add a body he does not carry.
 
 ## Adding to the world
 

@@ -163,6 +163,7 @@
   <div class="card" id="camp">
     <h2>Camp</h2>
     <div class="row" id="range-pick"></div>
+    <div class="row" id="body-pick"></div>
     <div class="row" id="light-pick"></div>
     <p class="note" id="camp-note"></p>
     <div class="row"><button class="primary" id="go">Drive the range</button></div>
@@ -193,7 +194,7 @@
 /* ============================== WORLD DATA ==============================
  * Everything the player can meet lives here. The engine below never
  * needs editing to add an animal, a behaviour or a range. Numbers are
- * one camera's: an older Nikon crop-sensor body and an 18–400 mm zoom.
+ * one camera's: an older crop-sensor DSLR and a long zoom.
  */
 
 // Shutter scales, slowest to fastest. `day` is the hand-held range; `sky`
@@ -437,13 +438,13 @@ const PLATES = [
 // species and how often each turns up; `lights` the windows the range
 // offers (all three by default).
 const RANGES = {
-  amber:   { name: "Amber Range",  place: "Maasai Mara, Kenya", seat: "drive", day: "safari", lens: { name: "18–400 mm at the long end", min: 5.6, max: 22, floor: "1/125" }, sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
+  amber:   { name: "Amber Range",  place: "Maasai Mara, Kenya", seat: "drive", day: "safari", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
              note: "Open grassland. The pride, the cheetah on the mound, the meerkat on sentry. Stay in the vehicle.",
              cast: { zebra: 5, topi: 3, gazelle: 4, buffalo: 2, elephant: 2, giraffe: 2, lion: 2, cheetah: 2, hyena: 2, vulture: 2, meerkat: 2, acacia: 3 } },
-  zambezi: { name: "Zambezi Hide", place: "Lower Zambezi, Zambia", seat: "hide", day: "safari", lens: { name: "18–400 mm at the long end", min: 5.6, max: 22, floor: "1/125" }, sky: ["#d9c9a8", "#b9a684"], ground: "#8fa0a4", far: "#6f7f5a",
+  zambezi: { name: "Zambezi Hide", place: "Lower Zambezi, Zambia", seat: "hide", day: "safari", body: "newer", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, zlens: { name: "the longer zoom at 500 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#d9c9a8", "#b9a684"], ground: "#8fa0a4", far: "#6f7f5a",
              note: "A floating hide, eye level with the drinking line. Nothing to drive. Wait, and the water brings them.",
              cast: { puku: 5, hippo: 3, elephant: 2, buffalo: 2, eagle: 3 } },
-  luangwa: { name: "South Luangwa", place: "South Luangwa, Zambia", seat: "walk", day: "luangwa", lens: { name: "18–400 mm at the long end", min: 5.6, max: 22, floor: "1/125" }, sky: ["#e8d6a8", "#c9a86a"], ground: "#a8905c", far: "#6a6a3a",
+  luangwa: { name: "South Luangwa", place: "South Luangwa, Zambia", seat: "walk", day: "luangwa", body: "newer", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, zlens: { name: "the longer zoom at 500 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#e8d6a8", "#c9a86a"], ground: "#a8905c", far: "#6a6a3a",
              note: "Walking country, single file behind the guide. Stop when he stops. After the gate, a night drive: the small ones are the plate.",
              cast: { puku: 3, elephant: 2, hippo: 2, leopard: 2, serval: 3, hyrax: 3, genet: 3, beeeater: 3, acacia: 2 },
              lights: ["first", "heat", "last", "night"] },
@@ -460,7 +461,7 @@ const RANGES = {
                { name: "1:1", frac: 0.20, note: "Life-size. Depth about a millimetre at f/8; f/16 buys depth with diffraction, and the effective aperture is already two stops darker.",
                  depth: { wide: "At 1:1 and wide open the depth of field is a fraction of a millimetre: an eye, and nothing else.", mid: "At 1:1 the depth of field is about a millimetre at f/8. The eye is sharp; the rest is not.", stopped: "At 1:1 and f/11, two millimetres of depth and the first softness of diffraction; the effective aperture is already f/22.", narrow: "At 1:1 and f/16, depth bought with diffraction: the whole insect in, and none of it crisp." } }
              ] },
-  sky:     { name: "Night Sky",     place: "South Luangwa, Zambia, after the fire", seat: "tripod", scale: "sky", lens: { name: "18 mm end of the zoom", min: 4, max: 22, floor: "1/60" }, sky: ["#070a1c", "#1a1f3a"], ground: "#0b0a10", far: "#14121c",
+  sky:     { name: "Night Sky",     place: "South Luangwa, Zambia, after the fire", seat: "tripod", scale: "sky", body: "newer", lens: { name: "18 mm end of the zoom", min: 4, max: 22, floor: "1/60" }, sky: ["#070a1c", "#1a1f3a"], ground: "#0b0a10", far: "#14121c",
              note: "A tripod on the airstrip, the camp behind you. Nothing to drive. The Earth turns; that is the movement. Wait for your eyes.",
              cast: { stars: 3, pole: 2, milky: 2, moon: 2, meteor: 3 },
              lights: ["newmoon", "moonlit"] }
@@ -536,10 +537,25 @@ const DEFAULT_LIGHTS = ["first", "heat", "last"];
 // ISO follows to the cap, and past it the frame is dark rather than
 // blurred. Diffraction softens from f/11 and is plain by f/16.
 const APERTURES = [2.8, 4, 5.6, 8, 11, 16, 22];
-const ISO_STEPS = [100, 200, 400, 800, 1600, 3200];
-const ISO_CAP = 3200;
 const MODES = { S: "Shutter priority", A: "Aperture priority", M: "Manual" };
-const DIFFRACTION = { soft: 11, plain: 16 };
+// The bodies. The older DSLR is the tutorial's camera and the Kenya body: eleven
+// AF points with one cross-type sensor in the middle, so it focuses on
+// what you put under the centre; ISO 1600 shows noise and 3200 is the cap.
+// The newer mirrorless is the Zambia body: subject detection across the frame, so
+// it finds the nearest animal's eye wherever it is and holds it; clean to
+// 6400 with a cap of 12800; smaller pixels, so diffraction starts a stop
+// earlier. `af` is "centre" or "eye".
+const BODIES = {
+  older: { name: "Older DSLR", af: "centre", isoSteps: [100, 200, 400, 800, 1600, 3200], cap: 3200, noiseFrom: 1600, diffraction: { soft: 11, plain: 16 },
+           note: "Eleven points, one cross-type in the middle. Put the animal under the centre and half-press." },
+  newer:   { name: "Newer mirrorless", af: "eye", isoSteps: [100, 200, 400, 800, 1600, 3200, 6400, 12800], cap: 12800, noiseFrom: 6400, diffraction: { soft: 8, plain: 16 },
+           note: "Subject detection across the frame: it finds the nearest animal's eye and holds it while it moves." }
+};
+const DEFAULT_BODY = "older";
+// the older body's numbers, by name, for anything that does not ask for a body
+const ISO_STEPS = BODIES.older.isoSteps;
+const ISO_CAP = BODIES.older.cap;
+const DIFFRACTION = BODIES.older.diffraction;
 
 // Verdict words that differ on the sky scale: a stop "slow" is a longer
 // exposure, and the thing that moved was the Earth.
@@ -635,12 +651,13 @@ function snapShutter(sec, scale) {
   for (const k of s) { const d = Math.abs(Math.log2(tSeconds(k) / sec)); if (d < bd) { bd = d; best = k; } }
   return best;
 }
-// The ISO the meter needs at ISO steps, and the stops it fell short or
-// over: under is stops past the cap, over is stops below ISO 100.
-function isoStep(need) {
-  if (need > ISO_CAP) return { iso: ISO_CAP, under: Math.log2(need / ISO_CAP), over: 0 };
-  if (need < ISO_STEPS[0]) return { iso: ISO_STEPS[0], under: 0, over: Math.log2(ISO_STEPS[0] / need) };
-  return { iso: ISO_STEPS.find(x => x >= need - 1e-9), under: 0, over: 0 };
+// The ISO the meter needs at the body's steps, and the stops it fell short
+// or over: under is stops past the cap, over is stops below ISO 100.
+function isoStep(need, body) {
+  const B = body || BODIES[DEFAULT_BODY], steps = B.isoSteps, cap = B.cap;
+  if (need > cap) return { iso: cap, under: Math.log2(need / cap), over: 0 };
+  if (need < steps[0]) return { iso: steps[0], under: 0, over: Math.log2(steps[0] / need) };
+  return { iso: steps.find(x => x >= need - 1e-9), under: 0, over: 0 };
 }
 function evOf(light, behaviour) { const B = BEHAVIOURS[behaviour]; return B && B.ev !== undefined ? B.ev : LIGHTS[light].ev; }
 function isoNeeded(N, sec, ev) { return 100 * Math.pow(2, Math.log2(N * N / sec) - ev); }
@@ -649,8 +666,9 @@ function lensApertures(lens) { return APERTURES.filter(N => N >= lens.min - 1e-9
 // The exposure the camera makes. `mode` S, A or M; `shutter` a key on
 // the scale; `aperture` a number; returns the settings that fired, the
 // ISO at a step, and how far under or over the frame is.
-function exposeFor(mode, shutter, aperture, light, behaviour, scale, lens, support) {
+function exposeFor(mode, shutter, aperture, light, behaviour, scale, lens, support, body) {
   scale = scale || "day";
+  body = body || BODIES[DEFAULT_BODY];
   const ev = evOf(light, behaviour);
   const aps = lensApertures(lens);
   let N = aperture, sec = tSeconds(shutter), dropped = false;
@@ -666,15 +684,15 @@ function exposeFor(mode, shutter, aperture, light, behaviour, scale, lens, suppo
     if (t100 <= floor) sec = t100;
     else {
       const need = 100 * t100 / floor;
-      if (need <= ISO_CAP) sec = floor;
-      else { sec = t100 * 100 / ISO_CAP; dropped = true; }
+      if (need <= body.cap) sec = floor;
+      else { sec = t100 * 100 / body.cap; dropped = true; }
     }
     // the fastest the dial goes is the fastest the camera goes
     sec = Math.max(sec, tSeconds(SCALES[scale][SCALES[scale].length - 1]));
     shutter = snapShutter(sec, scale); sec = tSeconds(shutter);
   }
-  const step = isoStep(isoNeeded(N, sec, ev));
-  return { mode, shutter, aperture: N, iso: step.iso, under: step.under, over: step.over, dropped };
+  const step = isoStep(isoNeeded(N, sec, ev), body);
+  return { mode, shutter, aperture: N, iso: step.iso, under: step.under, over: step.over, dropped, body: body.name };
 }
 
 // The guide's advice: general words about the settings, spoken when the
@@ -707,9 +725,10 @@ function advise(exp, behaviour, scale, support, pull, seat) {
 // `framing` is { inside, cut, fill } from measureFrame; `pull` the pull
 // on the glass, for its depth-of-field words.
 // Returns { stars 0..3, lines[], keeper }.
-function score(exp, behaviour, framing, light, animal, scale, support, pull) {
+function score(exp, behaviour, framing, light, animal, scale, support, pull, body) {
   const B = BEHAVIOURS[behaviour];
   scale = scale || "day";
+  body = body || BODIES[DEFAULT_BODY];
   const W = Object.assign({}, WORDS, SCALE_WORDS[scale] || {});
   const lines = [];
   const asked = askedFor(behaviour, support, scale);
@@ -733,11 +752,11 @@ function score(exp, behaviour, framing, light, animal, scale, support, pull) {
   if (exp.under >= 2) { stars -= 2; lines.push(W.under2); }
   else if (exp.under >= 0.5) { stars -= 1; lines.push(W.under1); }
   if (exp.over >= 0.5) { stars -= 1; lines.push(W.over); }
-  if (iso >= 1600) lines.push(W.noise);
+  if (iso >= body.noiseFrom) lines.push(body.noiseFrom === 1600 ? W.noise : W.noise.replace("ISO 1600", "ISO " + body.noiseFrom));
   // the aperture: depth of field at this pull, and diffraction
   if (pull && pull.depth) { const line = pull.depth[apertureBand(exp.aperture)]; if (line) lines.push(line); }
-  if (exp.aperture >= DIFFRACTION.plain) { stars -= 1; lines.push(W.diffPlain); }
-  else if (exp.aperture >= DIFFRACTION.soft) lines.push(W.diffSoft);
+  if (exp.aperture >= body.diffraction.plain) { stars -= 1; lines.push(W.diffPlain); }
+  else if (exp.aperture >= body.diffraction.soft) lines.push(body.diffraction.soft === 11 ? W.diffSoft : W.diffSoft.replace("f/11", "f/" + body.diffraction.soft));
   stars = Math.max(0, stars);
   const keeper = stars >= 2;
   const prize = !!(keeper && animal && ANIMALS[animal] && ANIMALS[animal].prize);
@@ -749,7 +768,8 @@ function score(exp, behaviour, framing, light, animal, scale, support, pull) {
 // range's pulls are magnifications, and may carry a verdict line).
 function lightsFor(rangeKey) { return RANGES[rangeKey].lights || DEFAULT_LIGHTS; }
 function pullsFor(rangeKey) { return RANGES[rangeKey].pulls || PULLS; }
-function lensFor(rangeKey) { return RANGES[rangeKey].lens; }
+function lensFor(rangeKey, bodyKey) { const R = RANGES[rangeKey]; return bodyKey === "newer" && R.zlens ? R.zlens : R.lens; }
+function bodyFor(rangeKey) { return RANGES[rangeKey].body || DEFAULT_BODY; }
 
 // Where an animal's box sits against the plate rectangle.
 function measureFrame(box, plate) {
@@ -822,7 +842,7 @@ function plateFor(animal, behaviour, rnd) {
 }
 
 const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, STILL, DAYS, CLOCK_RATE,
-                APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
+                APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
                 score, askedFor, measureFrame, spawnPlan, plateFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
 
@@ -838,7 +858,7 @@ const JEEP_X = W * 0.28, JEEP_LEN = 150;
 const state = {
   range: "amber", light: "first", playing: false,
   worldX: 0, speed: 0, animals: [], t: 0, rnd: null,
-  camera: false, shutter: "1/250", aperture: 8, mode: "S", pull: 1, support: null, aim: { x: W / 2, y: H * 0.7 },
+  camera: false, shutter: "1/250", aperture: 8, mode: "S", pull: 1, support: null, body: null, aim: { x: W / 2, y: H * 0.7 },
   focus: null, radio: null, radioUntil: 0,
   sheet: JSON.parse(localStorage.getItem("psr.sheet") || "[]"),
   keys: {}
@@ -850,8 +870,19 @@ function buildCamp() {
   for (const k in RANGES) {
     const b = document.createElement("button");
     b.textContent = RANGES[k].name; b.className = k === state.range ? "on" : "";
-    b.onclick = () => { state.range = k; buildCamp(); };
+    b.onclick = () => { state.range = k; state.body = null; buildCamp(); };
     rp.appendChild(b);
+  }
+  // the body: the range's own by default, either on offer
+  if (!state.body) state.body = bodyFor(state.range);
+  const bp = $("body-pick"); bp.innerHTML = "";
+  for (const k in BODIES) {
+    const b = document.createElement("button");
+    const lens = lensFor(state.range, k);
+    b.textContent = BODIES[k].name + " · " + lens.name; b.className = k === state.body ? "on" : "";
+    b.title = BODIES[k].note;
+    b.onclick = () => { state.body = k; buildCamp(); };
+    bp.appendChild(b);
   }
   const lp = $("light-pick"); lp.innerHTML = "";
   const lights = lightsFor(state.range);
@@ -887,7 +918,8 @@ function begin() {
   if (!scale.includes(state.shutter)) state.shutter = scale[3];
   if (state.pull >= pullsFor(state.range).length) state.pull = 1;
   // the aperture the lens can give: f/8, the walking-around stop, or the lens's nearest
-  const aps = lensApertures(lensFor(state.range));
+  if (!state.body) state.body = bodyFor(state.range);
+  const aps = lensApertures(lensFor(state.range, state.body));
   if (!aps.includes(state.aperture)) state.aperture = aps.includes(8) ? 8 : aps[0];
   // the support you brought: at the tripod range it is the tripod, always;
   // elsewhere the camera starts in your hands
@@ -1095,19 +1127,23 @@ function inLamp(a) {
   const b = boxOf(a), cx = b.x + b.w / 2, cy = b.y + b.h / 2;
   return Math.hypot(cx - state.aim.x, cy - state.aim.y) < LAMP;
 }
-// The animals in the plate, nearest the centre first: the camera's
-// autofocus takes whatever sits under the middle of the frame, and Tab
-// walks the rest.
+// The animals in the plate, in the order the body's autofocus takes them.
+// A centre-point body takes whatever sits under the middle of the frame;
+// an eye-detecting body takes the nearest animal's eye wherever it is and
+// holds it while it stays in the plate. Tab walks the rest either way.
 function inFrame() {
   const p = plateRect();
   const dist = (a) => { const b = boxOf(a); return Math.hypot(b.x + b.w / 2 - state.aim.x, b.y + b.h / 2 - state.aim.y); };
-  return state.animals.filter(a => !a.gone && inLamp(a) && measureFrame(boxOf(a), p).inside)
-    .sort((a, b) => dist(a) - dist(b));
+  const list = state.animals.filter(a => !a.gone && inLamp(a) && measureFrame(boxOf(a), p).inside);
+  if (BODIES[state.body].af === "eye") return list.sort((a, b) => boxOf(b).w - boxOf(a).w);
+  return list.sort((a, b) => dist(a) - dist(b));
 }
 
 function refreshFocus() {
   const list = inFrame();
-  if (!list.includes(state.focus)) state.focus = list[0] || null;
+  const sticky = BODIES[state.body].af === "eye";
+  if (!list.includes(state.focus) || (!sticky && list.length && state.focus !== list[0] && !state.focusPicked)) state.focus = list[0] || null;
+  if (!list.includes(state.focus)) state.focusPicked = false;
   const f = $("focus"); f.innerHTML = "";
   if (list.length > 1) for (const a of list) {
     const b = document.createElement("button");
@@ -1167,7 +1203,7 @@ function drawHoverTag() {
 function cycleFocus() {
   const list = inFrame(); if (!list.length) return;
   const i = list.indexOf(state.focus);
-  state.focus = list[(i + 1) % list.length]; refreshFocus();
+  state.focus = list[(i + 1) % list.length]; state.focusPicked = true; refreshFocus();
 }
 
 function fire() {
@@ -1176,13 +1212,13 @@ function fire() {
   const framing = a ? measureFrame(boxOf(a), p) : null;
   if (framing && !inLamp(a)) framing.dark = true;
   const behaviour = a ? a.behaviour : "resting";
-  const exp = exposeFor(state.mode, state.shutter, state.aperture, state.light, a ? behaviour : null, scaleFor(state.range), lensFor(state.range), state.support);
-  const v = score(exp, behaviour, framing, state.light, a ? a.key : null, scaleFor(state.range), state.support, pullsFor(state.range)[state.pull]);
+  const exp = exposeFor(state.mode, state.shutter, state.aperture, state.light, a ? behaviour : null, scaleFor(state.range), lensFor(state.range, state.body), state.support, BODIES[state.body]);
+  const v = score(exp, behaviour, framing, state.light, a ? a.key : null, scaleFor(state.range), state.support, pullsFor(state.range)[state.pull], BODIES[state.body]);
   if (a && a.spooked > 0 && v.stars > 0) { v.lines.unshift(RANGES[state.range].seat === "walk" ? WORDS.walked : WORDS.spooked); }
   const frame = a && v.stars > 0 ? plateFor(a.key, behaviour, state.rnd) : null;
   const plate = { when: Date.now(), range: state.range, light: state.light, shutter: exp.shutter, aperture: exp.aperture, mode: exp.mode,
                   animal: a ? a.key : null, behaviour: a ? behaviour : null, stars: v.stars, keeper: v.keeper, lines: v.lines, iso: v.iso,
-                  prize: !!v.prize, frame: frame ? frame.title : null, asked: v.asked, support: state.support };
+                  prize: !!v.prize, frame: frame ? frame.title : null, asked: v.asked, support: state.support, body: BODIES[state.body].name };
   // the plate image: the crop, drawn from the scene without the finder
   draw(false);
   const img = document.createElement("canvas");
@@ -1199,7 +1235,7 @@ function showPlate(plate, img, frame) {
   const A = plate.animal ? ANIMALS[plate.animal] : null, B = plate.behaviour ? BEHAVIOURS[plate.behaviour] : null;
   const head = A ? A.name + " · " + B.verb : "Empty frame";
   div.innerHTML = "<h3>" + head + " <span class='stars'>" + "★".repeat(plate.stars) + "☆".repeat(3 - plate.stars) + "</span></h3>" +
-    "<p class='note'>" + (plate.mode ? plate.mode + " · " : "") + shutterLabel(plate.shutter) + (plate.aperture ? " · f/" + plate.aperture : "") + (B ? " · asked " + (plate.asked || B.asked) : "") + (plate.support ? " · " + plate.support : "") + " · ISO " + (plate.iso || "—") + " · " + LIGHTS[plate.light].name + " · " + RANGES[plate.range].name + "</p>" +
+    "<p class='note'>" + (plate.body ? plate.body + " · " : "") + (plate.mode ? plate.mode + " · " : "") + shutterLabel(plate.shutter) + (plate.aperture ? " · f/" + plate.aperture : "") + (B ? " · asked " + (plate.asked || B.asked) : "") + (plate.support ? " · " + plate.support : "") + " · ISO " + (plate.iso || "—") + " · " + LIGHTS[plate.light].name + " · " + RANGES[plate.range].name + "</p>" +
     "<p>" + (plate.keeper ? WORDS.keeper : "<span class='why'>" + WORDS.folder + "</span>") + " " + plate.lines.join(" ") + "</p>";
   if (frame) {
     // the frame this was learned on: the photograph, with the crop as an inset
@@ -1506,7 +1542,14 @@ function drawFinder() {
   ctx.fillRect(0, 0, W, p.y); ctx.fillRect(0, p.y + p.h, W, H - p.y - p.h);
   ctx.fillRect(0, p.y, p.x, p.h); ctx.fillRect(p.x + p.w, p.y, W - p.x - p.w, p.h);
   ctx.strokeStyle = "#f5f0e4"; ctx.lineWidth = 2; ctx.strokeRect(p.x, p.y, p.w, p.h);
-  if (state.focus) { const b = boxOf(state.focus); ctx.strokeStyle = "#e8c97a"; ctx.lineWidth = 2; ctx.strokeRect(b.x - 4, b.y - 4, b.w + 8, b.h + 8); }
+  if (state.focus) {
+    const b = boxOf(state.focus); ctx.strokeStyle = "#e8c97a"; ctx.lineWidth = 2;
+    if (BODIES[state.body].af === "eye") {
+      // the eye box: the head end of the animal, the way it faces
+      const s = Math.max(14, b.w * 0.22), hx = state.focus.dir > 0 ? b.x + b.w - s - 2 : b.x + 2, hy = b.y + Math.min(b.h * 0.15, 10);
+      ctx.strokeRect(hx, hy, s, s);
+    } else ctx.strokeRect(b.x - 4, b.y - 4, b.w + 8, b.h + 8);
+  }
   ctx.strokeStyle = "rgba(245,240,228,0.8)"; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(state.aim.x - 12, state.aim.y); ctx.lineTo(state.aim.x + 12, state.aim.y); ctx.moveTo(state.aim.x, state.aim.y - 12); ctx.lineTo(state.aim.x, state.aim.y + 12); ctx.stroke();
 }
@@ -1521,7 +1564,8 @@ function drawHud() {
     const clk = add(clockLabel(state.clock) + " · " + day[state.leg].name + " (N)"); clk.title = "N: skip to the next part of the day"; clk.onclick = skipLeg;
   }
   const asked = state.focus ? askedFor(state.focus.behaviour, state.support, scaleFor(state.range)) : null;
-  // the dial, then what the camera will do with it for the subject in focus
+  // the body, the dial, then what the camera will do with it for the subject in focus
+  const bd = add(BODIES[state.body].name); bd.title = BODIES[state.body].note + " Change the body at camp.";
   for (const m of Object.keys(MODES)) {
     const e = add(m, m === state.mode ? "on" : ""); e.title = MODES[m] + " (M cycles)";
     e.onclick = () => { state.mode = m; drawHud(); };
@@ -1534,7 +1578,7 @@ function drawHud() {
     if (shutterLive) e.onclick = () => { state.shutter = s; drawHud(); };
   }
   const apLive = state.mode !== "S";
-  for (const N of lensApertures(lensFor(state.range))) {
+  for (const N of lensApertures(lensFor(state.range, state.body))) {
     const e = add("f/" + N, ((apLive ? N === state.aperture : N === exp.aperture) ? "on " : "") + (apLive ? "" : "dim"));
     e.title = apLive ? "" : "In S the camera sets the aperture";
     if (apLive) e.onclick = () => { state.aperture = N; drawHud(); };
@@ -1570,10 +1614,10 @@ function toggleSupport() {
 // light alone.
 function previewExposure() {
   const b = state.focus ? state.focus.behaviour : null;
-  return exposeFor(state.mode, state.shutter, state.aperture, state.light, b, scaleFor(state.range), lensFor(state.range), state.support);
+  return exposeFor(state.mode, state.shutter, state.aperture, state.light, b, scaleFor(state.range), lensFor(state.range, state.body), state.support, BODIES[state.body]);
 }
 function stepAperture(dir) {
-  const aps = lensApertures(lensFor(state.range));
+  const aps = lensApertures(lensFor(state.range, state.body));
   const i = aps.indexOf(state.aperture), j = i + dir;
   if (j >= 0 && j < aps.length) state.aperture = aps[j];
   drawHud();
@@ -1595,6 +1639,7 @@ function stepShutter(dir) {
 function toggleCamera() {
   if (!state.playing) return;
   state.camera = !state.camera;
+  state.focusPicked = false;
   if (state.camera) refreshFocus(); else { state.focus = null; $("focus").innerHTML = ""; refreshRange(); drawHud(); }
 }
 

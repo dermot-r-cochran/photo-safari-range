@@ -59,6 +59,18 @@ the pad's Skip ahead) jumps to the next part of the day.
 
 ## The camera
 
+Two bodies, chosen at camp and each the default where it was carried.
+The **older DSLR** is the tutorial's camera and the Kenya body: eleven
+autofocus points with one cross-type sensor in the middle, so it focuses
+on whatever you put under the centre of the frame; noise from ISO 1600, a
+cap of 3200. The **newer mirrorless** is the Zambia body, paired with the longer zoom:
+subject detection across the whole frame, so it finds the nearest
+animal's eye wherever it is and holds it while it moves, and the AF box
+sits on the head; clean to ISO 6400 with a cap of 12800, so in A at
+night it holds the shutter where the older body has to let it drop; smaller
+pixels, so diffraction starts a stop earlier, at f/8. Tab still picks
+another animal on either.
+
 One older crop-sensor body, and its dial. **S** sets the shutter and the
 camera finds the aperture and ISO: the smallest stop the light allows at
 ISO 100, else wide open and the ISO up. **A** sets the aperture for depth
@@ -77,7 +89,7 @@ The aperture then has real verdicts: wide open on a tight frame the near
 eye is sharp and the far ear is not; on the macro range 1:1 at f/8 is
 about a millimetre and wide open a fraction of one; f/11 starts to soften
 the pixels on this body and f/16 is plain diffraction, which costs a star.
-The lens sets the stops on offer: the 18–400 at its long end from f/5.6,
+The lens sets the stops on offer: the long zoom at its 400 mm end from f/5.6,
 the 70 mm macro from f/2.8.
 
 **The guide gives advice on the settings**, when the camera comes up on a
@@ -158,7 +170,7 @@ and
 The tutorial holds the lessons and the author's own frames; this is the
 range.
 
-**The camera is the author's own**, an older Nikon crop-sensor DSLR, and
+**The camera is the author's own**, an older crop-sensor DSLR, and
 the ISO the light windows charge is that body's: 400 clean, 800 fine, 1600
 showing chroma noise, 3200 a last resort. A newer body is cleaner. The
 decisions generalise; the thresholds are the ones to check against your
