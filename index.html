@@ -151,7 +151,7 @@
     <div class="row" id="light-pick"></div>
     <p class="note" id="camp-note"></p>
     <div class="row"><button class="primary" id="go">Drive the range</button></div>
-    <p class="note">Left and right arrows drive (A and D do too) · Space raises the camera and fires it · with the camera up the arrows move the aim · [ and ] change the shutter · Tab picks another animal in the frame · Z zooms · Esc packs up.</p>
+    <p class="note">The driver drives, stops when the spotter calls, and moves on · left and right arrows (or A and D) ask him for closer or back · Space raises the camera and fires it · with the camera up the arrows move the aim · [ and ] change the shutter · Tab picks another animal in the frame · Z zooms · Esc packs up.</p>
   </div>
   <div id="plates"></div>
 </main>
@@ -720,7 +720,13 @@ function step(dt) {
   // run from anyone moving nearby
   const moving = R.seat !== "hide" && R.seat !== "tripod" && !state.camera;
   const top = R.seat === "walk" ? 90 : 260;
-  const want = moving ? ((state.keys.d ? 1 : 0) - (state.keys.a ? 1 : 0)) * top : 0;
+  // the driver (or the guide on foot) moves the vehicle without being
+  // asked: a steady pace, a stop when the spotter calls something, then
+  // on again. The arrows are requests, closer or back, and override him.
+  const asked = (state.keys.d ? 1 : 0) - (state.keys.a ? 1 : 0);
+  const cruise = R.seat === "walk" ? 45 : 120;
+  const driverWants = state.t < (state.holdUntil || 0) ? 0 : cruise;
+  const want = !moving ? 0 : asked ? asked * top : driverWants;
   state.speed += (want - state.speed) * Math.min(1, dt * 3);
   state.worldX += state.speed * dt;
   const spookSpeed = R.seat === "walk" ? 40 : 200, spookRange = R.seat === "walk" ? 520 : 420;
@@ -762,9 +768,12 @@ function step(dt) {
       if (b.x + b.w < 40 || b.x > W - 40 || !inLamp(a)) continue;
       const A = ANIMALS[a.key], B = BEHAVIOURS[a.behaviour];
       a.called = true;
+      const drives = R.seat === "drive" || R.seat === "walk";
       say(R.seat === "walk" || R.seat === "tripod" ? "Guide" : "Spotter",
-          A.name + ", " + (A.sky ? (b.y < H * 0.25 ? "high" : "low") : (b.x + b.w / 2 > JEEP_X ? "right" : "left")) + ". " + B.verb + ".");
+          A.name + ", " + (A.sky ? (b.y < H * 0.25 ? "high" : "low") : (b.x + b.w / 2 > JEEP_X ? "right" : "left")) + ". " + B.verb + "." +
+          (drives ? (R.seat === "walk" ? " Stopping here." : " Stopping. Take your time.") : ""));
       state.nextCall = state.t + 2.5;
+      if (drives) state.holdUntil = state.t + 8;
       break;
     }
   }

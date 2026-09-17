@@ -22,14 +22,17 @@ or better; the sheet keeps what you keep.
 
 You know what you are looking at the way you would in the vehicle: the
 spotter calls each animal as it comes into view, with its side and what it
-is doing; the Asked panel lists what is on the range, nearest first, while
+is doing, and the driver stops for it; the Asked panel lists what is on the range, nearest first, while
 the camera is down; and the pointer over an animal shows its name. The
 silhouettes are a map, not a quiz.
 
 The loop, in four beats:
 
-1. **Drive** to the animals (the left and right arrows, or A and D, the
-   left hand's keys from the WASD habit), or sit still in the hide.
+1. **Ride.** The driver drives, without being asked: a steady pace, a stop
+   when the spotter calls something, a wait while you work, then on. The
+   left and right arrows (or A and D) are requests, closer or back, and he
+   obliges. On foot the guide walks the same way. In the hide and at the
+   tripod nothing moves but the animals.
 2. **Camera** up (Space). The plate rectangle follows the mouse or the
    arrow keys; Z zooms through wide, normal and tight (on the macro range,
    1:4, 1:2 and 1:1).
