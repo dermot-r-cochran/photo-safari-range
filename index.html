@@ -94,9 +94,22 @@
   #sheet li { display: flex; gap: 0.5rem; align-items: baseline; }
   #sheet li .s { color: var(--earth); white-space: nowrap; }
   .note { color: var(--dim); font-size: 0.95rem; }
-  @media (max-width: 60rem) {
-    .layout { flex-direction: column; }
+  #pad { display: none; gap: 0.4rem; flex-wrap: wrap; margin: 0.5rem 0; }
+  #pad button { flex: 1 1 auto; min-width: 3.2rem; padding: 0.6rem 0.4rem; font-size: 1rem; touch-action: manipulation; }
+  #pad button.wide { flex: 2 1 auto; }
+  @media (max-width: 60rem), (pointer: coarse) {
+    .layout { flex-direction: column; padding: 0.6rem 0.8rem 3rem; gap: 0.8rem; }
     aside { position: static; flex: 1 1 auto; width: 100%; }
+    header { padding: 0.7rem 0.8rem 0.5rem; }
+    header h1 { font-size: 1.15rem; }
+    header .sub { display: none; }
+    header .right { font-size: 0.85rem; }
+    body { font-size: 15px; }
+    #hud { font-size: 0.7rem; gap: 0.3rem; padding: 0.3rem 0.4rem; }
+    #hud .k { padding: 0.05rem 0.3rem; }
+    #radio { font-size: 0.75rem; padding: 0.25rem 0.5rem; max-width: 70%; }
+    #focus button { font-size: 0.7rem; }
+    #pad { display: flex; }
   }
 </style>
 </head>
@@ -113,6 +126,16 @@
     <div id="radio" hidden></div>
     <div id="focus"></div>
     <div id="hud"></div>
+  </div>
+  <div id="pad" aria-label="Touch controls">
+    <button data-act="left">◀</button>
+    <button data-act="right">▶</button>
+    <button data-act="camera" class="wide">Camera</button>
+    <button data-act="slower">1/− slower</button>
+    <button data-act="faster">faster 1/+</button>
+    <button data-act="next">Next</button>
+    <button data-act="pull">Pull</button>
+    <button data-act="pack">Pack up</button>
   </div>
   <div class="card" id="camp">
     <h2>Camp</h2>
@@ -282,7 +305,7 @@ function pick(weights, rnd) {
 function spawnPlan(rangeKey, n, rnd) {
   const R = RANGES[rangeKey];
   const out = [];
-  let x = 380;
+  let x = 80;
   for (let i = 0; i < n; i++) {
     const key = pick(R.cast, rnd);
     const A = ANIMALS[key];
@@ -355,9 +378,10 @@ function begin() {
   state.rnd = mulberry((Date.now() / 1000) | 0);
   state.worldX = 0; state.speed = 0; state.t = 0; state.camera = false; state.focus = null;
   state.animals = spawnPlan(state.range, 14, state.rnd).map(makeAnimal);
-  if (R.seat === "hide") for (const a of state.animals) { a.x = W * 0.2 + (a.x - 380) * 0.45; }
+  if (R.seat === "hide") for (const a of state.animals) { a.x = W * 0.15 + (a.x - 80) * 0.45; }
   state.playing = true;
   $("camp").hidden = true;
+  drawHud();
   say("Spotter", R.seat === "hide" ? "Sit still. The water brings them." : "Stay in the vehicle. A cat in the grass means you stay seated.");
   stage.focus();
 }
@@ -643,7 +667,8 @@ function drawFinder() {
 
 function drawHud() {
   const h = $("hud"); h.innerHTML = "";
-  if (!state.playing) { h.innerHTML = "<span class='k'>Pick a range and a light at camp</span>"; return; }
+  drawPad();
+  if (!state.playing) { h.innerHTML = "<span class='k'>At camp: pick a range and a light</span>"; return; }
   const add = (txt, cls) => { const s = document.createElement("span"); s.className = "k " + (cls || ""); s.textContent = txt; h.appendChild(s); return s; };
   const asked = state.focus ? BEHAVIOURS[state.focus.behaviour].asked : null;
   for (const s of SHUTTERS) {
@@ -687,16 +712,44 @@ stage.addEventListener("keydown", (e) => {
   if (k === "arrowdown") state.aim.y = Math.min(H, state.aim.y + nudge);
 });
 stage.addEventListener("keyup", (e) => { const k = e.key.toLowerCase(); if (k === "a" || k === "d") state.keys[k] = false; });
-stage.addEventListener("mousemove", (e) => {
+function aimAt(e) {
   const r = canvas.getBoundingClientRect();
-  state.aim.x = (e.clientX - r.left) * W / r.width; state.aim.y = (e.clientY - r.top) * H / r.height;
-});
+  state.aim.x = Math.max(0, Math.min(W, (e.clientX - r.left) * W / r.width));
+  state.aim.y = Math.max(0, Math.min(H, (e.clientY - r.top) * H / r.height));
+}
+stage.addEventListener("pointermove", (e) => { if (e.target === canvas) aimAt(e); });
+stage.addEventListener("pointerdown", (e) => { if (e.target === canvas) aimAt(e); });
 stage.addEventListener("click", (e) => {
   if (e.target !== canvas) return;
-  stage.focus();
+  stage.focus({ preventScroll: true });
   if (!state.playing) return;
-  if (state.camera) fire(); else toggleCamera();
+  aimAt(e);
+  if (state.camera) { refreshFocus(); fire(); } else toggleCamera();
 });
+// touch pad: the same actions as the keys
+const padHold = (dir, on) => { state.keys[dir] = on; };
+for (const b of document.querySelectorAll("#pad button")) {
+  const act = b.dataset.act;
+  if (act === "left" || act === "right") {
+    const k = act === "left" ? "a" : "d";
+    b.addEventListener("pointerdown", (e) => { e.preventDefault(); if (!state.playing) return; padHold(k, true); if (!state.camera && RANGES[state.range].seat === "drive") state.worldX += (k === "d" ? 1 : -1) * 14; });
+    for (const ev of ["pointerup", "pointercancel", "pointerleave"]) b.addEventListener(ev, () => padHold(k, false));
+    continue;
+  }
+  b.addEventListener("click", () => {
+    if (!state.playing) { if (act === "camera") begin(); return; }
+    if (act === "camera") { if (state.camera) fire(); else toggleCamera(); }
+    if (act === "slower") { const i = shutterIndex(state.shutter); if (i > 0) state.shutter = SHUTTERS[i - 1]; drawHud(); }
+    if (act === "faster") { const i = shutterIndex(state.shutter); if (i < SHUTTERS.length - 1) state.shutter = SHUTTERS[i + 1]; drawHud(); }
+    if (act === "next") cycleFocus();
+    if (act === "pull") { state.pull = (state.pull + 1) % PULLS.length; if (state.camera) refreshFocus(); else drawHud(); }
+    if (act === "pack") packUp();
+  });
+}
+function drawPad() {
+  const cam = document.querySelector('#pad button[data-act="camera"]');
+  if (cam) cam.textContent = !state.playing ? "Go" : state.camera ? "Shoot" : "Camera";
+}
 $("go").onclick = begin;
 $("clear").onclick = () => { state.sheet = []; save(); };
 

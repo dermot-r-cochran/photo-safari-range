@@ -104,7 +104,7 @@ for (const k in R.RANGES) {
   const a = R.spawnPlan(k, 14, R.mulberry(7)), b = R.spawnPlan(k, 14, R.mulberry(7));
   if (JSON.stringify(a) !== JSON.stringify(b)) fail("spawn plan for " + k + " is not deterministic");
   for (let i = 1; i < a.length; i++) if (a[i].x - a[i - 1].x < 200) fail("spawn plan for " + k + " puts two animals within a jeep-length");
-  if (a[0].x > 1100) fail("spawn plan for " + k + " leaves the range empty on entry");
+  if (a[0].x > 800) fail("spawn plan for " + k + " leaves the range empty on entry");
   for (const p of a) { if (!R.ANIMALS[p.key]) fail("spawn cast " + p.key); if (!R.ANIMALS[p.key].states[p.behaviour]) fail("spawned " + p.key + " " + p.behaviour + ", a state it does not have"); }
   ok();
 }
