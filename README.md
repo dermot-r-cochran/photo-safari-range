@@ -56,6 +56,36 @@ so nobody picks it; the night sky keeps its choice of moon. Breakfast,
 camp and the coffee stop are cards with the sheet so far on them; N (or
 the pad's Skip ahead) jumps to the next part of the day.
 
+## The camera
+
+One older crop-sensor body, and its dial. **S** sets the shutter and the
+camera finds the aperture and ISO: the smallest stop the light allows at
+ISO 100, else wide open and the ISO up. **A** sets the aperture for depth
+and the camera finds the shutter: it holds ISO 100 as long as the shutter
+stays above the hand-held floor, then raises ISO to its cap of 3200, then
+lets the shutter drop anyway, which is fine for a resting lion and fatal
+for a running gazelle. **M** sets both, and the ISO follows to the cap;
+past it the frame is dark rather than blurred, and the verdict says by how
+many stops. Below ISO 100 the frame is blown. M turns the dial, [ and ]
+the shutter, comma and full stop the aperture; the HUD shows what the
+camera will do with your settings for the subject in focus, and greys out
+the dial you are not holding. Each light window is an exposure value, so
+the moon meters as a sunlit rock whatever the sky.
+
+The aperture then has real verdicts: wide open on a tight frame the near
+eye is sharp and the far ear is not; on the macro range 1:1 at f/8 is
+about a millimetre and wide open a fraction of one; f/11 starts to soften
+the pixels on this body and f/16 is plain diffraction, which costs a star.
+The lens sets the stops on offer: the 18–400 at its long end from f/5.6,
+the 70 mm macro from f/2.8.
+
+**The guide gives advice on the settings**, when the camera comes up on a
+subject and only now and then: a dark frame at the cap, a blown one, A
+on a mover, ISO paid for speed the subject doesn't need, f/16, the
+beanbag when the light falls. Every line comes off the same exposure model
+as the verdict, so it is never wrong about the numbers, and never says
+what to do about the animal.
+
 ## What it teaches
 
 - **Behaviour first.** A resting lion wants 1/60; a walking zebra 1/250; a

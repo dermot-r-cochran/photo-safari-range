@@ -57,7 +57,13 @@ for (const k in R.RANGES) {
   for (const l of R.lightsFor(k)) {
     const L = R.LIGHTS[l]; if (!L) continue;
     if ((L.scale || "day") !== scale) fail("range " + k + " offers light " + l + ", which is on the " + (L.scale || "day") + " scale");
-    for (const sh of R.SCALES[scale]) if (!(L.iso[sh] > 0)) fail("light " + l + " has no ISO for " + sh);
+    if (typeof L.ev !== "number") fail("light " + l + " has no exposure value");
+  }
+  const lens = R.lensFor(k);
+  if (!lens || !lens.name || !(lens.min < lens.max) || !lens.floor) fail("range " + k + " has no usable lens");
+  else {
+    if (R.lensApertures(lens).length < 3) fail("range " + k + " lens offers fewer than three stops");
+    if (!R.SCALES[scale].includes(lens.floor)) fail("range " + k + " lens floor " + lens.floor + " is not on the " + scale + " scale");
   }
   ok();
 }
@@ -95,16 +101,19 @@ for (const k in R.RANGES) {
 for (const a in R.ANIMALS) if (R.ANIMALS[a].prize) {
   const b = Object.keys(R.ANIMALS[a].states)[0];
   const onSky = !R.SCALES.day.includes(R.BEHAVIOURS[b].asked);
-  const v = R.score(R.BEHAVIOURS[b].asked, b, { inside: true, cut: false, fill: 0.3 }, onSky ? "newmoon" : "heat", a, onSky ? "sky" : "day");
-  if (!v.prize || !v.lines.includes(R.WORDS.prize)) fail("a keeper of " + a + " is not marked a hard plate");
-  const w = R.score(R.SHUTTERS[0], "flight", { inside: true, cut: false, fill: 0.3 }, "heat", a);
+  const scale = onSky ? "sky" : "day", light = onSky ? "newmoon" : "heat", lens = onSky ? R.lensFor("sky") : R.lensFor("amber");
+  const e1 = R.exposeFor("S", R.BEHAVIOURS[b].asked, 8, light, b, scale, lens, null);
+  const v = R.score(e1, b, { inside: true, cut: false, fill: 0.3 }, light, a, scale);
+  if (!v.prize || !v.lines.includes(R.WORDS.prize)) fail("a keeper of " + a + " is not marked a hard plate: " + v.lines.join(" | "));
+  const e2 = R.exposeFor("S", R.SHUTTERS[0], 8, "heat", "flight", "day", R.lensFor("amber"), null);
+  const w = R.score(e2, "flight", { inside: true, cut: false, fill: 0.3 }, "heat", a);
   if (w.prize) fail("a folder plate of " + a + " is marked a hard plate");
   ok();
 }
 // dark plates score nothing
-if (R.score("1/250", "walking", { inside: true, cut: false, fill: 0.3, dark: true }, "night").stars !== 0) fail("a plate outside the lamp scored");
+if (R.score(R.exposeFor("S", "1/250", 8, "night", "walking", "day", R.lensFor("amber"), null), "walking", { inside: true, cut: false, fill: 0.3, dark: true }, "night").stars !== 0) fail("a plate outside the lamp scored");
 // the sky: the words say lines, not smear, and a unique subject spawns once
-const sky = R.score("30s", "points", { inside: true, cut: false, fill: 0.3 }, "newmoon", null, "sky");
+const sky = R.score(R.exposeFor("S", "30s", 4, "newmoon", "points", "sky", R.lensFor("sky"), "tripod"), "points", { inside: true, cut: false, fill: 0.3 }, "newmoon", null, "sky", "tripod");
 if (sky.stars !== 2 || !/lines/.test(sky.lines.join(" "))) fail("a stop over on the sky scale does not say the stars drew lines");
 for (const k in R.RANGES) for (const l of R.lightsFor(k)) {
   const plan = R.spawnPlan(k, 30, R.mulberry(5), l);
@@ -143,7 +152,63 @@ if (R.clockLabel(R.hm("06:15")) !== "06:15" || R.clockLabel(R.hm("18:45")) !== "
 // lights
 for (const k in R.LIGHTS) {
   const l = R.LIGHTS[k];
-  for (const s of R.SCALES[l.scale || "day"]) if (!(l.iso[s] > 0)) fail("light " + k + " has no ISO for " + s);
+  if (typeof l.ev !== "number" || !l.name) fail("light " + k + " has no exposure value or name");
+  ok();
+}
+// the camera: the exposure model behaves like the tutorial says the body does
+{
+  const lens = R.lensFor("amber");
+  // S at heat, 1/250: ISO 100, and the camera stops down for depth
+  const s1 = R.exposeFor("S", "1/250", 8, "heat", "walking", "day", lens, null);
+  if (s1.iso !== 100 || s1.aperture < 5.6 || s1.over >= 0.5 || s1.under > 0) fail("S at heat 1/250 is not a clean ISO 100 exposure: " + JSON.stringify(s1));
+  // S at last light, 1/2000: wide open and the ISO up, likely dark
+  const s2 = R.exposeFor("S", "1/2000", 8, "last", "flight", "day", lens, null);
+  if (s2.aperture !== 5.6 || s2.iso < 1600) fail("S at last light 1/2000 did not open up and raise ISO: " + JSON.stringify(s2));
+  // A at heat, f/8: shutter fast, ISO 100
+  const a1 = R.exposeFor("A", "1/250", 8, "heat", "walking", "day", lens, null);
+  if (a1.iso !== 100 || R.tSeconds(a1.shutter) > R.tSeconds(lens.floor)) fail("A at heat f/8 did not hold ISO 100 above the floor: " + JSON.stringify(a1));
+  // A at night, f/8: the ISO hits the cap and the shutter drops under the floor
+  const a2 = R.exposeFor("A", "1/250", 8, "night", "walking", "day", lens, null);
+  if (!a2.dropped || a2.iso !== R.ISO_CAP || R.tSeconds(a2.shutter) <= R.tSeconds(lens.floor)) fail("A at night f/8 did not drop the shutter at the cap: " + JSON.stringify(a2));
+  // A never sets a shutter off the scale
+  for (const light of ["first", "heat", "last", "night"]) for (const N of R.lensApertures(lens)) {
+    const e = R.exposeFor("A", "1/250", N, light, "walking", "day", lens, null);
+    if (!R.SCALES.day.includes(e.shutter)) fail("A set a shutter off the scale: " + e.shutter);
+    checks++;
+  }
+  // M at last light, 1/2000 f/22: dark by stops; M at heat 1/8 f/5.6: blown
+  const m1 = R.exposeFor("M", "1/2000", 22, "last", "flight", "day", lens, null);
+  if (!(m1.under >= 2)) fail("M at last light 1/2000 f/22 is not dark by two stops: " + JSON.stringify(m1));
+  const m2 = R.exposeFor("M", "1/8", 5.6, "heat", "resting", "day", lens, null);
+  if (!(m2.over >= 1)) fail("M at heat 1/8 f/5.6 is not blown: " + JSON.stringify(m2));
+  // the moon meters as a sunlit rock whatever the sky
+  const moon = R.exposeFor("M", "1/250", 8, "newmoon", "sunlit", "sky", R.lensFor("sky"), "tripod");
+  if (moon.iso > 200 || moon.under > 0) fail("the moon did not meter as sunlit: " + JSON.stringify(moon));
+  // a support lowers the A-mode floor: ISO 100 holds longer
+  const a3 = R.exposeFor("A", "1/250", 8, "last", "resting", "day", lens, "beanbag");
+  const a4 = R.exposeFor("A", "1/250", 8, "last", "resting", "day", lens, null);
+  if (a3.iso > a4.iso) fail("a support raised the ISO in A");
+  // the dark and blown plates lose stars; diffraction at f/16 loses one
+  const dark = R.score(m1, "flight", { inside: true, cut: false, fill: 0.3 }, "last", null, "day");
+  if (dark.stars > 1 || !dark.lines.includes(R.WORDS.under2)) fail("a frame two stops dark did not lose two stars");
+  const blown = R.score(m2, "resting", { inside: true, cut: false, fill: 0.3 }, "heat", null, "day");
+  if (!blown.lines.includes(R.WORDS.over)) fail("a blown frame is not named");
+  const diff = R.score(R.exposeFor("M", "1/60", 16, "heat", "resting", "day", lens, null), "resting", { inside: true, cut: false, fill: 0.3 }, "heat", null, "day");
+  if (!diff.lines.includes(R.WORDS.diffPlain) || diff.stars === 3) fail("f/16 did not cost a star for diffraction");
+  // every pull's depth words are strings in known bands, and the macro 1:1 says millimetre at f/8
+  for (const k in R.RANGES) for (const p of R.pullsFor(k)) if (p.depth) for (const band in p.depth) {
+    if (!["wide", "mid", "stopped", "narrow"].includes(band)) fail("pull " + p.name + " on " + k + " has depth band " + band);
+    if (typeof p.depth[band] !== "string") fail("pull " + p.name + " depth " + band + " is not words");
+  }
+  const macro = R.score(R.exposeFor("M", "1/125", 8, "overcast", "still", "day", R.lensFor("home"), null), "still", { inside: true, cut: false, fill: 0.3 }, "overcast", null, "day", null, R.pullsFor("home")[2]);
+  if (!macro.lines.some(l => /millimetre/.test(l))) fail("1:1 at f/8 does not say millimetre");
+  // the guide's advice is always words or nothing
+  if (R.ADVICE) for (const mode of ["S", "A", "M"]) for (const light of ["heat", "last", "night"]) for (const b of ["resting", "running", "flight"]) for (const N of R.lensApertures(lens)) {
+    const e = R.exposeFor(mode, "1/250", N, light, b, "day", lens, null);
+    const t = R.advise(e, b, "day", null, R.PULLS[2], "drive");
+    if (t !== null && typeof t !== "string") fail("advice is not words for " + mode + " " + light + " " + b);
+    checks++;
+  }
   ok();
 }
 // pulls, the default set and any range's own
@@ -200,13 +265,17 @@ for (const light in R.LIGHTS) {
   const scale = R.LIGHTS[light].scale || "day";
   for (const b in R.BEHAVIOURS) {
     if (!R.SCALES[scale].includes(R.BEHAVIOURS[b].asked)) continue;
+    const lens = scale === "sky" ? R.lensFor("sky") : R.lensFor("amber");
     for (const s of R.SCALES[scale]) for (const f of framings) {
-      const v = R.score(s, b, f, light, null, scale);
+      const e = R.exposeFor("S", s, 8, light, b, scale, lens, scale === "sky" ? "tripod" : null);
+      if (!R.SCALES[scale].includes(e.shutter) || !R.lensApertures(lens).includes(e.aperture) || !R.ISO_STEPS.includes(e.iso)) fail("exposure off the dials: " + JSON.stringify(e));
+      const v = R.score(e, b, f, light, null, scale, scale === "sky" ? "tripod" : null);
       if (!(v.stars >= 0 && v.stars <= 3)) fail("score out of range: " + s + " " + b);
       if (!Array.isArray(v.lines) || !v.lines.length) fail("score with no words: " + s + " " + b);
       if (v.lines.some(x => x === undefined)) fail("score with a missing word: " + s + " " + b + " on " + scale);
       if (!f.inside && v.stars !== 0) fail("a plate with nothing in it scored " + v.stars);
-      if (f.inside && !f.cut && f.fill === 0.3 && s === R.BEHAVIOURS[b].asked && !(v.stars === 3 && v.keeper)) fail("matched shutter, clean frame, not three stars: " + b + " at " + light);
+      const asked = R.askedFor(b, scale === "sky" ? "tripod" : null, scale);
+      if (f.inside && !f.cut && f.fill === 0.3 && s === asked && e.over < 0.5 && !e.under && e.aperture < R.DIFFRACTION.plain && !(v.stars === 3 && v.keeper)) fail("matched shutter, clean frame, clean exposure, not three stars: " + b + " at " + light + ": " + v.lines.join(" | "));
       if (v.keeper !== (v.stars >= 2)) fail("keeper does not follow the stars: " + s + " " + b);
       checks++;
     }
@@ -222,9 +291,13 @@ for (const b in R.BEHAVIOURS) {
   if (R.STILL[b] && !(di === 2 || (di > 0 && s.indexOf(bag) === 0))) fail("a support does not lower " + b + " by two stops");
   if (!R.STILL[b] && hand !== bag) fail("a support changed " + b + ", which moves");
   if (R.STILL[b] && hand !== bag) {
-    const v = R.score(bag, b, { inside: true, cut: false, fill: 0.3 }, scale === "day" ? "heat" : "newmoon", null, scale, "beanbag");
-    if (v.stars !== 3 || !v.lines.includes(R.WORDS.beanbag)) fail("a still subject on the beanbag at its supported shutter is not a clean three stars");
-    const w = R.score(bag, b, { inside: true, cut: false, fill: 0.3 }, scale === "day" ? "heat" : "newmoon", null, scale, null);
+    const light = scale === "day" ? "first" : "newmoon", lens = scale === "day" ? R.lensFor("amber") : R.lensFor("sky");
+    const e = R.exposeFor("S", bag, 8, light, b, scale, lens, "beanbag");
+    const v = R.score(e, b, { inside: true, cut: false, fill: 0.3 }, light, null, scale, "beanbag");
+    // in bright light a slow shutter drives S to f/16 and diffraction, which is true to life; the test is about the support
+    if (e.over >= 0.5 || e.aperture >= R.DIFFRACTION.plain) { checks++; continue; }
+    if (v.stars !== 3 || !v.lines.includes(R.WORDS.beanbag)) fail("a still subject on the beanbag at its supported shutter is not a clean three stars: " + b + " " + v.lines.join(" | "));
+    const w = R.score(e, b, { inside: true, cut: false, fill: 0.3 }, light, null, scale, null);
     if (w.stars === 3) fail("the supported shutter scored three in the hand for " + b);
   }
   checks++;

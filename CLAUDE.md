@@ -124,6 +124,29 @@ name (dsc_1030, dsc_1000). Aperture is still not a control the player
 sets; the pulls carry its cost in words. If that ever changes, it is a
 second axis on the scorer, not a new range.
 
+## The camera and the dial
+
+Added 2026-09-17 at Dermot's "Shutter Speed, Aperture, ISO and other
+settings", his choice of option 2 (the tutorial's three modes) over
+shutter-only and over the full camera. `LIGHTS` are exposure values at ISO
+100 (`ev`), a behaviour may override with its own (`sunlit`), each range
+carries a `lens` (widest and narrowest stop, hand-held `floor` on its
+scale), and `exposeFor(mode, shutter, aperture, light, behaviour, scale,
+lens, support)` is the camera: S picks the smallest stop that keeps ISO
+100 else opens up and raises ISO; A holds ISO 100 above the floor, raises
+to `ISO_CAP`, then drops the shutter (`dropped`); M follows to the cap and
+reports `under` and `over` in stops. The floor is four times longer on a
+support. `score` takes the exposure, not a shutter, and adds the dark,
+blown, diffraction and depth-of-field lines; a pull's `depth` words are by
+aperture band (`apertureBand`). `ADVICE` is the guide's settings advice,
+rules with `when` and `text`, first match spoken on focus every ten
+seconds; `advise` is pure and the check runs it over modes, lights,
+subjects and stops. Thresholds are the tutorial's and one camera's:
+diffraction from f/11, plain at f/16; ISO 1600 noise, 3200 cap. The
+things ruled out of the range on the same day, as the tutorial's job:
+manual ISO, picture control and the vivid trap, focus modes, burst,
+exposure compensation, white balance.
+
 ## Adding to the world
 
 An animal: add to `ANIMALS` with `name`, `latin`, `size`, `shape` (one of

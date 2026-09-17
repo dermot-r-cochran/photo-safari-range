@@ -70,6 +70,7 @@
     border-radius: 4px; background: rgba(0,0,0,0.25); }
   #hud .k.on { background: #f5f0e4; color: var(--ink); }
   #hud .k.asked { border-color: #f5f0e4; font-weight: bold; }
+  #hud .k.dim { opacity: 0.55; }
   #pause {
     position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
     width: min(28rem, 90%); background: var(--panel); color: var(--ink);
@@ -148,8 +149,11 @@
     <button data-act="left">◀</button>
     <button data-act="right">▶</button>
     <button data-act="camera" class="wide">Camera</button>
+    <button data-act="mode">Mode</button>
     <button data-act="slower">1/− slower</button>
     <button data-act="faster">faster 1/+</button>
+    <button data-act="wider">f− wider</button>
+    <button data-act="narrower">narrower f+</button>
     <button data-act="next">Next</button>
     <button data-act="pull">Zoom</button>
     <button data-act="support">Beanbag</button>
@@ -162,7 +166,7 @@
     <div class="row" id="light-pick"></div>
     <p class="note" id="camp-note"></p>
     <div class="row"><button class="primary" id="go">Drive the range</button></div>
-    <p class="note">The driver drives, stops when the spotter calls, and moves on · left and right arrows (or A and D) ask him for closer or back · Space raises the camera and fires it · with the camera up the arrows move the aim · [ and ] change the shutter · B rests the camera on the beanbag, or the tripod on foot · Tab picks another animal in the frame · Z zooms · N skips to the next part of the day · Esc packs up.</p>
+    <p class="note">The driver drives, stops when the spotter calls, and moves on · left and right arrows (or A and D) ask him for closer or back · Space raises the camera and fires it · with the camera up the arrows move the aim · M turns the mode dial through S, A and M · [ and ] change the shutter · , and . change the aperture · B rests the camera on the beanbag, or the tripod on foot · Tab picks another animal in the frame · Z zooms · N skips to the next part of the day · Esc packs up.</p>
   </div>
   <div id="plates"></div>
 </main>
@@ -222,7 +226,7 @@ const BEHAVIOURS = {
   working:  { asked: "1/500",  verb: "Working",  note: "On the flower and never still: legs, antennae, the head in the pollen. 1/500 holds the body. The wings are their own problem." },
   crawling: { asked: "1/250",  verb: "Crawling", note: "Across a seed head at its own pace. 1/250 is enough, and the depth of field is the real question." },
   // the night sky, on the sky scale
-  sunlit:   { asked: "1/250",  verb: "Sunlit",   note: "A rock in full sun, however dark the night. Meter it like a daylight scene or it goes to a white disc." },
+  sunlit:   { asked: "1/250",  verb: "Sunlit",   ev: 13, note: "A rock in full sun, however dark the night. Meter it like a daylight scene or it goes to a white disc." },
   points:   { asked: "15s",    verb: "Points",   note: "Five hundred over the focal length, in seconds, before the Earth turns them into lines. At 30 mm on this body, about fifteen." },
   core:     { asked: "15s",    verb: "The core", note: "Faint, wide, and moving with everything else. Fifteen seconds and all the ISO the body has." },
   wheel:    { asked: "8m",     verb: "Wheeling", note: "Around the pole the stars draw arcs. Minutes, a still tripod, and no wind in the legs." },
@@ -433,13 +437,13 @@ const PLATES = [
 // species and how often each turns up; `lights` the windows the range
 // offers (all three by default).
 const RANGES = {
-  amber:   { name: "Amber Range",  place: "Maasai Mara, Kenya", seat: "drive", day: "safari", sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
+  amber:   { name: "Amber Range",  place: "Maasai Mara, Kenya", seat: "drive", day: "safari", lens: { name: "18–400 mm at the long end", min: 5.6, max: 22, floor: "1/125" }, sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
              note: "Open grassland. The pride, the cheetah on the mound, the meerkat on sentry. Stay in the vehicle.",
              cast: { zebra: 5, topi: 3, gazelle: 4, buffalo: 2, elephant: 2, giraffe: 2, lion: 2, cheetah: 2, hyena: 2, vulture: 2, meerkat: 2, acacia: 3 } },
-  zambezi: { name: "Zambezi Hide", place: "Lower Zambezi, Zambia", seat: "hide", day: "safari", sky: ["#d9c9a8", "#b9a684"], ground: "#8fa0a4", far: "#6f7f5a",
+  zambezi: { name: "Zambezi Hide", place: "Lower Zambezi, Zambia", seat: "hide", day: "safari", lens: { name: "18–400 mm at the long end", min: 5.6, max: 22, floor: "1/125" }, sky: ["#d9c9a8", "#b9a684"], ground: "#8fa0a4", far: "#6f7f5a",
              note: "A floating hide, eye level with the drinking line. Nothing to drive. Wait, and the water brings them.",
              cast: { puku: 5, hippo: 3, elephant: 2, buffalo: 2, eagle: 3 } },
-  luangwa: { name: "South Luangwa", place: "South Luangwa, Zambia", seat: "walk", day: "luangwa", sky: ["#e8d6a8", "#c9a86a"], ground: "#a8905c", far: "#6a6a3a",
+  luangwa: { name: "South Luangwa", place: "South Luangwa, Zambia", seat: "walk", day: "luangwa", lens: { name: "18–400 mm at the long end", min: 5.6, max: 22, floor: "1/125" }, sky: ["#e8d6a8", "#c9a86a"], ground: "#a8905c", far: "#6a6a3a",
              note: "Walking country, single file behind the guide. Stop when he stops. After the gate, a night drive: the small ones are the plate.",
              cast: { puku: 3, elephant: 2, hippo: 2, leopard: 2, serval: 3, hyrax: 3, genet: 3, beeeater: 3, acacia: 2 },
              lights: ["first", "heat", "last", "night"] },
@@ -447,12 +451,16 @@ const RANGES = {
              note: "The week after, on foot, with the 70 mm macro. The pulls are magnification now: at 1:1 the depth of field is about a millimetre at f/8. Get low, and do not walk at the bees.",
              cast: { mushroom: 4, rose: 3, thistle: 2, angelica: 2, sloe: 2, bramble: 2, bee: 3, hoverfly: 2, ladybird: 2 },
              lights: ["overcast", "dappled", "shade"],
+             lens: { name: "70 mm macro", min: 2.8, max: 22, floor: "1/125" },
              pulls: [
-               { name: "1:4", frac: 0.55, note: "A quarter life-size. The plant and its ground." },
-               { name: "1:2", frac: 0.34, note: "Half life-size. Depth a few millimetres at f/8.", verdict: "At 1:2 the depth of field is a few millimetres: the near petals are sharp, the far ones are not." },
-               { name: "1:1", frac: 0.20, note: "Life-size. Depth about a millimetre at f/8; f/16 buys depth with diffraction, and the effective aperture is already two stops darker.", verdict: "At 1:1 the depth of field is about a millimetre at f/8. The eye is sharp; the rest is not. Stopping down to f/16 buys depth and pays in diffraction." }
+               { name: "1:4", frac: 0.55, note: "A quarter life-size. The plant and its ground.",
+                 depth: { wide: "At 1:4 and wide open the flower is sharp and its ground is gone; a centimetre or two of depth." } },
+               { name: "1:2", frac: 0.34, note: "Half life-size. Depth a few millimetres at f/8.",
+                 depth: { wide: "At 1:2 and wide open the depth is a millimetre or two: one petal.", mid: "At 1:2 the depth of field is a few millimetres: the near petals are sharp, the far ones are not.", stopped: "At 1:2 and f/11, a centimetre of depth, and the pixels starting to soften.", narrow: "At 1:2 and f/16, the whole head in depth and diffraction over all of it." } },
+               { name: "1:1", frac: 0.20, note: "Life-size. Depth about a millimetre at f/8; f/16 buys depth with diffraction, and the effective aperture is already two stops darker.",
+                 depth: { wide: "At 1:1 and wide open the depth of field is a fraction of a millimetre: an eye, and nothing else.", mid: "At 1:1 the depth of field is about a millimetre at f/8. The eye is sharp; the rest is not.", stopped: "At 1:1 and f/11, two millimetres of depth and the first softness of diffraction; the effective aperture is already f/22.", narrow: "At 1:1 and f/16, depth bought with diffraction: the whole insect in, and none of it crisp." } }
              ] },
-  sky:     { name: "Night Sky",     place: "South Luangwa, Zambia, after the fire", seat: "tripod", scale: "sky", sky: ["#070a1c", "#1a1f3a"], ground: "#0b0a10", far: "#14121c",
+  sky:     { name: "Night Sky",     place: "South Luangwa, Zambia, after the fire", seat: "tripod", scale: "sky", lens: { name: "18 mm end of the zoom", min: 4, max: 22, floor: "1/60" }, sky: ["#070a1c", "#1a1f3a"], ground: "#0b0a10", far: "#14121c",
              note: "A tripod on the airstrip, the camp behind you. Nothing to drive. The Earth turns; that is the movement. Wait for your eyes.",
              cast: { stars: 3, pole: 2, milky: 2, moon: 2, meteor: 3 },
              lights: ["newmoon", "moonlit"] }
@@ -499,21 +507,39 @@ function legAt(day, min) { let i = 0; for (let k = 0; k < day.length; k++) if (m
 // Light windows: the sky, and the ISO the meter lands on at each shutter.
 // ISO 400 clean, 800 fine, 1600 shows chroma noise, 3200 a last resort.
 // A `lamp` window is dark outside the spotlight, which follows the aim.
+// Each window is an exposure value at ISO 100: what the meter reads off
+// the scene. Heat is f/5.6 at 1/250 and ISO 100; first light two stops
+// less; last light three; the lamp at night seven; the new-moon sky is
+// fifteen seconds at f/4 and ISO 3200. A subject may carry its own `ev`
+// (the moon is a sunlit rock whatever the hour).
 const LIGHTS = {
-  first: { name: "First light", tint: "rgba(240,160,80,0.18)",  iso: { "1/8": 100, "1/15": 100, "1/30": 100, "1/60": 100, "1/125": 200, "1/250": 400, "1/500": 800, "1/1000": 1600, "1/2000": 3200 } },
-  heat:  { name: "Heat",        tint: "rgba(255,255,230,0.10)", iso: { "1/8": 100, "1/15": 100, "1/30": 100, "1/60": 100, "1/125": 100, "1/250": 100, "1/500": 200, "1/1000": 400, "1/2000": 800 } },
-  last:  { name: "Last light",  tint: "rgba(200,90,60,0.22)",   iso: { "1/8": 100, "1/15": 100, "1/30": 100, "1/60": 200, "1/125": 400, "1/250": 800, "1/500": 1600, "1/1000": 3200, "1/2000": 3200 } },
-  night: { name: "Night drive", tint: "rgba(10,18,40,0.55)", lamp: 1, iso: { "1/8": 400, "1/15": 800, "1/30": 1600, "1/60": 3200, "1/125": 3200, "1/250": 3200, "1/500": 3200, "1/1000": 3200, "1/2000": 3200 } },
+  first: { name: "First light", tint: "rgba(240,160,80,0.18)",  ev: 11 },
+  heat:  { name: "Heat",        tint: "rgba(255,255,230,0.10)", ev: 13 },
+  last:  { name: "Last light",  tint: "rgba(200,90,60,0.22)",   ev: 10 },
+  night: { name: "Night drive", tint: "rgba(10,18,40,0.55)", lamp: 1, ev: 6 },
   // home ground: bright overcast, sun through the leaves, and the wood's floor
-  overcast: { name: "Bright overcast", tint: "rgba(220,226,230,0.12)", iso: { "1/8": 100, "1/15": 100, "1/30": 100, "1/60": 100, "1/125": 200, "1/250": 400, "1/500": 800, "1/1000": 1600, "1/2000": 3200 } },
-  dappled:  { name: "Dappled sun",     tint: "rgba(255,240,180,0.12)", iso: { "1/8": 100, "1/15": 100, "1/30": 100, "1/60": 100, "1/125": 100, "1/250": 200, "1/500": 400, "1/1000": 800, "1/2000": 1600 } },
-  shade:    { name: "Woodland floor",  tint: "rgba(30,50,30,0.22)",    iso: { "1/8": 100, "1/15": 100, "1/30": 200, "1/60": 400, "1/125": 800, "1/250": 1600, "1/500": 3200, "1/1000": 3200, "1/2000": 3200 } },
-  // the sky scale: what the meter wants at f/3.5 on the 18 mm end, and the
-  // moon is a daylight subject whatever the hour
-  newmoon: { name: "New moon",  scale: "sky", tint: "rgba(0,0,0,0)", iso: { "8m": 100, "2m": 400, "30s": 1600, "15s": 3200, "4s": 3200, "1s": 3200, "1/60": 3200, "1/250": 100 } },
-  moonlit: { name: "Moonlit",   scale: "sky", tint: "rgba(120,140,200,0.10)", iso: { "8m": 100, "2m": 100, "30s": 400, "15s": 800, "4s": 3200, "1s": 3200, "1/60": 3200, "1/250": 100 } }
+  overcast: { name: "Bright overcast", tint: "rgba(220,226,230,0.12)", ev: 11 },
+  dappled:  { name: "Dappled sun",     tint: "rgba(255,240,180,0.12)", ev: 12 },
+  shade:    { name: "Woodland floor",  tint: "rgba(30,50,30,0.22)",    ev: 9 },
+  // the sky
+  newmoon: { name: "New moon",  scale: "sky", tint: "rgba(0,0,0,0)", ev: -5 },
+  moonlit: { name: "Moonlit",   scale: "sky", tint: "rgba(120,140,200,0.10)", ev: -3 }
 };
 const DEFAULT_LIGHTS = ["first", "heat", "last"];
+
+// The camera: one older crop-sensor body. Apertures the dial offers, ISO
+// steps and the cap past which Auto ISO leaves a frame dark, and the
+// modes of the dial: S sets the shutter and the camera finds aperture and
+// ISO; A sets the aperture and the camera finds shutter and ISO, holding
+// ISO 100 until the shutter would drop under the hand-held floor, raising
+// ISO to the cap, then lengthening the shutter anyway; M sets both and the
+// ISO follows to the cap, and past it the frame is dark rather than
+// blurred. Diffraction softens from f/11 and is plain by f/16.
+const APERTURES = [2.8, 4, 5.6, 8, 11, 16, 22];
+const ISO_STEPS = [100, 200, 400, 800, 1600, 3200];
+const ISO_CAP = 3200;
+const MODES = { S: "Shutter priority", A: "Aperture priority", M: "Manual" };
+const DIFFRACTION = { soft: 11, plain: 16 };
 
 // Verdict words that differ on the sky scale: a stop "slow" is a longer
 // exposure, and the thing that moved was the Earth.
@@ -530,11 +556,17 @@ const SCALE_WORDS = {
 };
 
 // The three pulls on the glass: how much of the scene the plate takes.
+// A pull may carry `depth`: what the aperture does to the depth of field
+// at that framing, in four bands: wide (f/4 and under), mid (f/5.6, f/8),
+// stopped (f/11) and narrow (f/16 and past).
 const PULLS = [
   { name: "Wide", frac: 0.55, note: "The country stays in the plate." },
-  { name: "Normal", frac: 0.34, note: "Fills the animal. An honest lens." },
-  { name: "Tight", frac: 0.20, note: "Head and shoulders. A long lens stacks the background: compression, not walking closer." }
+  { name: "Normal", frac: 0.34, note: "Fills the animal. An honest lens.",
+    depth: { wide: "Wide open at this distance the eye is sharp and the flank is going soft; enough for a portrait, not for the herd." } },
+  { name: "Tight", frac: 0.20, note: "Head and shoulders. A long lens stacks the background: compression, not walking closer.",
+    depth: { wide: "Wide open on a tight frame: the near eye is sharp and the far ear is not. Focus on the eye or stop down.", mid: "f/5.6 to f/8 on a tight frame: the head is in, the background is out. The long lens's own look." } }
 ];
+function apertureBand(N) { return N <= 4 ? "wide" : N <= 8 ? "mid" : N <= 11 ? "stopped" : "narrow"; }
 
 // Verdict words. Stars come from the asked shutter and the framing.
 const WORDS = {
@@ -547,6 +579,12 @@ const WORDS = {
   fastfree: "Faster than it needed, and the light paid for it, not the ISO.",
   beanbag:  "On the beanbag: two stops slower than the hand can hold, and the ISO came down with it.",
   tripod:   "On the tripod: two stops slower than the hand can hold, and the ISO came down with it.",
+  under1:   "Dark by a stop: the ISO hit its cap. A raw file may hold it.",
+  under2:   "Dark by two stops or more. The ISO hit its cap and the raw file will not hold it.",
+  over:     "Blown: too much light for ISO 100 at that setting. The highlights are gone and nothing brings them back.",
+  diffSoft: "f/11: diffraction is starting to soften the pixels on this body.",
+  diffPlain: "f/16 or smaller: diffraction is plain at fourteen megapixels. The depth was bought with softness.",
+  aDropped: "In A the camera held ISO 100 as long as it could, hit the cap, and let the shutter drop under the floor.",
   cut:      "Cut by the frame edge.",
   small:    "A speck. Pull tighter or get closer.",
   filling:  "It fills the plate.",
@@ -582,9 +620,94 @@ function askedFor(behaviour, support, scale) {
   return i < 0 ? B.asked : s[Math.max(0, i - 2)];
 }
 
-// Score a plate. `framing` is { inside, cut, fill } from measureFrame.
+// ---- the exposure: what the camera does with the dial ----
+
+// A shutter as seconds, and seconds as the nearest shutter on a scale.
+function tSeconds(s) {
+  if (typeof s === "number") return 1 / s;
+  if (s.startsWith("1/")) return 1 / Number(s.slice(2));
+  if (s.endsWith("m")) return Number(s.slice(0, -1)) * 60;
+  return Number(s.slice(0, -1));
+}
+function snapShutter(sec, scale) {
+  const s = SCALES[scale || "day"];
+  let best = s[0], bd = Infinity;
+  for (const k of s) { const d = Math.abs(Math.log2(tSeconds(k) / sec)); if (d < bd) { bd = d; best = k; } }
+  return best;
+}
+// The ISO the meter needs at ISO steps, and the stops it fell short or
+// over: under is stops past the cap, over is stops below ISO 100.
+function isoStep(need) {
+  if (need > ISO_CAP) return { iso: ISO_CAP, under: Math.log2(need / ISO_CAP), over: 0 };
+  if (need < ISO_STEPS[0]) return { iso: ISO_STEPS[0], under: 0, over: Math.log2(ISO_STEPS[0] / need) };
+  return { iso: ISO_STEPS.find(x => x >= need - 1e-9), under: 0, over: 0 };
+}
+function evOf(light, behaviour) { const B = BEHAVIOURS[behaviour]; return B && B.ev !== undefined ? B.ev : LIGHTS[light].ev; }
+function isoNeeded(N, sec, ev) { return 100 * Math.pow(2, Math.log2(N * N / sec) - ev); }
+function lensApertures(lens) { return APERTURES.filter(N => N >= lens.min - 1e-9 && N <= lens.max + 1e-9); }
+
+// The exposure the camera makes. `mode` S, A or M; `shutter` a key on
+// the scale; `aperture` a number; returns the settings that fired, the
+// ISO at a step, and how far under or over the frame is.
+function exposeFor(mode, shutter, aperture, light, behaviour, scale, lens, support) {
+  scale = scale || "day";
+  const ev = evOf(light, behaviour);
+  const aps = lensApertures(lens);
+  let N = aperture, sec = tSeconds(shutter), dropped = false;
+  if (mode === "S") {
+    // the widest stop the light allows at ISO 100, else wide open and ISO up
+    N = aps[0];
+    for (const cand of aps) if (isoNeeded(cand, sec, ev) <= 100 + 1e-9) N = cand;
+  } else if (mode === "A") {
+    // ISO 100 until the shutter would drop under the floor, then ISO to the
+    // cap, then the shutter lengthens anyway
+    let floor = tSeconds(lens.floor); if (support) floor *= 4;
+    const t100 = N * N / Math.pow(2, ev);
+    if (t100 <= floor) sec = t100;
+    else {
+      const need = 100 * t100 / floor;
+      if (need <= ISO_CAP) sec = floor;
+      else { sec = t100 * 100 / ISO_CAP; dropped = true; }
+    }
+    // the fastest the dial goes is the fastest the camera goes
+    sec = Math.max(sec, tSeconds(SCALES[scale][SCALES[scale].length - 1]));
+    shutter = snapShutter(sec, scale); sec = tSeconds(shutter);
+  }
+  const step = isoStep(isoNeeded(N, sec, ev));
+  return { mode, shutter, aperture: N, iso: step.iso, under: step.under, over: step.over, dropped };
+}
+
+// The guide's advice: general words about the settings, spoken when the
+// camera comes up on a subject, from the same exposure model. The first
+// rule that applies is the one said; `text` may be a function of the seat.
+const ADVICE = [
+  { when: (e) => e.under >= 0.5,
+    text: "Dark: the ISO is at its cap. Open the aperture, or a slower shutter if the subject can take it." },
+  { when: (e) => e.over >= 0.5,
+    text: "Too much light for ISO 100 at that setting. A faster shutter, or a smaller stop." },
+  { when: (e, b, scale, support) => e.mode === "A" && !STILL[b] && shutterIndex(e.shutter, scale) < shutterIndex(askedFor(b, support, scale), scale),
+    text: "In A the camera sets the shutter for the light, not the animal. For a mover, S, and the shutter it asks for." },
+  { when: (e, b, scale, support) => shutterIndex(e.shutter, scale) - shutterIndex(askedFor(b, support, scale), scale) >= 2 && e.iso >= 1600,
+    text: "You are paying ISO for speed the subject does not need. Come down to the shutter it asks for." },
+  { when: (e) => e.aperture >= DIFFRACTION.plain,
+    text: "f/16 buys depth with diffraction on this body. f/8 to f/11 is where the pixels are sharpest." },
+  { when: (e, b, scale, support, pull, seat) => !support && seat !== "tripod" && STILL[b] && e.iso >= 800,
+    text: (seat) => "A still subject in falling light. Rest the camera on the " + (seat === "walk" ? "tripod" : "beanbag") + ": two stops back, and the ISO comes down." },
+  { when: (e, b, scale, support, pull) => e.mode === "S" && STILL[b] && e.aperture <= 4 && pull && pull.depth,
+    text: "Plenty of light and a still subject. In A you could stop down for the depth." },
+  { when: (e, b, scale, support, pull) => e.mode !== "A" && !STILL[b] && e.aperture <= 4 && pull && pull.depth && pull.depth.wide,
+    text: "Wide open on a mover: focus on the eye, because nothing behind it will be sharp." }
+];
+function advise(exp, behaviour, scale, support, pull, seat) {
+  for (const a of ADVICE) if (a.when(exp, behaviour, scale || "day", support, pull, seat)) return typeof a.text === "function" ? a.text(seat) : a.text;
+  return null;
+}
+
+// Score a plate. `exp` is the exposure that fired (from exposeFor);
+// `framing` is { inside, cut, fill } from measureFrame; `pull` the pull
+// on the glass, for its depth-of-field words.
 // Returns { stars 0..3, lines[], keeper }.
-function score(shutter, behaviour, framing, light, animal, scale, support) {
+function score(exp, behaviour, framing, light, animal, scale, support, pull) {
   const B = BEHAVIOURS[behaviour];
   scale = scale || "day";
   const W = Object.assign({}, WORDS, SCALE_WORDS[scale] || {});
@@ -592,6 +715,7 @@ function score(shutter, behaviour, framing, light, animal, scale, support) {
   const asked = askedFor(behaviour, support, scale);
   if (!framing || !framing.inside) return { stars: 0, lines: [W.miss], keeper: false, asked };
   if (framing.dark) return { stars: 0, lines: [W.dark], keeper: false, asked };
+  const shutter = exp.shutter, iso = exp.iso;
   const d = shutterIndex(shutter, scale) - shutterIndex(asked, scale);
   if (support && STILL[behaviour] && asked !== B.asked && d <= 0) lines.push(support === "tripod" ? W.tripod : W.beanbag);
   let stars = 3;
@@ -599,13 +723,21 @@ function score(shutter, behaviour, framing, light, animal, scale, support) {
   else if (d === -1) { stars -= 1; lines.push(W.slow1); }
   else if (d <= -2)  { stars -= 2; lines.push(W.slow2); }
   else if (d === 1)  { lines.push(W.fast1); }
-  else if (LIGHTS[light].iso[shutter] <= 400) { lines.push(W.fastfree); }
+  else if (iso <= 400) { lines.push(W.fastfree); }
   else               { stars -= 1; lines.push(W.fast2); }
+  if (exp.dropped && d < 0) lines.push(W.aDropped);
   if (framing.cut)   { stars -= 1; lines.push(W.cut); }
   else if (framing.fill < 0.10) { stars -= 1; lines.push(W.small); }
   else if (framing.fill > 0.45) lines.push(W.filling);
-  const iso = LIGHTS[light].iso[shutter];
+  // the exposure itself
+  if (exp.under >= 2) { stars -= 2; lines.push(W.under2); }
+  else if (exp.under >= 0.5) { stars -= 1; lines.push(W.under1); }
+  if (exp.over >= 0.5) { stars -= 1; lines.push(W.over); }
   if (iso >= 1600) lines.push(W.noise);
+  // the aperture: depth of field at this pull, and diffraction
+  if (pull && pull.depth) { const line = pull.depth[apertureBand(exp.aperture)]; if (line) lines.push(line); }
+  if (exp.aperture >= DIFFRACTION.plain) { stars -= 1; lines.push(W.diffPlain); }
+  else if (exp.aperture >= DIFFRACTION.soft) lines.push(W.diffSoft);
   stars = Math.max(0, stars);
   const keeper = stars >= 2;
   const prize = !!(keeper && animal && ANIMALS[animal] && ANIMALS[animal].prize);
@@ -617,6 +749,7 @@ function score(shutter, behaviour, framing, light, animal, scale, support) {
 // range's pulls are magnifications, and may carry a verdict line).
 function lightsFor(rangeKey) { return RANGES[rangeKey].lights || DEFAULT_LIGHTS; }
 function pullsFor(rangeKey) { return RANGES[rangeKey].pulls || PULLS; }
+function lensFor(rangeKey) { return RANGES[rangeKey].lens; }
 
 // Where an animal's box sits against the plate rectangle.
 function measureFrame(box, plate) {
@@ -688,7 +821,9 @@ function plateFor(animal, behaviour, rnd) {
   return any[Math.floor(rnd() * any.length) % any.length];
 }
 
-const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, STILL, DAYS, CLOCK_RATE, score, askedFor, measureFrame, spawnPlan, plateFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, pick, mulberry };
+const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, STILL, DAYS, CLOCK_RATE,
+                APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
+                score, askedFor, measureFrame, spawnPlan, plateFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
 
 // ---- page section: everything below needs a document ----
@@ -703,7 +838,7 @@ const JEEP_X = W * 0.28, JEEP_LEN = 150;
 const state = {
   range: "amber", light: "first", playing: false,
   worldX: 0, speed: 0, animals: [], t: 0, rnd: null,
-  camera: false, shutter: "1/250", pull: 1, support: null, aim: { x: W / 2, y: H * 0.7 },
+  camera: false, shutter: "1/250", aperture: 8, mode: "S", pull: 1, support: null, aim: { x: W / 2, y: H * 0.7 },
   focus: null, radio: null, radioUntil: 0,
   sheet: JSON.parse(localStorage.getItem("psr.sheet") || "[]"),
   keys: {}
@@ -751,6 +886,9 @@ function begin() {
   const scale = SCALES[scaleFor(state.range)];
   if (!scale.includes(state.shutter)) state.shutter = scale[3];
   if (state.pull >= pullsFor(state.range).length) state.pull = 1;
+  // the aperture the lens can give: f/8, the walking-around stop, or the lens's nearest
+  const aps = lensApertures(lensFor(state.range));
+  if (!aps.includes(state.aperture)) state.aperture = aps.includes(8) ? 8 : aps[0];
   // the support you brought: at the tripod range it is the tripod, always;
   // elsewhere the camera starts in your hands
   state.support = R.seat === "tripod" ? "tripod" : null;
@@ -979,6 +1117,11 @@ function refreshFocus() {
     const asked = askedFor(a.behaviour, state.support, scaleFor(state.range));
     $("asked").innerHTML = "<b>" + A.name + "</b> <span class='dim'>" + A.latin + "</span><br>" +
       B.verb + " — " + asked + (asked !== B.asked ? " <span class='dim'>(" + B.asked + " in the hand)</span>" : "") + "<br><span class='dim'>" + B.note + "</span>";
+    // the guide, on the settings, now and then
+    if (state.t > (state.nextTip || 0)) {
+      const tip = advise(previewExposure(), a.behaviour, scaleFor(state.range), state.support, pullsFor(state.range)[state.pull], RANGES[state.range].seat);
+      if (tip) { say("Guide", tip); state.nextTip = state.t + 10; }
+    }
   } else $("asked").textContent = "Nothing in the frame. Move the aim, or drive closer.";
   drawHud();
 }
@@ -1029,12 +1172,11 @@ function fire() {
   const framing = a ? measureFrame(boxOf(a), p) : null;
   if (framing && !inLamp(a)) framing.dark = true;
   const behaviour = a ? a.behaviour : "resting";
-  const v = score(state.shutter, behaviour, framing, state.light, a ? a.key : null, scaleFor(state.range), state.support);
+  const exp = exposeFor(state.mode, state.shutter, state.aperture, state.light, a ? behaviour : null, scaleFor(state.range), lensFor(state.range), state.support);
+  const v = score(exp, behaviour, framing, state.light, a ? a.key : null, scaleFor(state.range), state.support, pullsFor(state.range)[state.pull]);
   if (a && a.spooked > 0 && v.stars > 0) { v.lines.unshift(RANGES[state.range].seat === "walk" ? WORDS.walked : WORDS.spooked); }
-  const pullNow = pullsFor(state.range)[state.pull];
-  if (v.stars > 0 && pullNow.verdict) v.lines.push(pullNow.verdict);
   const frame = a && v.stars > 0 ? plateFor(a.key, behaviour, state.rnd) : null;
-  const plate = { when: Date.now(), range: state.range, light: state.light, shutter: state.shutter,
+  const plate = { when: Date.now(), range: state.range, light: state.light, shutter: exp.shutter, aperture: exp.aperture, mode: exp.mode,
                   animal: a ? a.key : null, behaviour: a ? behaviour : null, stars: v.stars, keeper: v.keeper, lines: v.lines, iso: v.iso,
                   prize: !!v.prize, frame: frame ? frame.title : null, asked: v.asked, support: state.support };
   // the plate image: the crop, drawn from the scene without the finder
@@ -1053,7 +1195,7 @@ function showPlate(plate, img, frame) {
   const A = plate.animal ? ANIMALS[plate.animal] : null, B = plate.behaviour ? BEHAVIOURS[plate.behaviour] : null;
   const head = A ? A.name + " · " + B.verb : "Empty frame";
   div.innerHTML = "<h3>" + head + " <span class='stars'>" + "★".repeat(plate.stars) + "☆".repeat(3 - plate.stars) + "</span></h3>" +
-    "<p class='note'>" + shutterLabel(plate.shutter) + (B ? " · asked " + (plate.asked || B.asked) : "") + (plate.support ? " · " + plate.support : "") + " · ISO " + (plate.iso || "—") + " · " + LIGHTS[plate.light].name + " · " + RANGES[plate.range].name + "</p>" +
+    "<p class='note'>" + (plate.mode ? plate.mode + " · " : "") + shutterLabel(plate.shutter) + (plate.aperture ? " · f/" + plate.aperture : "") + (B ? " · asked " + (plate.asked || B.asked) : "") + (plate.support ? " · " + plate.support : "") + " · ISO " + (plate.iso || "—") + " · " + LIGHTS[plate.light].name + " · " + RANGES[plate.range].name + "</p>" +
     "<p>" + (plate.keeper ? WORDS.keeper : "<span class='why'>" + WORDS.folder + "</span>") + " " + plate.lines.join(" ") + "</p>";
   if (frame) {
     // the frame this was learned on: the photograph, with the crop as an inset
@@ -1085,7 +1227,7 @@ function drawSheet() {
   for (const p of state.sheet.slice().reverse()) {
     const li = document.createElement("li");
     const A = ANIMALS[p.animal];
-    li.innerHTML = "<span class='s'>" + "★".repeat(p.stars) + "</span> " + (A ? A.name : "—") + (p.behaviour ? " · " + BEHAVIOURS[p.behaviour].verb.toLowerCase() : "") + " · " + shutterLabel(p.shutter) + (p.prize ? " <span class='s'>· hard plate</span>" : "") + (p.frame ? " <span class='dim'>· " + p.frame + "</span>" : "");
+    li.innerHTML = "<span class='s'>" + "★".repeat(p.stars) + "</span> " + (A ? A.name : "—") + (p.behaviour ? " · " + BEHAVIOURS[p.behaviour].verb.toLowerCase() : "") + " · " + shutterLabel(p.shutter) + (p.aperture ? " f/" + p.aperture : "") + (p.prize ? " <span class='s'>· hard plate</span>" : "") + (p.frame ? " <span class='dim'>· " + p.frame + "</span>" : "");
     ul.appendChild(li); if (p.keeper) keepers++; if (p.prize) hard++;
   }
   $("sheet-line").textContent = state.sheet.length ? state.sheet.length + (state.sheet.length === 1 ? " plate" : " plates") + " kept, " + keepers + (keepers === 1 ? " keeper" : " keepers") + (hard ? ", " + hard + (hard === 1 ? " hard plate" : " hard plates") : "") + "." : "No plates yet.";
@@ -1375,11 +1517,25 @@ function drawHud() {
     const clk = add(clockLabel(state.clock) + " · " + day[state.leg].name + " (N)"); clk.title = "N: skip to the next part of the day"; clk.onclick = skipLeg;
   }
   const asked = state.focus ? askedFor(state.focus.behaviour, state.support, scaleFor(state.range)) : null;
-  for (const s of SCALES[scaleFor(state.range)]) {
-    const e = add(s, (s === state.shutter ? "on " : "") + (s === asked ? "asked" : ""));
-    e.onclick = () => { state.shutter = s; drawHud(); };
+  // the dial, then what the camera will do with it for the subject in focus
+  for (const m of Object.keys(MODES)) {
+    const e = add(m, m === state.mode ? "on" : ""); e.title = MODES[m] + " (M cycles)";
+    e.onclick = () => { state.mode = m; drawHud(); };
   }
-  add("ISO " + LIGHTS[state.light].iso[state.shutter]);
+  const exp = previewExposure();
+  const shutterLive = state.mode !== "A";
+  for (const s of SCALES[scaleFor(state.range)]) {
+    const e = add(s, ((shutterLive ? s === state.shutter : s === exp.shutter) ? "on " : "") + (s === asked ? "asked" : "") + (shutterLive ? "" : " dim"));
+    e.title = shutterLive ? "" : "In A the camera sets the shutter";
+    if (shutterLive) e.onclick = () => { state.shutter = s; drawHud(); };
+  }
+  const apLive = state.mode !== "S";
+  for (const N of lensApertures(lensFor(state.range))) {
+    const e = add("f/" + N, ((apLive ? N === state.aperture : N === exp.aperture) ? "on " : "") + (apLive ? "" : "dim"));
+    e.title = apLive ? "" : "In S the camera sets the aperture";
+    if (apLive) e.onclick = () => { state.aperture = N; drawHud(); };
+  }
+  add("ISO " + exp.iso + (exp.under >= 0.5 ? " · dark" : exp.over >= 0.5 ? " · blown" : ""));
   const pulls = pullsFor(state.range);
   const pull = add("Zoom: " + pulls[state.pull].name + " (Z)"); pull.title = pulls[state.pull].note; pull.onclick = () => { state.pull = (state.pull + 1) % pulls.length; if (state.camera) refreshFocus(); else drawHud(); };
   const seat = RANGES[state.range].seat;
@@ -1406,6 +1562,24 @@ function toggleSupport() {
   if (state.camera) refreshFocus(); else { refreshRange(); drawHud(); }
 }
 
+// The exposure the camera would make now, for the subject in focus or the
+// light alone.
+function previewExposure() {
+  const b = state.focus ? state.focus.behaviour : null;
+  return exposeFor(state.mode, state.shutter, state.aperture, state.light, b, scaleFor(state.range), lensFor(state.range), state.support);
+}
+function stepAperture(dir) {
+  const aps = lensApertures(lensFor(state.range));
+  const i = aps.indexOf(state.aperture), j = i + dir;
+  if (j >= 0 && j < aps.length) state.aperture = aps[j];
+  drawHud();
+}
+function cycleMode() {
+  const ms = Object.keys(MODES);
+  state.mode = ms[(ms.indexOf(state.mode) + 1) % ms.length];
+  drawHud();
+}
+
 function stepShutter(dir) {
   const scale = SCALES[scaleFor(state.range)];
   const i = shutterIndex(state.shutter, scaleFor(state.range));
@@ -1423,7 +1597,7 @@ function toggleCamera() {
 // ---- input ----
 stage.addEventListener("keydown", (e) => {
   const k = e.key.toLowerCase();
-  if (["a", "d", " ", "tab", "[", "]", "z", "c", "escape", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) e.preventDefault();
+  if (["a", "d", " ", "tab", "[", "]", ",", ".", "z", "c", "m", "b", "n", "escape", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) e.preventDefault();
   if (!state.playing) { if (k === " " || k === "enter") begin(); return; }
   if (state.paused && k !== "n" && k !== "escape") return;
   // A and D drive (the left hand's keys, from the WASD habit); with the
@@ -1445,6 +1619,9 @@ stage.addEventListener("keydown", (e) => {
   if (k === "z") { state.pull = (state.pull + 1) % pullsFor(state.range).length; if (state.camera) refreshFocus(); else drawHud(); }
   if (k === "b") toggleSupport();
   if (k === "n") skipLeg();
+  if (k === "m") cycleMode();
+  if (k === ",") stepAperture(-1);
+  if (k === ".") stepAperture(1);
   if (state.paused) return;
   if (k === "escape") packUp();
   const nudge = 24;
@@ -1489,6 +1666,9 @@ for (const b of document.querySelectorAll("#pad button")) {
     if (act === "camera") { if (state.camera) fire(); else toggleCamera(); }
     if (act === "slower") stepShutter(-1);
     if (act === "faster") stepShutter(1);
+    if (act === "wider") stepAperture(-1);
+    if (act === "narrower") stepAperture(1);
+    if (act === "mode") cycleMode();
     if (act === "next") cycleFocus();
     if (act === "pull") { state.pull = (state.pull + 1) % pullsFor(state.range).length; if (state.camera) refreshFocus(); else drawHud(); }
     if (act === "pack") packUp();
@@ -1508,6 +1688,8 @@ function drawPad() {
   }
   const sk = document.querySelector('#pad button[data-act="skip"]');
   if (sk) sk.hidden = !dayFor(state.range);
+  const md = document.querySelector('#pad button[data-act="mode"]');
+  if (md) md.textContent = "Mode: " + state.mode;
 }
 $("go").onclick = begin;
 $("clear").onclick = () => { state.sheet = []; save(); };
