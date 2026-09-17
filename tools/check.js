@@ -189,6 +189,22 @@ for (const light in R.LIGHTS) {
   }
 }
 if (R.shutterLabel(250) !== "1/250" || R.shutterLabel("15s") !== "15s") fail("shutterLabel does not read old and new plates alike");
+// a support lowers the floor for a still subject by two stops and leaves a
+// moving one alone; the scorer honours it and says so
+for (const b in R.BEHAVIOURS) {
+  const scale = R.SCALES.day.includes(R.BEHAVIOURS[b].asked) ? "day" : "sky";
+  const hand = R.askedFor(b, null, scale), bag = R.askedFor(b, "beanbag", scale);
+  const s = R.SCALES[scale], di = s.indexOf(hand) - s.indexOf(bag);
+  if (R.STILL[b] && !(di === 2 || (di > 0 && s.indexOf(bag) === 0))) fail("a support does not lower " + b + " by two stops");
+  if (!R.STILL[b] && hand !== bag) fail("a support changed " + b + ", which moves");
+  if (R.STILL[b] && hand !== bag) {
+    const v = R.score(bag, b, { inside: true, cut: false, fill: 0.3 }, scale === "day" ? "heat" : "newmoon", null, scale, "beanbag");
+    if (v.stars !== 3 || !v.lines.includes(R.WORDS.beanbag)) fail("a still subject on the beanbag at its supported shutter is not a clean three stars");
+    const w = R.score(bag, b, { inside: true, cut: false, fill: 0.3 }, scale === "day" ? "heat" : "newmoon", null, scale, null);
+    if (w.stars === 3) fail("the supported shutter scored three in the hand for " + b);
+  }
+  checks++;
+}
 
 // measureFrame
 const plate = { x: 100, y: 100, w: 400, h: 225 };

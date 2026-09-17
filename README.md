@@ -66,6 +66,14 @@ Cats and elephants do not run from a jeep. Nothing is killed on the range.
   70 mm, 1/125; a breeze asks for 1/250; a bee working a flower asks for
   1/500 and in flight 1/2000. Walk at the bees and they leave. Seventeen
   frames from the portfolio's Macro and Nature pages are the reveal.
+- **Your own camera, and what it rests on.** In the jeep and in the hide
+  you have a beanbag; on foot, a tripod; at the night sky, the tripod
+  always. Press B (or the pad's Beanbag or Tripod) to rest the camera on
+  it. A still subject then asks two stops less than the hand can hold, a
+  resting lion at 1/15 instead of 1/60, and the ISO comes down with it;
+  a moving subject asks the same shutter on a support as off it. The
+  driver won't drive on while the beanbag is on the sill, and the guide
+  waits while the tripod is up.
 - **The country is a subject too.** A flat-topped acacia stands on the
   range like anything else and asks for the hand-held floor, about 1/30 at
   the wide end on this body, or 1/125 when the wind is in the canopy. A

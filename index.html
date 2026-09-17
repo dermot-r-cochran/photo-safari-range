@@ -143,6 +143,7 @@
     <button data-act="faster">faster 1/+</button>
     <button data-act="next">Next</button>
     <button data-act="pull">Zoom</button>
+    <button data-act="support">Beanbag</button>
     <button data-act="pack">Pack up</button>
   </div>
   <div class="card" id="camp">
@@ -151,7 +152,7 @@
     <div class="row" id="light-pick"></div>
     <p class="note" id="camp-note"></p>
     <div class="row"><button class="primary" id="go">Drive the range</button></div>
-    <p class="note">The driver drives, stops when the spotter calls, and moves on · left and right arrows (or A and D) ask him for closer or back · Space raises the camera and fires it · with the camera up the arrows move the aim · [ and ] change the shutter · Tab picks another animal in the frame · Z zooms · Esc packs up.</p>
+    <p class="note">The driver drives, stops when the spotter calls, and moves on · left and right arrows (or A and D) ask him for closer or back · Space raises the camera and fires it · with the camera up the arrows move the aim · [ and ] change the shutter · B rests the camera on the beanbag, or the tripod on foot · Tab picks another animal in the frame · Z zooms · Esc packs up.</p>
   </div>
   <div id="plates"></div>
 </main>
@@ -185,7 +186,7 @@
 // is the tripod at night, where the shutter is seconds and minutes and
 // the thing that moves is the Earth.
 const SCALES = {
-  day: ["1/30", "1/60", "1/125", "1/250", "1/500", "1/1000", "1/2000"],
+  day: ["1/8", "1/15", "1/30", "1/60", "1/125", "1/250", "1/500", "1/1000", "1/2000"],
   sky: ["8m", "2m", "30s", "15s", "4s", "1s", "1/60", "1/250"]
 };
 const SHUTTERS = SCALES.day;
@@ -451,14 +452,14 @@ const RANGES = {
 // ISO 400 clean, 800 fine, 1600 shows chroma noise, 3200 a last resort.
 // A `lamp` window is dark outside the spotlight, which follows the aim.
 const LIGHTS = {
-  first: { name: "First light", tint: "rgba(240,160,80,0.18)",  iso: { "1/30": 100, "1/60": 100, "1/125": 200, "1/250": 400, "1/500": 800, "1/1000": 1600, "1/2000": 3200 } },
-  heat:  { name: "Heat",        tint: "rgba(255,255,230,0.10)", iso: { "1/30": 100, "1/60": 100, "1/125": 100, "1/250": 100, "1/500": 200, "1/1000": 400, "1/2000": 800 } },
-  last:  { name: "Last light",  tint: "rgba(200,90,60,0.22)",   iso: { "1/30": 100, "1/60": 200, "1/125": 400, "1/250": 800, "1/500": 1600, "1/1000": 3200, "1/2000": 3200 } },
-  night: { name: "Night drive", tint: "rgba(10,18,40,0.55)", lamp: 1, iso: { "1/30": 1600, "1/60": 3200, "1/125": 3200, "1/250": 3200, "1/500": 3200, "1/1000": 3200, "1/2000": 3200 } },
+  first: { name: "First light", tint: "rgba(240,160,80,0.18)",  iso: { "1/8": 100, "1/15": 100, "1/30": 100, "1/60": 100, "1/125": 200, "1/250": 400, "1/500": 800, "1/1000": 1600, "1/2000": 3200 } },
+  heat:  { name: "Heat",        tint: "rgba(255,255,230,0.10)", iso: { "1/8": 100, "1/15": 100, "1/30": 100, "1/60": 100, "1/125": 100, "1/250": 100, "1/500": 200, "1/1000": 400, "1/2000": 800 } },
+  last:  { name: "Last light",  tint: "rgba(200,90,60,0.22)",   iso: { "1/8": 100, "1/15": 100, "1/30": 100, "1/60": 200, "1/125": 400, "1/250": 800, "1/500": 1600, "1/1000": 3200, "1/2000": 3200 } },
+  night: { name: "Night drive", tint: "rgba(10,18,40,0.55)", lamp: 1, iso: { "1/8": 400, "1/15": 800, "1/30": 1600, "1/60": 3200, "1/125": 3200, "1/250": 3200, "1/500": 3200, "1/1000": 3200, "1/2000": 3200 } },
   // home ground: bright overcast, sun through the leaves, and the wood's floor
-  overcast: { name: "Bright overcast", tint: "rgba(220,226,230,0.12)", iso: { "1/30": 100, "1/60": 100, "1/125": 200, "1/250": 400, "1/500": 800, "1/1000": 1600, "1/2000": 3200 } },
-  dappled:  { name: "Dappled sun",     tint: "rgba(255,240,180,0.12)", iso: { "1/30": 100, "1/60": 100, "1/125": 100, "1/250": 200, "1/500": 400, "1/1000": 800, "1/2000": 1600 } },
-  shade:    { name: "Woodland floor",  tint: "rgba(30,50,30,0.22)",    iso: { "1/30": 200, "1/60": 400, "1/125": 800, "1/250": 1600, "1/500": 3200, "1/1000": 3200, "1/2000": 3200 } },
+  overcast: { name: "Bright overcast", tint: "rgba(220,226,230,0.12)", iso: { "1/8": 100, "1/15": 100, "1/30": 100, "1/60": 100, "1/125": 200, "1/250": 400, "1/500": 800, "1/1000": 1600, "1/2000": 3200 } },
+  dappled:  { name: "Dappled sun",     tint: "rgba(255,240,180,0.12)", iso: { "1/8": 100, "1/15": 100, "1/30": 100, "1/60": 100, "1/125": 100, "1/250": 200, "1/500": 400, "1/1000": 800, "1/2000": 1600 } },
+  shade:    { name: "Woodland floor",  tint: "rgba(30,50,30,0.22)",    iso: { "1/8": 100, "1/15": 100, "1/30": 200, "1/60": 400, "1/125": 800, "1/250": 1600, "1/500": 3200, "1/1000": 3200, "1/2000": 3200 } },
   // the sky scale: what the meter wants at f/3.5 on the 18 mm end, and the
   // moon is a daylight subject whatever the hour
   newmoon: { name: "New moon",  scale: "sky", tint: "rgba(0,0,0,0)", iso: { "8m": 100, "2m": 400, "30s": 1600, "15s": 3200, "4s": 3200, "1s": 3200, "1/60": 3200, "1/250": 100 } },
@@ -496,6 +497,8 @@ const WORDS = {
   fast1:    "Faster than it needed. ISO paid for it.",
   fast2:    "Two stops faster than it needed. Noise for nothing.",
   fastfree: "Faster than it needed, and the light paid for it, not the ISO.",
+  beanbag:  "On the beanbag: two stops slower than the hand can hold, and the ISO came down with it.",
+  tripod:   "On the tripod: two stops slower than the hand can hold, and the ISO came down with it.",
   cut:      "Cut by the frame edge.",
   small:    "A speck. Pull tighter or get closer.",
   filling:  "It fills the plate.",
@@ -518,16 +521,31 @@ function shutterIndex(s, scale) { return SCALES[scale || "day"].indexOf(s); }
 // A shutter for display: old saved plates carry the denominator as a number.
 function shutterLabel(s) { return typeof s === "number" ? "1/" + s : s; }
 
+// Behaviours that do not move: a support (beanbag, tripod) lowers the
+// hand-held floor for them by two stops on the scale. A moving subject
+// asks the same shutter on a support as off it.
+const STILL = { resting: 1, sentinel: 1, drinking: 1, feeding: 1, standing: 1, still: 1, sunlit: 1 };
+function askedFor(behaviour, support, scale) {
+  const B = BEHAVIOURS[behaviour];
+  scale = scale || "day";
+  if (!support || !STILL[behaviour]) return B.asked;
+  const s = SCALES[scale];
+  const i = s.indexOf(B.asked);
+  return i < 0 ? B.asked : s[Math.max(0, i - 2)];
+}
+
 // Score a plate. `framing` is { inside, cut, fill } from measureFrame.
 // Returns { stars 0..3, lines[], keeper }.
-function score(shutter, behaviour, framing, light, animal, scale) {
+function score(shutter, behaviour, framing, light, animal, scale, support) {
   const B = BEHAVIOURS[behaviour];
   scale = scale || "day";
   const W = Object.assign({}, WORDS, SCALE_WORDS[scale] || {});
   const lines = [];
-  if (!framing || !framing.inside) return { stars: 0, lines: [W.miss], keeper: false };
-  if (framing.dark) return { stars: 0, lines: [W.dark], keeper: false };
-  const d = shutterIndex(shutter, scale) - shutterIndex(B.asked, scale);
+  const asked = askedFor(behaviour, support, scale);
+  if (!framing || !framing.inside) return { stars: 0, lines: [W.miss], keeper: false, asked };
+  if (framing.dark) return { stars: 0, lines: [W.dark], keeper: false, asked };
+  const d = shutterIndex(shutter, scale) - shutterIndex(asked, scale);
+  if (support && STILL[behaviour] && asked !== B.asked && d <= 0) lines.push(support === "tripod" ? W.tripod : W.beanbag);
   let stars = 3;
   if (d === 0) lines.push(W.match);
   else if (d === -1) { stars -= 1; lines.push(W.slow1); }
@@ -544,7 +562,7 @@ function score(shutter, behaviour, framing, light, animal, scale) {
   const keeper = stars >= 2;
   const prize = !!(keeper && animal && ANIMALS[animal] && ANIMALS[animal].prize);
   if (prize) lines.push(WORDS.prize);
-  return { stars, lines, keeper, iso, prize };
+  return { stars, lines, keeper, iso, prize, asked };
 }
 
 // The light windows a range offers, and its pulls on the glass (a macro
@@ -622,7 +640,7 @@ function plateFor(animal, behaviour, rnd) {
   return any[Math.floor(rnd() * any.length) % any.length];
 }
 
-const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, score, measureFrame, spawnPlan, plateFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, pick, mulberry };
+const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, STILL, score, askedFor, measureFrame, spawnPlan, plateFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
 
 // ---- page section: everything below needs a document ----
@@ -637,7 +655,7 @@ const JEEP_X = W * 0.28, JEEP_LEN = 150;
 const state = {
   range: "amber", light: "first", playing: false,
   worldX: 0, speed: 0, animals: [], t: 0, rnd: null,
-  camera: false, shutter: "1/250", pull: 1, aim: { x: W / 2, y: H * 0.7 },
+  camera: false, shutter: "1/250", pull: 1, support: null, aim: { x: W / 2, y: H * 0.7 },
   focus: null, radio: null, radioUntil: 0,
   sheet: JSON.parse(localStorage.getItem("psr.sheet") || "[]"),
   keys: {}
@@ -675,6 +693,9 @@ function begin() {
   const scale = SCALES[scaleFor(state.range)];
   if (!scale.includes(state.shutter)) state.shutter = scale[3];
   if (state.pull >= pullsFor(state.range).length) state.pull = 1;
+  // the support you brought: at the tripod range it is the tripod, always;
+  // elsewhere the camera starts in your hands
+  state.support = R.seat === "tripod" ? "tripod" : null;
   state.animals = spawnPlan(state.range, R.seat === "tripod" ? 6 : 14, state.rnd, state.light).map(makeAnimal);
   if (R.seat === "hide") for (const a of state.animals) { a.x = W * 0.15 + (a.x - 80) * 0.45; }
   if (R.seat === "tripod") state.animals.forEach((a, i) => { a.x = 120 + ((i * 0.37 + 0.1) % 1) * (W - 240); a.dir = 1; });
@@ -725,7 +746,8 @@ function step(dt) {
   // on again. The arrows are requests, closer or back, and override him.
   const asked = (state.keys.d ? 1 : 0) - (state.keys.a ? 1 : 0);
   const cruise = R.seat === "walk" ? 45 : 120;
-  const driverWants = state.t < (state.holdUntil || 0) ? 0 : cruise;
+  // he does not drive on while your beanbag is on the sill or your tripod is up
+  const driverWants = state.t < (state.holdUntil || 0) || state.support ? 0 : cruise;
   const want = !moving ? 0 : asked ? asked * top : driverWants;
   state.speed += (want - state.speed) * Math.min(1, dt * 3);
   state.worldX += state.speed * dt;
@@ -832,8 +854,9 @@ function refreshFocus() {
   const a = state.focus;
   if (a) {
     const B = BEHAVIOURS[a.behaviour], A = ANIMALS[a.key];
+    const asked = askedFor(a.behaviour, state.support, scaleFor(state.range));
     $("asked").innerHTML = "<b>" + A.name + "</b> <span class='dim'>" + A.latin + "</span><br>" +
-      B.verb + " — " + B.asked + "<br><span class='dim'>" + B.note + "</span>";
+      B.verb + " — " + asked + (asked !== B.asked ? " <span class='dim'>(" + B.asked + " in the hand)</span>" : "") + "<br><span class='dim'>" + B.note + "</span>";
   } else $("asked").textContent = "Nothing in the frame. Move the aim, or drive closer.";
   drawHud();
 }
@@ -851,7 +874,7 @@ function refreshRange() {
   el.innerHTML = "<span class='dim'>On the range, nearest first:</span><br>" + list.map(a => {
     const A = ANIMALS[a.key], B = BEHAVIOURS[a.behaviour], b = boxOf(a);
     const side = A.sky ? "" : (b.x + b.w / 2 > JEEP_X ? ", right" : ", left");
-    return "<b>" + A.name + "</b>" + side + " · " + B.verb.toLowerCase() + " · " + B.asked;
+    return "<b>" + A.name + "</b>" + side + " · " + B.verb.toLowerCase() + " · " + askedFor(a.behaviour, state.support, scaleFor(state.range));
   }).join("<br>");
 }
 
@@ -884,14 +907,14 @@ function fire() {
   const framing = a ? measureFrame(boxOf(a), p) : null;
   if (framing && !inLamp(a)) framing.dark = true;
   const behaviour = a ? a.behaviour : "resting";
-  const v = score(state.shutter, behaviour, framing, state.light, a ? a.key : null, scaleFor(state.range));
+  const v = score(state.shutter, behaviour, framing, state.light, a ? a.key : null, scaleFor(state.range), state.support);
   if (a && a.spooked > 0 && v.stars > 0) { v.lines.unshift(RANGES[state.range].seat === "walk" ? WORDS.walked : WORDS.spooked); }
   const pullNow = pullsFor(state.range)[state.pull];
   if (v.stars > 0 && pullNow.verdict) v.lines.push(pullNow.verdict);
   const frame = a && v.stars > 0 ? plateFor(a.key, behaviour, state.rnd) : null;
   const plate = { when: Date.now(), range: state.range, light: state.light, shutter: state.shutter,
                   animal: a ? a.key : null, behaviour: a ? behaviour : null, stars: v.stars, keeper: v.keeper, lines: v.lines, iso: v.iso,
-                  prize: !!v.prize, frame: frame ? frame.title : null };
+                  prize: !!v.prize, frame: frame ? frame.title : null, asked: v.asked, support: state.support };
   // the plate image: the crop, drawn from the scene without the finder
   draw(false);
   const img = document.createElement("canvas");
@@ -908,7 +931,7 @@ function showPlate(plate, img, frame) {
   const A = plate.animal ? ANIMALS[plate.animal] : null, B = plate.behaviour ? BEHAVIOURS[plate.behaviour] : null;
   const head = A ? A.name + " · " + B.verb : "Empty frame";
   div.innerHTML = "<h3>" + head + " <span class='stars'>" + "★".repeat(plate.stars) + "☆".repeat(3 - plate.stars) + "</span></h3>" +
-    "<p class='note'>" + shutterLabel(plate.shutter) + (B ? " · asked " + B.asked : "") + " · ISO " + (plate.iso || "—") + " · " + LIGHTS[plate.light].name + " · " + RANGES[plate.range].name + "</p>" +
+    "<p class='note'>" + shutterLabel(plate.shutter) + (B ? " · asked " + (plate.asked || B.asked) : "") + (plate.support ? " · " + plate.support : "") + " · ISO " + (plate.iso || "—") + " · " + LIGHTS[plate.light].name + " · " + RANGES[plate.range].name + "</p>" +
     "<p>" + (plate.keeper ? WORDS.keeper : "<span class='why'>" + WORDS.folder + "</span>") + " " + plate.lines.join(" ") + "</p>";
   if (frame) {
     // the frame this was learned on: the photograph, with the crop as an inset
@@ -1225,7 +1248,7 @@ function drawHud() {
   drawPad();
   if (!state.playing) { h.innerHTML = "<span class='k'>At camp: pick a range and a light</span>"; return; }
   const add = (txt, cls) => { const s = document.createElement("span"); s.className = "k " + (cls || ""); s.textContent = txt; h.appendChild(s); return s; };
-  const asked = state.focus ? BEHAVIOURS[state.focus.behaviour].asked : null;
+  const asked = state.focus ? askedFor(state.focus.behaviour, state.support, scaleFor(state.range)) : null;
   for (const s of SCALES[scaleFor(state.range)]) {
     const e = add(s, (s === state.shutter ? "on " : "") + (s === asked ? "asked" : ""));
     e.onclick = () => { state.shutter = s; drawHud(); };
@@ -1233,9 +1256,28 @@ function drawHud() {
   add("ISO " + LIGHTS[state.light].iso[state.shutter]);
   const pulls = pullsFor(state.range);
   const pull = add("Zoom: " + pulls[state.pull].name + " (Z)"); pull.title = pulls[state.pull].note; pull.onclick = () => { state.pull = (state.pull + 1) % pulls.length; if (state.camera) refreshFocus(); else drawHud(); };
+  const seat = RANGES[state.range].seat;
+  if (seat !== "tripod") {
+    const sup = add((state.support ? "On the " + state.support : "In the hand") + " (B)", state.support ? "on" : "");
+    sup.title = "B: rest the camera on the " + supportFor(seat) + ", or take it back in the hand"; sup.onclick = toggleSupport;
+  }
   const cam = add(state.camera ? "Space: shoot" : "Space: camera"); cam.onclick = () => toggleCamera();
   if (state.camera) { const lo = add("Lower (C)"); lo.onclick = () => toggleCamera(); }
   const pk = add("Esc: pack up"); pk.onclick = packUp;
+}
+
+// The support the seat offers: a beanbag on the sill of the jeep or the
+// hide, a tripod on foot, and the tripod itself at the tripod range.
+function supportFor(seat) { return seat === "walk" || seat === "tripod" ? "tripod" : "beanbag"; }
+function toggleSupport() {
+  if (!state.playing) return;
+  const seat = RANGES[state.range].seat;
+  if (seat === "tripod") return;
+  state.support = state.support ? null : supportFor(seat);
+  say(seat === "walk" ? "Guide" : "Driver", state.support
+    ? (state.support === "tripod" ? "Tripod up. I will wait." : "Beanbag on the sill. Engine off.")
+    : (seat === "walk" ? "Tripod down. Walking on." : "Camera in the hand. Driving on."));
+  if (state.camera) refreshFocus(); else { refreshRange(); drawHud(); }
 }
 
 function stepShutter(dir) {
@@ -1274,6 +1316,7 @@ stage.addEventListener("keydown", (e) => {
   if (k === "[") stepShutter(-1);
   if (k === "]") stepShutter(1);
   if (k === "z") { state.pull = (state.pull + 1) % pullsFor(state.range).length; if (state.camera) refreshFocus(); else drawHud(); }
+  if (k === "b") toggleSupport();
   if (k === "escape") packUp();
   const nudge = 24;
   if (k === "arrowleft") state.aim.x = Math.max(0, state.aim.x - nudge);
@@ -1319,11 +1362,19 @@ for (const b of document.querySelectorAll("#pad button")) {
     if (act === "next") cycleFocus();
     if (act === "pull") { state.pull = (state.pull + 1) % pullsFor(state.range).length; if (state.camera) refreshFocus(); else drawHud(); }
     if (act === "pack") packUp();
+    if (act === "support") toggleSupport();
   });
 }
 function drawPad() {
   const cam = document.querySelector('#pad button[data-act="camera"]');
   if (cam) cam.textContent = !state.playing ? "Go" : state.camera ? "Shoot" : "Camera";
+  const sup = document.querySelector('#pad button[data-act="support"]');
+  if (sup) {
+    const seat = RANGES[state.range].seat;
+    sup.hidden = seat === "tripod";
+    const name = supportFor(seat);
+    sup.textContent = state.support ? "In the hand" : name.charAt(0).toUpperCase() + name.slice(1);
+  }
 }
 $("go").onclick = begin;
 $("clear").onclick = () => { state.sheet = []; save(); };
