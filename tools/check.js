@@ -1,0 +1,113 @@
+#!/usr/bin/env node
+"use strict";
+/* check — run the game's model without a browser.
+ *
+ * Loads the <script> out of index.html into a bare VM context (no
+ * `document`, so the page never boots) and holds the world data and the
+ * scorer to the shape the page relies on: every behaviour asks for a
+ * shutter the camera has, every animal's states are behaviours, every
+ * range's cast is animals, every light window prices every shutter, the
+ * scorer returns 0..3 for every shutter against every behaviour and every
+ * framing, a matched shutter with a clean frame is always a keeper, and a
+ * spawn plan is deterministic and spaced. Node only — nothing to install.
+ *
+ *     node tools/check.js
+ */
+const fs = require("fs");
+const path = require("path");
+const vm = require("vm");
+
+const root = path.join(__dirname, "..");
+const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const m = html.match(/<script>([\s\S]*?)<\/script>/);
+if (!m) { console.error("no <script> block in index.html"); process.exit(1); }
+
+const ctx = { console };
+ctx.globalThis = ctx;
+vm.createContext(ctx);
+vm.runInContext(m[1], ctx, { filename: "index.html" });
+const R = ctx.RANGE;
+if (!R) { console.error("the script did not export RANGE"); process.exit(1); }
+
+let fails = 0, checks = 0;
+const fail = (msg) => { fails++; console.error("  FAIL: " + msg); };
+const ok = () => { checks++; };
+
+// behaviours
+for (const k in R.BEHAVIOURS) {
+  const b = R.BEHAVIOURS[k];
+  if (!R.SHUTTERS.includes(b.asked)) fail("behaviour " + k + " asks for 1/" + b.asked + ", not a shutter the camera has");
+  if (!b.verb || !b.note) fail("behaviour " + k + " has no verb or note");
+  ok();
+}
+// animals
+for (const k in R.ANIMALS) {
+  const a = R.ANIMALS[k];
+  if (!a.name || !a.latin || !a.shape || !a.colour) fail("animal " + k + " is missing name, latin, shape or colour");
+  if (!(a.size > 0)) fail("animal " + k + " has no size");
+  let n = 0;
+  for (const s in a.states) { if (!R.BEHAVIOURS[s]) fail("animal " + k + " has state " + s + ", not a behaviour"); n++; }
+  if (!n) fail("animal " + k + " has no states");
+  if (a.fly && !("flight" in a.states)) fail("animal " + k + " flies but never has flight");
+  ok();
+}
+// ranges
+for (const k in R.RANGES) {
+  const r = R.RANGES[k];
+  if (!["drive", "hide"].includes(r.seat)) fail("range " + k + " seat is " + r.seat);
+  if (!r.name || !r.place || !r.note) fail("range " + k + " is missing name, place or note");
+  let n = 0;
+  for (const s in r.cast) { if (!R.ANIMALS[s]) fail("range " + k + " casts " + s + ", not an animal"); n++; }
+  if (n < 2) fail("range " + k + " casts fewer than two animals");
+  ok();
+}
+// lights
+for (const k in R.LIGHTS) {
+  const l = R.LIGHTS[k];
+  for (const s of R.SHUTTERS) if (!(l.iso[s] > 0)) fail("light " + k + " has no ISO for 1/" + s);
+  ok();
+}
+// pulls
+if (R.PULLS.length < 2) fail("fewer than two pulls on the glass");
+for (const p of R.PULLS) if (!(p.frac > 0 && p.frac <= 1)) fail("pull " + p.name + " has a bad fraction");
+
+// scorer
+const framings = [
+  { inside: false, cut: false, fill: 0 },
+  { inside: true, cut: true, fill: 0.3 },
+  { inside: true, cut: false, fill: 0.05 },
+  { inside: true, cut: false, fill: 0.3 },
+  { inside: true, cut: false, fill: 0.6 }
+];
+for (const light in R.LIGHTS) for (const b in R.BEHAVIOURS) for (const s of R.SHUTTERS) for (const f of framings) {
+  const v = R.score(s, b, f, light);
+  if (!(v.stars >= 0 && v.stars <= 3)) fail("score out of range: " + s + " " + b);
+  if (!Array.isArray(v.lines) || !v.lines.length) fail("score with no words: " + s + " " + b);
+  if (!f.inside && v.stars !== 0) fail("a plate with nothing in it scored " + v.stars);
+  if (f.inside && !f.cut && f.fill === 0.3 && s === R.BEHAVIOURS[b].asked && !(v.stars === 3 && v.keeper)) fail("matched shutter, clean frame, not three stars: " + b + " at " + light);
+  if (v.keeper !== (v.stars >= 2)) fail("keeper does not follow the stars: " + s + " " + b);
+  checks++;
+}
+
+// measureFrame
+const plate = { x: 100, y: 100, w: 400, h: 225 };
+const inside = R.measureFrame({ x: 200, y: 150, w: 80, h: 50 }, plate);
+if (!inside.inside || inside.cut) fail("a box wholly inside the plate reads as cut or outside");
+const cut = R.measureFrame({ x: 460, y: 150, w: 80, h: 50 }, plate);
+if (!cut.inside || !cut.cut) fail("a box over the edge does not read as cut");
+const out = R.measureFrame({ x: 600, y: 150, w: 80, h: 50 }, plate);
+if (out.inside) fail("a box outside the plate reads as inside");
+ok();
+
+// spawn plan: deterministic, spaced, valid
+for (const k in R.RANGES) {
+  const a = R.spawnPlan(k, 14, R.mulberry(7)), b = R.spawnPlan(k, 14, R.mulberry(7));
+  if (JSON.stringify(a) !== JSON.stringify(b)) fail("spawn plan for " + k + " is not deterministic");
+  for (let i = 1; i < a.length; i++) if (a[i].x - a[i - 1].x < 200) fail("spawn plan for " + k + " puts two animals within a jeep-length");
+  if (a[0].x > 1100) fail("spawn plan for " + k + " leaves the range empty on entry");
+  for (const p of a) { if (!R.ANIMALS[p.key]) fail("spawn cast " + p.key); if (!R.ANIMALS[p.key].states[p.behaviour]) fail("spawned " + p.key + " " + p.behaviour + ", a state it does not have"); }
+  ok();
+}
+
+console.log(checks + " checks, " + fails + " failures");
+process.exit(fails ? 1 : 0);

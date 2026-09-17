@@ -1,0 +1,94 @@
+# Photo Safari Range
+
+A wildlife-photography arcade in one page. Open `index.html` in any
+browser — no server, no build, no dependencies, no network — or play it as
+served from `main` at
+https://dermot-r-cochran.github.io/photo-safari-range/ , which is the same
+file and nothing else. The contact sheet saves to that browser's
+localStorage only.
+
+## What it is
+
+You are in a vehicle on open grassland, or sitting a floating hide on the
+Zambezi at eye level with the drinking line. Animals are on the range, and
+each one is always doing something: resting, grazing, on sentry, walking,
+stalking, running, in flight. Raise the camera and the spotter names the
+animal, what it is doing, and the shutter that needs. Set the shutter,
+frame the animal, shoot. The plate scores on one rule, the field's rule:
+the shutter follows the animal, not the light meter. A keeper is two stars
+or better; the sheet keeps what you keep.
+
+The loop, in four beats:
+
+1. **Drive** to the animals (A and D), or sit still in the hide.
+2. **Camera** up (Space). The plate rectangle follows the mouse or the
+   arrow keys; Z walks the three pulls on the glass — context, working,
+   tighter.
+3. **Match** the shutter to what the spotter asked ([ and ]). Tab picks
+   another animal when several are in the frame.
+4. **Shoot** (Space). Keep the plate or discard it.
+
+Drive at an animal fast and the shy ones run; the plate is the tail end.
+Cats and elephants do not run from a jeep. Nothing is killed on the range.
+
+## What it teaches
+
+- **Behaviour first.** A resting lion wants 1/60; a walking zebra 1/250; a
+  running cheetah 1/1000; a fish eagle in flight 1/2000. The spotter's
+  ethogram note says what to look for, and the plate scores on whether the
+  shutter agreed with the animal at the moment the shutter fired.
+- **The cost of the wrong shutter.** A stop slow smears the movement; a
+  stop fast is bought with ISO the light did not have. Last light at
+  1/2000 is ISO 3200 on this camera, and the verdict says so.
+- **Framing.** An animal cut by the frame edge loses a star; a speck loses
+  a star; an animal that fills the working pull is the plate you wanted.
+  Tighter is head and shoulders, and the note is the field's: long glass
+  stacks the background, which is compression, not walking closer.
+- **Stay in the vehicle.** The guide's one hard rule, and the game's.
+
+## Where it came from
+
+The game descends from a set of prototypes built in a hosted app builder
+in September 2026 (four apps, three of them called Sundrift). Those were
+abandoned on 17 September 2026: every prompt rewrote the whole app and
+regressed it, single fixes took ten minutes of build, and publishing failed
+without a message. What was worth keeping — the asked shutter, the ethogram
+captions, the focus list, the three pulls, hide versus drive, the light
+windows — is written up in the author's design notes and rebuilt here in
+the same shape as the author's other one-file repositories:
+[four-islands-quest](https://github.com/dermot-r-cochran/four-islands-quest)
+and
+[photo-safari-tutorial-game](https://github.com/dermot-r-cochran/photo-safari-tutorial-game).
+The tutorial holds the lessons and the author's own frames; this is the
+range.
+
+**The camera is the author's own**, an older Nikon crop-sensor DSLR, and
+the ISO the light windows charge is that body's: 400 clean, 800 fine, 1600
+showing chroma noise, 3200 a last resort. A newer body is cleaner. The
+decisions generalise; the thresholds are the ones to check against your
+own camera.
+
+## Art
+
+The animals are placeholder silhouettes drawn on the canvas, so the page
+works with no picture files. Sprites, when they come, go under `images/`
+with a transparent background and a ground line, and the page must still
+work without them. The author's portfolio carries no generated images; this
+game is not the portfolio and lives at its own address.
+
+## Tools
+
+`tools/check.js` loads the page's script into a bare VM context — no
+`document`, so the page never boots — and holds the world data and the
+scorer to shape: every behaviour asks for a shutter the camera has, every
+animal's states are behaviours, every range's cast is animals, every light
+prices every shutter, the scorer stays within 0–3 and a matched shutter
+with a clean frame is always a keeper, and a spawn plan is deterministic
+and spaced. CI runs it and installs nothing.
+
+## Licence
+
+The engine is MIT (`LICENSE`); the range content — the animals, notes,
+ranges and verdict words — is CC BY 4.0 (`CONTENT-LICENSE.md`). Any
+photograph of the author's own added later carries the portfolio's
+CC BY-NC-ND 4.0 terms.
