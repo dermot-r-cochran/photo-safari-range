@@ -246,7 +246,7 @@ const ANIMALS = {
   elephant: { name: "Bush Elephant",    latin: "Loxodonta africana",   size: 220, shape: "elephant", colour: "#5b5650", states: { walking: 4, grazing: 3, resting: 1 }, spook: 0 },
   lion:     { name: "African Lion",     latin: "Panthera leo",         size: 130, shape: "cat",      colour: "#8a6a3a", states: { resting: 6, walking: 2, stalking: 1 }, spook: 0 },
   cheetah:  { name: "Cheetah",          latin: "Acinonyx jubatus",     size: 100, shape: "cat",      colour: "#a8823f", states: { sentinel: 3, walking: 2, stalking: 2, running: 1 }, spook: 1 },
-  meerkat:  { name: "Meerkat",          latin: "Suricata suricatta",   size: 28,  shape: "upright",  colour: "#7c6a4a", states: { sentinel: 5, walking: 2 }, spook: 2 },
+  mongoose: { name: "Banded Mongoose",  latin: "Mungos mungo",         size: 30,  shape: "upright",  colour: "#6e5e46", states: { sentinel: 5, walking: 2 }, spook: 2 },
   hippo:    { name: "Hippopotamus",     latin: "Hippopotamus amphibius", size: 180, shape: "bovid",  colour: "#5a4a4c", states: { drinking: 4, resting: 4, walking: 1 }, spook: 0 },
   puku:     { name: "Puku",             latin: "Kobus vardonii",       size: 95,  shape: "antelope", colour: "#a0703a", states: { drinking: 5, grazing: 3, walking: 2, running: 1 }, spook: 1 },
   eagle:    { name: "African Fish Eagle", latin: "Haliaeetus vocifer", size: 70,  shape: "bird",     colour: "#2a2420", states: { flight: 5, sentinel: 3 }, fly: 1, spook: 0 },
@@ -440,8 +440,8 @@ const PLATES = [
 // offers (all three by default).
 const RANGES = {
   amber:   { name: "Amber Range",  place: "Maasai Mara, Kenya", seat: "drive", day: "safari", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
-             note: "Open grassland. The pride, the cheetah on the mound, the meerkat on sentry. Stay in the vehicle.",
-             cast: { zebra: 5, topi: 3, gazelle: 4, buffalo: 2, elephant: 2, giraffe: 2, lion: 2, cheetah: 2, hyena: 2, vulture: 2, meerkat: 2, acacia: 3 } },
+             note: "Open grassland. The pride, the cheetah on the mound, a mongoose on sentry at the termite mound. Stay in the vehicle.",
+             cast: { zebra: 5, topi: 3, gazelle: 4, buffalo: 2, elephant: 2, giraffe: 2, lion: 2, cheetah: 2, hyena: 2, vulture: 2, mongoose: 2, acacia: 3 } },
   zambezi: { name: "Zambezi Hide", place: "Lower Zambezi, Zambia", seat: "hide", day: "safari", body: "newer", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, zlens: { name: "the longer zoom at 500 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#d9c9a8", "#b9a684"], ground: "#8fa0a4", far: "#6f7f5a",
              note: "A floating hide, eye level with the drinking line. Nothing to drive. Wait, and the water brings them.",
              cast: { puku: 5, hippo: 3, elephant: 2, buffalo: 2, eagle: 3 } },

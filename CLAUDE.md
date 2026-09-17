@@ -76,6 +76,15 @@ without the name. The frames under `images/` carry no EXIF, so nothing
 leaks that way either. Keep it that way in data, verdicts, comments, the
 README and the check's messages.
 
+## Animals belong where they live
+
+Dermot, 17 Sept 2026: "I did not see any Meerkats in Kenya last year."
+Quite right: meerkats are southern Africa's, and the Mara's sentinel on a
+termite mound is the banded mongoose, which replaced it the same day. The
+prototype had put the meerkat there and it was carried over unchecked.
+Before adding an animal to a range, check that it lives there; the
+spotter's calls are only worth anything if they are true.
+
 ## Tone
 
 - Nothing is killed on the range. Predators stalk and rush; prey runs;
