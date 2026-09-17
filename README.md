@@ -68,13 +68,22 @@ showing chroma noise, 3200 a last resort. A newer body is cleaner. The
 decisions generalise; the thresholds are the ones to check against your
 own camera.
 
-## Art
+## The frames
 
-The animals are placeholder silhouettes drawn on the canvas, so the page
-works with no picture files. Sprites, when they come, go under `images/`
-with a transparent background and a ground line, and the page must still
-work without them. The author's portfolio carries no generated images; this
-game is not the portfolio and lives at its own address.
+After a shot that hit something, the plate card shows **the frame this was
+learned on**: the author's own photograph of that animal doing that thing,
+from the outings the range was written from, with your crop inset in the
+corner and a caption that says what the frame is. It is a comparison, not
+the answer: the stars and the verdict are about your plate; the photograph
+is what the same moment looked like when it was got. Twenty-eight frames
+so far, under `images/`, at portfolio size, chosen by animal and
+behaviour; an animal with no frame yet (the meerkat, the hippo, the puku)
+shows the crop alone, and the page works with no picture files at all.
+
+The animals on the range are placeholder silhouettes drawn on the canvas.
+The author's portfolio carries no generated images; if generated sprites
+ever come, they go under `images/` at this address and nowhere near the
+portfolio.
 
 ## Tools
 
@@ -89,6 +98,6 @@ and spaced. CI runs it and installs nothing.
 ## Licence
 
 The engine is MIT (`LICENSE`); the range content — the animals, notes,
-ranges and verdict words — is CC BY 4.0 (`CONTENT-LICENSE.md`). Any
-photograph of the author's own added later carries the portfolio's
-CC BY-NC-ND 4.0 terms.
+ranges, plate captions and verdict words — is CC BY 4.0
+(`CONTENT-LICENSE.md`); the photographs are CC BY-NC-ND 4.0
+(`LICENSE-PHOTOS.md`), the portfolio's own terms.

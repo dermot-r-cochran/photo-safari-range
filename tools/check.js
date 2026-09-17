@@ -71,6 +71,35 @@ for (const k in R.LIGHTS) {
 if (R.PULLS.length < 2) fail("fewer than two pulls on the glass");
 for (const p of R.PULLS) if (!(p.frac > 0 && p.frac <= 1)) fail("pull " + p.name + " has a bad fraction");
 
+// plates: every frame has a file, an animal, behaviours the animal has, words
+const imagesDir = path.join(root, "images");
+const onDisk = fs.existsSync(imagesDir) ? new Set(fs.readdirSync(imagesDir)) : new Set();
+const referenced = new Set();
+for (const p of R.PLATES) {
+  if (!p.file || !p.title || !p.alt || !p.caption) fail("plate " + (p.title || p.file) + " is missing file, title, alt or caption");
+  if (!R.ANIMALS[p.animal]) fail("plate " + p.title + " is of " + p.animal + ", not an animal");
+  if (!Array.isArray(p.behaviours) || !p.behaviours.length) fail("plate " + p.title + " names no behaviour");
+  for (const b of p.behaviours || []) {
+    if (!R.BEHAVIOURS[b]) fail("plate " + p.title + " names behaviour " + b);
+    else if (R.ANIMALS[p.animal] && !R.ANIMALS[p.animal].states[b]) fail("plate " + p.title + ": " + p.animal + " never does " + b);
+  }
+  if (!onDisk.has(p.file)) fail("plate " + p.title + " has no file images/" + p.file);
+  if (referenced.has(p.file)) fail("plate file " + p.file + " is listed twice");
+  referenced.add(p.file);
+  if (/[0-9]+\/[0-9]+|f\/[0-9]/.test(p.alt)) fail("plate " + p.title + " alt states settings");
+  ok();
+}
+for (const f of onDisk) if (!referenced.has(f)) fail("images/" + f + " is not shown on any plate");
+// plateFor: exact before any, deterministic, null for an animal with no frame
+for (const a in R.ANIMALS) for (const b in R.ANIMALS[a].states) {
+  const p = R.plateFor(a, b, R.mulberry(3));
+  const has = R.PLATES.some(x => x.animal === a);
+  if (has && !p) fail("plateFor gave nothing for " + a + " " + b);
+  if (!has && p) fail("plateFor gave a frame for " + a + ", which has none");
+  if (p && R.PLATES.some(x => x.animal === a && x.behaviours.includes(b)) && !p.behaviours.includes(b)) fail("plateFor skipped an exact frame for " + a + " " + b);
+  checks++;
+}
+
 // scorer
 const framings = [
   { inside: false, cut: false, fill: 0 },

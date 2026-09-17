@@ -38,8 +38,21 @@ that, and they are the `four-islands-quest` rules this repository inherits:
   section; everything that needs a document sits below that export inside
   the `if (typeof document !== "undefined")` block.
 - **The page works with no picture files.** The animals are canvas
-  silhouettes. When sprites arrive under `images/`, a missing file falls
-  back to the silhouette, and the check does not require any image.
+  silhouettes, and a plate with no frame shows the crop alone.
+- **The photograph comes after the verdict, as a comparison.** `PLATES`
+  lists the author's own frames (file, animal, behaviours, title, alt,
+  caption), copied at site size from the portfolio under its licence.
+  After a shot that hit something, `plateFor` picks a frame of the same
+  animal and behaviour, else any of the animal, and the card shows it
+  under *The frame this was learned on*, with the player's crop inset. It
+  never stands in for the score; the stars and the verdict are the
+  player's plate. Dermot's choice, 2026-09-17, over generated sprites
+  ("option 1"): the frames are the one asset no other safari game has.
+  Captions state no settings unless the point of the frame is the
+  settings (The Break); the site JPEGs carry no EXIF, so nothing is
+  invented. The check holds every plate to a file, an animal, behaviours
+  that animal has, and words, and every file under `images/` to a plate.
+  Only the author's own photographs, ever.
 
 ## The one rule the game teaches
 
