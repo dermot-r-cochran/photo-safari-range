@@ -88,6 +88,23 @@ the sheet) and `night` (spawns only on a lamp light). A range lists its
 `lights`; the default is the three day windows. There are no frames for
 these animals yet; the plate shows the crop alone until he has been.
 
+## Night Sky
+
+Added 2026-09-17 at Dermot's one word, *Astrophotography*, and his
+choice of a range in the game over a trip note or a tutorial stop. It
+introduced the one structural change since the first commit: shutters are
+strings on named `SCALES` (`day` in fractions, `sky` in seconds and
+minutes, both ordered slowest to fastest so the scorer's stop arithmetic
+is unchanged), a range names its `scale`, a light names the scale it
+prices, and `SCALE_WORDS` overrides the verdict words where a stop over
+means lines rather than smear. Sky subjects are animals with `sky: 1`
+(hung at a height of the frame, drawn by `drawSky`), `unique: 1` (one
+moon), and `only: [lights]` (no moon on a new moon, no core under the
+moon). The seat is `tripod`: nothing drives, nothing spooks. Saved plates
+from before the change carry a numeric shutter; `shutterLabel` reads both.
+The numbers are one camera's again: the 500 rule at the 18 mm end of the
+zoom on the crop body, and ISO 3200 as its ceiling.
+
 ## Adding to the world
 
 An animal: add to `ANIMALS` with `name`, `latin`, `size`, `shape` (one of

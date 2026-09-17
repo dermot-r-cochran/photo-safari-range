@@ -33,11 +33,32 @@ let fails = 0, checks = 0;
 const fail = (msg) => { fails++; console.error("  FAIL: " + msg); };
 const ok = () => { checks++; };
 
+// scales
+const allShutters = new Set();
+for (const s in R.SCALES) {
+  if (R.SCALES[s].length < 4) fail("scale " + s + " has fewer than four shutters");
+  for (const sh of R.SCALES[s]) allShutters.add(sh);
+}
 // behaviours
 for (const k in R.BEHAVIOURS) {
   const b = R.BEHAVIOURS[k];
-  if (!R.SHUTTERS.includes(b.asked)) fail("behaviour " + k + " asks for 1/" + b.asked + ", not a shutter the camera has");
+  if (!allShutters.has(b.asked)) fail("behaviour " + k + " asks for " + b.asked + ", not a shutter on any scale");
   if (!b.verb || !b.note) fail("behaviour " + k + " has no verb or note");
+  ok();
+}
+// every animal a range casts asks only for shutters on that range's scale,
+// and every light a range offers is priced on that scale
+for (const k in R.RANGES) {
+  const r = R.RANGES[k], scale = R.scaleFor(k);
+  if (!R.SCALES[scale]) fail("range " + k + " shoots on scale " + scale + ", which does not exist");
+  for (const a in r.cast) for (const b in (R.ANIMALS[a] || { states: {} }).states) {
+    if (!R.SCALES[scale].includes(R.BEHAVIOURS[b].asked)) fail("range " + k + " casts " + a + ", whose " + b + " asks " + R.BEHAVIOURS[b].asked + ", not on the " + scale + " scale");
+  }
+  for (const l of R.lightsFor(k)) {
+    const L = R.LIGHTS[l]; if (!L) continue;
+    if ((L.scale || "day") !== scale) fail("range " + k + " offers light " + l + ", which is on the " + (L.scale || "day") + " scale");
+    for (const sh of R.SCALES[scale]) if (!(L.iso[sh] > 0)) fail("light " + l + " has no ISO for " + sh);
+  }
   ok();
 }
 // animals
@@ -54,7 +75,7 @@ for (const k in R.ANIMALS) {
 // ranges
 for (const k in R.RANGES) {
   const r = R.RANGES[k];
-  if (!["drive", "hide", "walk"].includes(r.seat)) fail("range " + k + " seat is " + r.seat);
+  if (!["drive", "hide", "walk", "tripod"].includes(r.seat)) fail("range " + k + " seat is " + r.seat);
   if (!r.name || !r.place || !r.note) fail("range " + k + " is missing name, place or note");
   let n = 0, day = 0;
   for (const s in r.cast) { if (!R.ANIMALS[s]) fail("range " + k + " casts " + s + ", not an animal"); else if (!R.ANIMALS[s].night) day++; n++; }
@@ -73,18 +94,32 @@ for (const k in R.RANGES) {
 // a keeper on a prize animal says so
 for (const a in R.ANIMALS) if (R.ANIMALS[a].prize) {
   const b = Object.keys(R.ANIMALS[a].states)[0];
-  const v = R.score(R.BEHAVIOURS[b].asked, b, { inside: true, cut: false, fill: 0.3 }, "heat", a);
+  const onSky = !R.SCALES.day.includes(R.BEHAVIOURS[b].asked);
+  const v = R.score(R.BEHAVIOURS[b].asked, b, { inside: true, cut: false, fill: 0.3 }, onSky ? "newmoon" : "heat", a, onSky ? "sky" : "day");
   if (!v.prize || !v.lines.includes(R.WORDS.prize)) fail("a keeper of " + a + " is not marked a hard plate");
   const w = R.score(R.SHUTTERS[0], "flight", { inside: true, cut: false, fill: 0.3 }, "heat", a);
   if (w.prize) fail("a folder plate of " + a + " is marked a hard plate");
   ok();
 }
 // dark plates score nothing
-if (R.score(250, "walking", { inside: true, cut: false, fill: 0.3, dark: true }, "night").stars !== 0) fail("a plate outside the lamp scored");
+if (R.score("1/250", "walking", { inside: true, cut: false, fill: 0.3, dark: true }, "night").stars !== 0) fail("a plate outside the lamp scored");
+// the sky: the words say lines, not smear, and a unique subject spawns once
+const sky = R.score("30s", "points", { inside: true, cut: false, fill: 0.3 }, "newmoon", null, "sky");
+if (sky.stars !== 2 || !/lines/.test(sky.lines.join(" "))) fail("a stop over on the sky scale does not say the stars drew lines");
+for (const k in R.RANGES) for (const l of R.lightsFor(k)) {
+  const plan = R.spawnPlan(k, 30, R.mulberry(5), l);
+  const seen = {};
+  for (const p of plan) {
+    const A = R.ANIMALS[p.key];
+    if (A.unique && seen[p.key]) fail("range " + k + " spawns " + p.key + " twice");
+    seen[p.key] = 1;
+    if (A.only && !A.only.includes(l)) fail("range " + k + " spawns " + p.key + " under " + l + ", which it does not appear in");
+  }
+}
 // lights
 for (const k in R.LIGHTS) {
   const l = R.LIGHTS[k];
-  for (const s of R.SHUTTERS) if (!(l.iso[s] > 0)) fail("light " + k + " has no ISO for 1/" + s);
+  for (const s of R.SCALES[l.scale || "day"]) if (!(l.iso[s] > 0)) fail("light " + k + " has no ISO for " + s);
   ok();
 }
 // pulls
@@ -128,15 +163,23 @@ const framings = [
   { inside: true, cut: false, fill: 0.3 },
   { inside: true, cut: false, fill: 0.6 }
 ];
-for (const light in R.LIGHTS) for (const b in R.BEHAVIOURS) for (const s of R.SHUTTERS) for (const f of framings) {
-  const v = R.score(s, b, f, light);
-  if (!(v.stars >= 0 && v.stars <= 3)) fail("score out of range: " + s + " " + b);
-  if (!Array.isArray(v.lines) || !v.lines.length) fail("score with no words: " + s + " " + b);
-  if (!f.inside && v.stars !== 0) fail("a plate with nothing in it scored " + v.stars);
-  if (f.inside && !f.cut && f.fill === 0.3 && s === R.BEHAVIOURS[b].asked && !(v.stars === 3 && v.keeper)) fail("matched shutter, clean frame, not three stars: " + b + " at " + light);
-  if (v.keeper !== (v.stars >= 2)) fail("keeper does not follow the stars: " + s + " " + b);
-  checks++;
+for (const light in R.LIGHTS) {
+  const scale = R.LIGHTS[light].scale || "day";
+  for (const b in R.BEHAVIOURS) {
+    if (!R.SCALES[scale].includes(R.BEHAVIOURS[b].asked)) continue;
+    for (const s of R.SCALES[scale]) for (const f of framings) {
+      const v = R.score(s, b, f, light, null, scale);
+      if (!(v.stars >= 0 && v.stars <= 3)) fail("score out of range: " + s + " " + b);
+      if (!Array.isArray(v.lines) || !v.lines.length) fail("score with no words: " + s + " " + b);
+      if (v.lines.some(x => x === undefined)) fail("score with a missing word: " + s + " " + b + " on " + scale);
+      if (!f.inside && v.stars !== 0) fail("a plate with nothing in it scored " + v.stars);
+      if (f.inside && !f.cut && f.fill === 0.3 && s === R.BEHAVIOURS[b].asked && !(v.stars === 3 && v.keeper)) fail("matched shutter, clean frame, not three stars: " + b + " at " + light);
+      if (v.keeper !== (v.stars >= 2)) fail("keeper does not follow the stars: " + s + " " + b);
+      checks++;
+    }
+  }
 }
+if (R.shutterLabel(250) !== "1/250" || R.shutterLabel("15s") !== "15s") fail("shutterLabel does not read old and new plates alike");
 
 // measureFrame
 const plate = { x: 100, y: 100, w: 400, h: 225 };

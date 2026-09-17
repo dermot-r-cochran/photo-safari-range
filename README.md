@@ -50,6 +50,16 @@ Cats and elephants do not run from a jeep. Nothing is killed on the range.
   foot the rule is the walking guide's: single file, stop when he stops,
   because nothing runs from a still person and everything runs from a
   moving one.
+- **The Earth turns; that is the movement.** On the Night Sky range the
+  shutter scale is seconds and minutes on a tripod. The moon is a sunlit
+  rock and asks for 1/250 at ISO 100 whatever the hour; stars as points
+  ask for five hundred over the focal length in seconds, about fifteen at
+  the wide end on this body, and every second past that draws a line; the
+  Milky Way's core asks for the same fifteen and all the ISO the body has,
+  so it comes with the noise note; the pole asks for eight minutes and
+  gives you arcs on purpose; a meteor cannot be timed, so the shutter stays
+  open and the sky decides. New moon or moonlit: under the moon the sky is
+  brighter, the core is gone, and the ISO drops.
 - **The small ones are the range.** In South Luangwa a keeper of a serval,
   a hyrax, a genet or a carmine bee-eater is a hard plate and the sheet
   says so; an elephant is an elephant. The genet only comes out on the

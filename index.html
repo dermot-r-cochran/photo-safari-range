@@ -181,21 +181,33 @@
  * one camera's: an older Nikon crop-sensor body and an 18–400 mm zoom.
  */
 
-// Shutter speeds the camera offers, slowest to fastest, as denominators.
-const SHUTTERS = [30, 60, 125, 250, 500, 1000, 2000];
+// Shutter scales, slowest to fastest. `day` is the hand-held range; `sky`
+// is the tripod at night, where the shutter is seconds and minutes and
+// the thing that moves is the Earth.
+const SCALES = {
+  day: ["1/30", "1/60", "1/125", "1/250", "1/500", "1/1000", "1/2000"],
+  sky: ["8m", "2m", "30s", "15s", "4s", "1s", "1/60", "1/250"]
+};
+const SHUTTERS = SCALES.day;
 
 // What an animal can be doing, the shutter that needs, and the spotter's
-// one-line ethogram note. `asked` is a SHUTTERS denominator.
+// one-line ethogram note. `asked` is a shutter on one of the scales.
 const BEHAVIOURS = {
-  resting:  { asked: 60,   verb: "Resting",  note: "Sprawled on a side, flanks rising slowly, an ear flick." },
-  sentinel: { asked: 125,  verb: "Sentinel", note: "Upright on the tail, sky in the eyes, nothing else moving." },
-  grazing:  { asked: 125,  verb: "Grazing",  note: "Head down, a step every few seconds, the tail working." },
-  drinking: { asked: 125,  verb: "Drinking", note: "Head to the water, the throat working, ears turned back." },
-  walking:  { asked: 250,  verb: "Walking",  note: "A gait with weight in it. The legs cross." },
-  stalking: { asked: 250,  verb: "Stalking", note: "Low, slow, the shoulders up. It has seen something." },
-  running:  { asked: 1000, verb: "Running",  note: "All four feet off the ground at once, more than once." },
-  feeding:  { asked: 500,  verb: "Feeding",  note: "Heads down at the carcass, a wing thrown open, the squabble." },
-  flight:   { asked: 2000, verb: "Flight",   note: "Wings loaded. The head is the still point." }
+  resting:  { asked: "1/60",   verb: "Resting",  note: "Sprawled on a side, flanks rising slowly, an ear flick." },
+  sentinel: { asked: "1/125",  verb: "Sentinel", note: "Upright on the tail, sky in the eyes, nothing else moving." },
+  grazing:  { asked: "1/125",  verb: "Grazing",  note: "Head down, a step every few seconds, the tail working." },
+  drinking: { asked: "1/125",  verb: "Drinking", note: "Head to the water, the throat working, ears turned back." },
+  walking:  { asked: "1/250",  verb: "Walking",  note: "A gait with weight in it. The legs cross." },
+  stalking: { asked: "1/250",  verb: "Stalking", note: "Low, slow, the shoulders up. It has seen something." },
+  running:  { asked: "1/1000", verb: "Running",  note: "All four feet off the ground at once, more than once." },
+  feeding:  { asked: "1/500",  verb: "Feeding",  note: "Heads down at the carcass, a wing thrown open, the squabble." },
+  flight:   { asked: "1/2000", verb: "Flight",   note: "Wings loaded. The head is the still point." },
+  // the night sky, on the sky scale
+  sunlit:   { asked: "1/250",  verb: "Sunlit",   note: "A rock in full sun, however dark the night. Meter it like a daylight scene or it goes to a white disc." },
+  points:   { asked: "15s",    verb: "Points",   note: "Five hundred over the focal length, in seconds, before the Earth turns them into lines. At 30 mm on this body, about fifteen." },
+  core:     { asked: "15s",    verb: "The core", note: "Faint, wide, and moving with everything else. Fifteen seconds and all the ISO the body has." },
+  wheel:    { asked: "8m",     verb: "Wheeling", note: "Around the pole the stars draw arcs. Minutes, a still tripod, and no wind in the legs." },
+  streak:   { asked: "30s",    verb: "Streak",   note: "You cannot time a meteor. Leave the shutter open and let the sky decide." }
 };
 
 // Animals. `size` is body length in scene units at the near line (1 unit
@@ -223,7 +235,14 @@ const ANIMALS = {
   serval:   { name: "Serval",            latin: "Leptailurus serval",   size: 70,  shape: "cat",      colour: "#b48a48", states: { stalking: 3, walking: 2, sentinel: 2, running: 1 }, spook: 2, prize: 1 },
   hyrax:    { name: "Rock Hyrax",        latin: "Procavia capensis",    size: 34,  shape: "blob",     colour: "#6a5a44", states: { sentinel: 4, resting: 3, walking: 1 }, spook: 2, prize: 1 },
   genet:    { name: "Large-spotted Genet", latin: "Genetta maculata",   size: 55,  shape: "cat",      colour: "#8a7a5a", states: { walking: 4, resting: 2 }, spook: 2, prize: 1, night: 1 },
-  beeeater: { name: "Carmine Bee-eater", latin: "Merops nubicoides",    size: 40,  shape: "bird",     colour: "#b8384a", states: { flight: 5, sentinel: 2 }, fly: 1, spook: 1, prize: 1 }
+  beeeater: { name: "Carmine Bee-eater", latin: "Merops nubicoides",    size: 40,  shape: "bird",     colour: "#b8384a", states: { flight: 5, sentinel: 2 }, fly: 1, spook: 1, prize: 1 },
+  // The night sky. `sky` puts a subject in the sky at `depth` of the height;
+  // `unique` spawns it once; `only` lists the lights it appears under.
+  moon:     { name: "The Moon",          latin: "A sunlit rock",        size: 60,  shape: "moon",     colour: "#f2edd8", states: { sunlit: 1 }, sky: 1, unique: 1, spook: 0, only: ["moonlit"] },
+  stars:    { name: "The Stars",         latin: "As points",            size: 240, shape: "stars",    colour: "#f5f0e4", states: { points: 1 }, sky: 1, unique: 1, spook: 0 },
+  pole:     { name: "The Pole",          latin: "The south celestial pole", size: 200, shape: "pole", colour: "#f5f0e4", states: { wheel: 1 }, sky: 1, unique: 1, spook: 0 },
+  milky:    { name: "The Milky Way",     latin: "The core, rising",     size: 360, shape: "core",     colour: "#d8d4e8", states: { core: 1 }, sky: 1, unique: 1, spook: 0, only: ["newmoon"] },
+  meteor:   { name: "A Meteor",          latin: "Luck",                 size: 90,  shape: "meteor",   colour: "#fff8e0", states: { streak: 1 }, sky: 1, spook: 0, prize: 1 }
 };
 
 // The frames the range was learned on: the author's own photographs, at
@@ -333,19 +352,41 @@ const RANGES = {
   luangwa: { name: "South Luangwa", place: "South Luangwa, Zambia", seat: "walk", sky: ["#e8d6a8", "#c9a86a"], ground: "#a8905c", far: "#6a6a3a",
              note: "Walking country, single file behind the guide. Stop when he stops. After the gate, a night drive: the small ones are the plate.",
              cast: { puku: 3, elephant: 2, hippo: 2, leopard: 2, serval: 3, hyrax: 3, genet: 3, beeeater: 3 },
-             lights: ["first", "heat", "last", "night"] }
+             lights: ["first", "heat", "last", "night"] },
+  sky:     { name: "Night Sky",     place: "South Luangwa, Zambia, after the fire", seat: "tripod", scale: "sky", sky: ["#070a1c", "#1a1f3a"], ground: "#0b0a10", far: "#14121c",
+             note: "A tripod on the airstrip, the camp behind you. Nothing to drive. The Earth turns; that is the movement. Wait for your eyes.",
+             cast: { stars: 3, pole: 2, milky: 2, moon: 2, meteor: 3 },
+             lights: ["newmoon", "moonlit"] }
 };
 
 // Light windows: the sky, and the ISO the meter lands on at each shutter.
 // ISO 400 clean, 800 fine, 1600 shows chroma noise, 3200 a last resort.
 // A `lamp` window is dark outside the spotlight, which follows the aim.
 const LIGHTS = {
-  first: { name: "First light", tint: "rgba(240,160,80,0.18)",  iso: { 30: 100, 60: 100, 125: 200, 250: 400, 500: 800, 1000: 1600, 2000: 3200 } },
-  heat:  { name: "Heat",        tint: "rgba(255,255,230,0.10)", iso: { 30: 100, 60: 100, 125: 100, 250: 100, 500: 200, 1000: 400, 2000: 800 } },
-  last:  { name: "Last light",  tint: "rgba(200,90,60,0.22)",   iso: { 30: 100, 60: 200, 125: 400, 250: 800, 500: 1600, 1000: 3200, 2000: 3200 } },
-  night: { name: "Night drive", tint: "rgba(10,18,40,0.55)", lamp: 1, iso: { 30: 1600, 60: 3200, 125: 3200, 250: 3200, 500: 3200, 1000: 3200, 2000: 3200 } }
+  first: { name: "First light", tint: "rgba(240,160,80,0.18)",  iso: { "1/30": 100, "1/60": 100, "1/125": 200, "1/250": 400, "1/500": 800, "1/1000": 1600, "1/2000": 3200 } },
+  heat:  { name: "Heat",        tint: "rgba(255,255,230,0.10)", iso: { "1/30": 100, "1/60": 100, "1/125": 100, "1/250": 100, "1/500": 200, "1/1000": 400, "1/2000": 800 } },
+  last:  { name: "Last light",  tint: "rgba(200,90,60,0.22)",   iso: { "1/30": 100, "1/60": 200, "1/125": 400, "1/250": 800, "1/500": 1600, "1/1000": 3200, "1/2000": 3200 } },
+  night: { name: "Night drive", tint: "rgba(10,18,40,0.55)", lamp: 1, iso: { "1/30": 1600, "1/60": 3200, "1/125": 3200, "1/250": 3200, "1/500": 3200, "1/1000": 3200, "1/2000": 3200 } },
+  // the sky scale: what the meter wants at f/3.5 on the 18 mm end, and the
+  // moon is a daylight subject whatever the hour
+  newmoon: { name: "New moon",  scale: "sky", tint: "rgba(0,0,0,0)", iso: { "8m": 100, "2m": 400, "30s": 1600, "15s": 3200, "4s": 3200, "1s": 3200, "1/60": 3200, "1/250": 100 } },
+  moonlit: { name: "Moonlit",   scale: "sky", tint: "rgba(120,140,200,0.10)", iso: { "8m": 100, "2m": 100, "30s": 400, "15s": 800, "4s": 3200, "1s": 3200, "1/60": 3200, "1/250": 100 } }
 };
 const DEFAULT_LIGHTS = ["first", "heat", "last"];
+
+// Verdict words that differ on the sky scale: a stop "slow" is a longer
+// exposure, and the thing that moved was the Earth.
+const SCALE_WORDS = {
+  sky: {
+    slow1:   "Twice the time it wanted. The stars drew short lines.",
+    slow2:   "Four times the time. Lines, not stars.",
+    fast1:   "Half the time it wanted, and the ISO paid for it.",
+    fast2:   "A quarter of the time. Dark, and the noise on top of it.",
+    small:   "A speck. Long glass, or leave it as the landscape's sky.",
+    spooked: "The tripod moved.",
+    walked:  "The tripod moved."
+  }
+};
 
 // The three pulls on the glass: how much of the scene the plate takes.
 const PULLS = [
@@ -378,27 +419,33 @@ const WORDS = {
 
 // ---- pure section: no document, no canvas; tools/check.js loads to here ----
 
-function shutterIndex(s) { return SHUTTERS.indexOf(s); }
+// The scale a range shoots on, and a shutter's place on it.
+function scaleFor(rangeKey) { return RANGES[rangeKey].scale || "day"; }
+function shutterIndex(s, scale) { return SCALES[scale || "day"].indexOf(s); }
+// A shutter for display: old saved plates carry the denominator as a number.
+function shutterLabel(s) { return typeof s === "number" ? "1/" + s : s; }
 
 // Score a plate. `framing` is { inside, cut, fill } from measureFrame.
 // Returns { stars 0..3, lines[], keeper }.
-function score(shutter, behaviour, framing, light, animal) {
+function score(shutter, behaviour, framing, light, animal, scale) {
   const B = BEHAVIOURS[behaviour];
+  scale = scale || "day";
+  const W = Object.assign({}, WORDS, SCALE_WORDS[scale] || {});
   const lines = [];
-  if (!framing || !framing.inside) return { stars: 0, lines: [WORDS.miss], keeper: false };
-  if (framing.dark) return { stars: 0, lines: [WORDS.dark], keeper: false };
-  const d = shutterIndex(shutter) - shutterIndex(B.asked);
+  if (!framing || !framing.inside) return { stars: 0, lines: [W.miss], keeper: false };
+  if (framing.dark) return { stars: 0, lines: [W.dark], keeper: false };
+  const d = shutterIndex(shutter, scale) - shutterIndex(B.asked, scale);
   let stars = 3;
-  if (d === 0) lines.push(WORDS.match);
-  else if (d === -1) { stars -= 1; lines.push(WORDS.slow1); }
-  else if (d <= -2)  { stars -= 2; lines.push(WORDS.slow2); }
-  else if (d === 1)  { lines.push(WORDS.fast1); }
-  else               { stars -= 1; lines.push(WORDS.fast2); }
-  if (framing.cut)   { stars -= 1; lines.push(WORDS.cut); }
-  else if (framing.fill < 0.10) { stars -= 1; lines.push(WORDS.small); }
-  else if (framing.fill > 0.45) lines.push(WORDS.filling);
+  if (d === 0) lines.push(W.match);
+  else if (d === -1) { stars -= 1; lines.push(W.slow1); }
+  else if (d <= -2)  { stars -= 2; lines.push(W.slow2); }
+  else if (d === 1)  { lines.push(W.fast1); }
+  else               { stars -= 1; lines.push(W.fast2); }
+  if (framing.cut)   { stars -= 1; lines.push(W.cut); }
+  else if (framing.fill < 0.10) { stars -= 1; lines.push(W.small); }
+  else if (framing.fill > 0.45) lines.push(W.filling);
   const iso = LIGHTS[light].iso[shutter];
-  if (iso >= 1600) lines.push(WORDS.noise);
+  if (iso >= 1600) lines.push(W.noise);
   stars = Math.max(0, stars);
   const keeper = stars >= 2;
   const prize = !!(keeper && animal && ANIMALS[animal] && ANIMALS[animal].prize);
@@ -437,15 +484,22 @@ function spawnPlan(rangeKey, n, rnd, light) {
   const R = RANGES[rangeKey];
   const night = !!(light && LIGHTS[light] && LIGHTS[light].lamp);
   const cast = {};
-  for (const k in R.cast) if (!ANIMALS[k].night || night) cast[k] = R.cast[k];
+  for (const k in R.cast) {
+    const A = ANIMALS[k];
+    if (A.night && !night) continue;
+    if (A.only && light && !A.only.includes(light)) continue;
+    cast[k] = R.cast[k];
+  }
   const out = [];
   let x = 80;
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < n && Object.keys(cast).length; i++) {
     const key = pick(cast, rnd);
     const A = ANIMALS[key];
+    if (A.unique) delete cast[key];
     const gap = 260 + A.size + rnd() * 400;
     x += gap;
-    const depth = A.fly ? 1 : 0.35 + rnd() * 0.65;
+    // sky subjects sit at a height of the frame; ground animals at a depth
+    const depth = A.sky ? 0.08 + rnd() * 0.4 : A.fly ? 1 : 0.35 + rnd() * 0.65;
     const behaviour = pick(A.states, rnd);
     out.push({ key, x, depth, behaviour, dir: rnd() < 0.5 ? -1 : 1 });
   }
@@ -472,7 +526,7 @@ function plateFor(animal, behaviour, rnd) {
   return any[Math.floor(rnd() * any.length) % any.length];
 }
 
-const RANGE = { SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, PULLS, WORDS, PLATES, score, measureFrame, spawnPlan, plateFor, lightsFor, pick, mulberry };
+const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, score, measureFrame, spawnPlan, plateFor, lightsFor, scaleFor, shutterIndex, shutterLabel, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
 
 // ---- page section: everything below needs a document ----
@@ -487,7 +541,7 @@ const JEEP_X = W * 0.28, JEEP_LEN = 150;
 const state = {
   range: "amber", light: "first", playing: false,
   worldX: 0, speed: 0, animals: [], t: 0, rnd: null,
-  camera: false, shutter: 250, pull: 1, aim: { x: W / 2, y: H * 0.7 },
+  camera: false, shutter: "1/250", pull: 1, aim: { x: W / 2, y: H * 0.7 },
   focus: null, radio: null, radioUntil: 0,
   sheet: JSON.parse(localStorage.getItem("psr.sheet") || "[]"),
   keys: {}
@@ -513,7 +567,7 @@ function buildCamp() {
   }
   const R = RANGES[state.range];
   $("camp-note").textContent = R.place + ". " + R.note;
-  $("go").textContent = R.seat === "hide" ? "Sit the hide" : R.seat === "walk" ? "Walk the range" : "Drive the range";
+  $("go").textContent = R.seat === "hide" ? "Sit the hide" : R.seat === "walk" ? "Walk the range" : R.seat === "tripod" ? "Set up the tripod" : "Drive the range";
   $("range-line").textContent = R.name + " · " + LIGHTS[state.light].name;
 }
 
@@ -522,12 +576,16 @@ function begin() {
   const R = RANGES[state.range];
   state.rnd = mulberry((Date.now() / 1000) | 0);
   state.worldX = 0; state.speed = 0; state.t = 0; state.camera = false; state.focus = null;
-  state.animals = spawnPlan(state.range, 14, state.rnd, state.light).map(makeAnimal);
+  const scale = SCALES[scaleFor(state.range)];
+  if (!scale.includes(state.shutter)) state.shutter = scale[3];
+  state.animals = spawnPlan(state.range, R.seat === "tripod" ? 6 : 14, state.rnd, state.light).map(makeAnimal);
   if (R.seat === "hide") for (const a of state.animals) { a.x = W * 0.15 + (a.x - 80) * 0.45; }
+  if (R.seat === "tripod") state.animals.forEach((a, i) => { a.x = 120 + ((i * 0.37 + 0.1) % 1) * (W - 240); a.dir = 1; });
   state.playing = true;
   $("camp").hidden = true;
   drawHud();
-  say(R.seat === "walk" ? "Guide" : "Spotter",
+  say(R.seat === "walk" || R.seat === "tripod" ? "Guide" : "Spotter",
+      R.seat === "tripod" ? "Your eyes take twenty minutes. The camp lights are behind you. The Earth turns; that is the movement." :
       R.seat === "hide" ? "Sit still. The water brings them." :
       R.seat === "walk" ? (LIGHTS[state.light].lamp ? "The lamp is the frame. Whatever is in it is what you have." : "Single file. Stop when I stop. Nothing runs from a still person.") :
       "Stay in the vehicle. A cat in the grass means you stay seated.");
@@ -553,7 +611,8 @@ function say(who, text) {
 }
 
 // Behaviour speeds in scene units per second at the near line.
-const SPEED = { resting: 0, sentinel: 0, grazing: 8, drinking: 0, walking: 40, stalking: 22, running: 220, feeding: 0, flight: 140 };
+const SPEED = { resting: 0, sentinel: 0, grazing: 8, drinking: 0, walking: 40, stalking: 22, running: 220, feeding: 0, flight: 140,
+                sunlit: 0, points: 0, core: 0, wheel: 0, streak: 320 };
 
 function step(dt) {
   const R = RANGES[state.range];
@@ -561,7 +620,7 @@ function step(dt) {
   if (state.radio && state.t > state.radioUntil) { $("radio").hidden = true; state.radio = null; }
   // driving, or walking: on foot the pace is a third and the shy ones
   // run from anyone moving nearby
-  const moving = R.seat !== "hide" && !state.camera;
+  const moving = R.seat !== "hide" && R.seat !== "tripod" && !state.camera;
   const top = R.seat === "walk" ? 90 : 260;
   const want = moving ? ((state.keys.d ? 1 : 0) - (state.keys.a ? 1 : 0)) * top : 0;
   state.speed += (want - state.speed) * Math.min(1, dt * 3);
@@ -588,6 +647,12 @@ function step(dt) {
     if (a.behaviour === "walking" || a.behaviour === "grazing") a.phase += dt * 6;
     if (a.behaviour === "running") a.phase += dt * 14;
     if (a.behaviour === "flight") a.phase += dt * 9;
+    // a mover across the sky comes back in from the other side
+    if (A.sky && SPEED[a.behaviour] > 0) {
+      if (sx > W + 200) { a.x -= W + 400; a.depth = 0.05 + state.rnd() * 0.35; }
+      if (sx < -200) { a.x += W + 400; a.depth = 0.05 + state.rnd() * 0.35; }
+      continue;
+    }
     // the range has no edge: an animal far behind respawns far ahead
     if (sx < -900) { const p = spawnPlan(state.range, 1, state.rnd, state.light)[0]; a.key = p.key; a.behaviour = p.behaviour; a.depth = p.depth; a.x = state.worldX + W + 600 + state.rnd() * 800; a.spooked = 0; }
   }
@@ -599,6 +664,11 @@ function step(dt) {
 function boxOf(a) {
   const A = ANIMALS[a.key];
   const scale = 0.45 + 0.55 * a.depth;
+  if (A.sky) {
+    // a sky subject: full size, hung at a height of the frame
+    const w = A.size, h = A.shape === "core" ? A.size * 0.45 : A.shape === "meteor" ? A.size * 0.3 : A.size;
+    return { x: a.x - state.worldX + JEEP_X - w / 2, y: H * a.depth, w, h, scale: 1 };
+  }
   const w = A.size * scale, h = (A.shape === "bird" ? A.size * 0.5 : A.shape === "upright" ? A.size * 1.6 : A.shape === "giraffe" ? A.size * 1.3 : A.shape === "blob" ? A.size * 1.1 : A.size * 0.6) * scale;
   const x = a.x - state.worldX + JEEP_X - w / 2;
   let y;
@@ -640,7 +710,7 @@ function refreshFocus() {
   if (a) {
     const B = BEHAVIOURS[a.behaviour], A = ANIMALS[a.key];
     $("asked").innerHTML = "<b>" + A.name + "</b> <span class='dim'>" + A.latin + "</span><br>" +
-      B.verb + " — 1/" + B.asked + "<br><span class='dim'>" + B.note + "</span>";
+      B.verb + " — " + B.asked + "<br><span class='dim'>" + B.note + "</span>";
   } else $("asked").textContent = "Nothing in the frame. Move the aim, or drive closer.";
   drawHud();
 }
@@ -657,7 +727,7 @@ function fire() {
   const framing = a ? measureFrame(boxOf(a), p) : null;
   if (framing && !inLamp(a)) framing.dark = true;
   const behaviour = a ? a.behaviour : "resting";
-  const v = score(state.shutter, behaviour, framing, state.light, a ? a.key : null);
+  const v = score(state.shutter, behaviour, framing, state.light, a ? a.key : null, scaleFor(state.range));
   if (a && a.spooked > 0 && v.stars > 0) { v.lines.unshift(RANGES[state.range].seat === "walk" ? WORDS.walked : WORDS.spooked); }
   const frame = a && v.stars > 0 ? plateFor(a.key, behaviour, state.rnd) : null;
   const plate = { when: Date.now(), range: state.range, light: state.light, shutter: state.shutter,
@@ -679,7 +749,7 @@ function showPlate(plate, img, frame) {
   const A = plate.animal ? ANIMALS[plate.animal] : null, B = plate.behaviour ? BEHAVIOURS[plate.behaviour] : null;
   const head = A ? A.name + " · " + B.verb : "Empty frame";
   div.innerHTML = "<h3>" + head + " <span class='stars'>" + "★".repeat(plate.stars) + "☆".repeat(3 - plate.stars) + "</span></h3>" +
-    "<p class='note'>1/" + plate.shutter + (B ? " · asked 1/" + B.asked : "") + " · ISO " + (plate.iso || "—") + " · " + LIGHTS[plate.light].name + " · " + RANGES[plate.range].name + "</p>" +
+    "<p class='note'>" + shutterLabel(plate.shutter) + (B ? " · asked " + B.asked : "") + " · ISO " + (plate.iso || "—") + " · " + LIGHTS[plate.light].name + " · " + RANGES[plate.range].name + "</p>" +
     "<p>" + (plate.keeper ? WORDS.keeper : "<span class='why'>" + WORDS.folder + "</span>") + " " + plate.lines.join(" ") + "</p>";
   if (frame) {
     // the frame this was learned on: the photograph, with the crop as an inset
@@ -711,7 +781,7 @@ function drawSheet() {
   for (const p of state.sheet.slice().reverse()) {
     const li = document.createElement("li");
     const A = ANIMALS[p.animal];
-    li.innerHTML = "<span class='s'>" + "★".repeat(p.stars) + "</span> " + (A ? A.name : "—") + (p.behaviour ? " · " + BEHAVIOURS[p.behaviour].verb.toLowerCase() : "") + " · 1/" + p.shutter + (p.prize ? " <span class='s'>· hard plate</span>" : "") + (p.frame ? " <span class='dim'>· " + p.frame + "</span>" : "");
+    li.innerHTML = "<span class='s'>" + "★".repeat(p.stars) + "</span> " + (A ? A.name : "—") + (p.behaviour ? " · " + BEHAVIOURS[p.behaviour].verb.toLowerCase() : "") + " · " + shutterLabel(p.shutter) + (p.prize ? " <span class='s'>· hard plate</span>" : "") + (p.frame ? " <span class='dim'>· " + p.frame + "</span>" : "");
     ul.appendChild(li); if (p.keeper) keepers++; if (p.prize) hard++;
   }
   $("sheet-line").textContent = state.sheet.length ? state.sheet.length + (state.sheet.length === 1 ? " plate" : " plates") + " kept, " + keepers + (keepers === 1 ? " keeper" : " keepers") + (hard ? ", " + hard + (hard === 1 ? " hard plate" : " hard plates") : "") + "." : "No plates yet.";
@@ -720,6 +790,7 @@ function drawSheet() {
 // ---- drawing ----
 function draw(withFinder = true) {
   const R = RANGES[state.range], L = LIGHTS[state.light];
+  if (R.seat === "tripod") return drawSkyScene(withFinder);
   const g = ctx.createLinearGradient(0, 0, 0, HORIZON);
   g.addColorStop(0, R.sky[0]); g.addColorStop(1, R.sky[1]);
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, HORIZON);
@@ -758,6 +829,45 @@ function draw(withFinder = true) {
   if (state.camera && withFinder) drawFinder();
 }
 
+// The night sky: a seeded star field, the horizon's acacias, the tripod.
+const STARFIELD = (() => { const r = mulberry(19); const s = []; for (let i = 0; i < 420; i++) s.push([r(), r(), r()]); return s; })();
+function drawSkyScene(withFinder) {
+  const R = RANGES[state.range], L = LIGHTS[state.light];
+  const g = ctx.createLinearGradient(0, 0, 0, NEAR);
+  g.addColorStop(0, R.sky[0]); g.addColorStop(1, R.sky[1]);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, NEAR);
+  // the field, dimmer under moonlight
+  const dim = L.name === "Moonlit" ? 0.55 : 1;
+  for (const [fx, fy, m] of STARFIELD) {
+    const r = m < 0.9 ? 0.8 : 1.6, tw = 0.7 + 0.3 * Math.sin(state.t * 2 + fx * 40);
+    ctx.fillStyle = "rgba(245,240,228," + (0.35 + 0.65 * m) * dim * tw + ")";
+    ctx.fillRect(fx * W, fy * (NEAR - 40), r, r);
+  }
+  ctx.fillStyle = L.tint; ctx.fillRect(0, 0, W, H);
+  // subjects, then the ground and the near trees
+  for (const a of state.animals) if (!a.gone) drawAnimal(a);
+  ctx.fillStyle = R.ground; ctx.fillRect(0, NEAR - 6, W, H - NEAR + 6);
+  ctx.fillStyle = R.far;
+  for (let i = 0; i < 7; i++) {
+    const x = 90 + i * 190 + (i % 2) * 40;
+    ctx.beginPath(); ctx.ellipse(x, NEAR - 40, 70, 22, 0, 0, 6.28); ctx.fill();
+    ctx.fillRect(x - 3, NEAR - 40, 6, 36);
+  }
+  drawTripod();
+  if (state.camera && withFinder) drawFinder();
+}
+
+function drawTripod() {
+  const x = JEEP_X, y = NEAR + 4;
+  ctx.strokeStyle = "#2a2a30"; ctx.lineWidth = 4; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(x, y - 90); ctx.lineTo(x - 34, y); ctx.moveTo(x, y - 90); ctx.lineTo(x + 34, y); ctx.moveTo(x, y - 90); ctx.lineTo(x + 6, y); ctx.stroke();
+  ctx.fillStyle = "#2a2a30"; ctx.fillRect(x - 16, y - 108, 32, 20);
+  ctx.fillRect(x + 14, y - 104, 22, 12);
+  // the photographer beside it, and the camp lights behind
+  ctx.fillStyle = "#1c1a22"; ctx.fillRect(x - 70, y - 86, 22, 86); ctx.beginPath(); ctx.arc(x - 59, y - 96, 11, 0, 6.28); ctx.fill();
+  for (const lx of [60, 130]) { ctx.fillStyle = "rgba(255,200,120,0.9)"; ctx.fillRect(lx, NEAR - 14, 3, 3); }
+}
+
 function drawWalkers() {
   // the guide ahead, you behind, on the near line
   for (const [x, h, c] of [[JEEP_X + 60, 78, "#5d6b3a"], [JEEP_X, 72, "#7a4b1e"]]) {
@@ -771,8 +881,45 @@ function drawWalkers() {
   }
 }
 
+function drawSky(a, A, b) {
+  const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+  ctx.save();
+  if (A.shape === "moon") {
+    const g = ctx.createRadialGradient(cx, cy, b.w * 0.5, cx, cy, b.w * 1.6);
+    g.addColorStop(0, "rgba(242,237,216,0.25)"); g.addColorStop(1, "rgba(242,237,216,0)");
+    ctx.fillStyle = g; ctx.fillRect(cx - b.w * 2, cy - b.w * 2, b.w * 4, b.w * 4);
+    ctx.fillStyle = A.colour; ctx.beginPath(); ctx.arc(cx, cy, b.w / 2, 0, 6.28); ctx.fill();
+    ctx.fillStyle = "rgba(120,110,100,0.35)";
+    for (const [dx, dy, r] of [[-0.2, -0.1, 0.16], [0.15, 0.2, 0.12], [0.1, -0.25, 0.08]]) { ctx.beginPath(); ctx.arc(cx + dx * b.w, cy + dy * b.w, r * b.w, 0, 6.28); ctx.fill(); }
+  } else if (A.shape === "stars") {
+    const r = mulberry(a.x | 0);
+    for (let i = 0; i < 34; i++) { const s = 1 + r() * 2.2; ctx.fillStyle = "rgba(255,250,235," + (0.6 + r() * 0.4) + ")"; ctx.fillRect(b.x + r() * b.w, b.y + r() * b.h, s, s); }
+  } else if (A.shape === "pole") {
+    ctx.strokeStyle = "rgba(245,240,228,0.10)"; ctx.lineWidth = 1;
+    for (let k = 1; k <= 4; k++) { ctx.beginPath(); ctx.arc(cx, cy, b.w * 0.12 * k, 0, 6.28); ctx.stroke(); }
+    const r = mulberry((a.x | 0) + 7);
+    for (let i = 0; i < 26; i++) { const ang = r() * 6.28, rad = b.w * 0.05 + r() * b.w * 0.45; ctx.fillStyle = "rgba(255,250,235," + (0.5 + r() * 0.5) + ")"; ctx.fillRect(cx + Math.cos(ang) * rad, cy + Math.sin(ang) * rad, 1.6, 1.6); }
+    ctx.fillStyle = "#fff"; ctx.fillRect(cx - 1, cy - 1, 2, 2);
+  } else if (A.shape === "core") {
+    ctx.translate(cx, cy); ctx.rotate(-0.5);
+    const g = ctx.createRadialGradient(0, 0, 0, 0, 0, b.w * 0.55);
+    g.addColorStop(0, "rgba(216,212,232,0.28)"); g.addColorStop(0.6, "rgba(200,190,230,0.12)"); g.addColorStop(1, "rgba(200,190,230,0)");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(0, 0, b.w * 0.55, b.h * 0.5, 0, 0, 6.28); ctx.fill();
+    const r = mulberry(31);
+    for (let i = 0; i < 120; i++) { const ang = r() * 6.28, rad = Math.sqrt(r()); ctx.fillStyle = "rgba(255,250,240," + (0.3 + r() * 0.6) + ")"; ctx.fillRect(Math.cos(ang) * rad * b.w * 0.5, Math.sin(ang) * rad * b.h * 0.45, 1.2, 1.2); }
+  } else if (A.shape === "meteor") {
+    const g = ctx.createLinearGradient(b.x, cy, b.x + b.w, cy);
+    g.addColorStop(0, "rgba(255,248,224,0)"); g.addColorStop(1, "rgba(255,248,224,0.95)");
+    ctx.strokeStyle = g; ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.moveTo(b.x, cy + b.h * 0.4); ctx.lineTo(b.x + b.w, cy - b.h * 0.4); ctx.stroke();
+    ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(b.x + b.w, cy - b.h * 0.4, 2.4, 0, 6.28); ctx.fill();
+  }
+  ctx.restore();
+}
+
 function drawAnimal(a) {
   const A = ANIMALS[a.key], b = boxOf(a);
+  if (A.sky) return drawSky(a, A, b);
   ctx.save();
   ctx.translate(b.x + b.w / 2, b.y + b.h);
   ctx.scale(a.dir, 1);
@@ -874,8 +1021,8 @@ function drawHud() {
   if (!state.playing) { h.innerHTML = "<span class='k'>At camp: pick a range and a light</span>"; return; }
   const add = (txt, cls) => { const s = document.createElement("span"); s.className = "k " + (cls || ""); s.textContent = txt; h.appendChild(s); return s; };
   const asked = state.focus ? BEHAVIOURS[state.focus.behaviour].asked : null;
-  for (const s of SHUTTERS) {
-    const e = add("1/" + s, (s === state.shutter ? "on " : "") + (s === asked ? "asked" : ""));
+  for (const s of SCALES[scaleFor(state.range)]) {
+    const e = add(s, (s === state.shutter ? "on " : "") + (s === asked ? "asked" : ""));
     e.onclick = () => { state.shutter = s; drawHud(); };
   }
   add("ISO " + LIGHTS[state.light].iso[state.shutter]);
@@ -883,6 +1030,14 @@ function drawHud() {
   const cam = add(state.camera ? "Space: shoot" : "Space: camera"); cam.onclick = () => toggleCamera();
   if (state.camera) { const lo = add("Lower (C)"); lo.onclick = () => toggleCamera(); }
   const pk = add("Esc: pack up"); pk.onclick = packUp;
+}
+
+function stepShutter(dir) {
+  const scale = SCALES[scaleFor(state.range)];
+  const i = shutterIndex(state.shutter, scaleFor(state.range));
+  const j = i + dir;
+  if (j >= 0 && j < scale.length) state.shutter = scale[j];
+  drawHud();
 }
 
 function toggleCamera() {
@@ -904,8 +1059,8 @@ stage.addEventListener("keydown", (e) => {
   if (k === " ") { if (state.camera) fire(); else toggleCamera(); }
   if (k === "c") { if (state.camera) toggleCamera(); }
   if (k === "tab") cycleFocus();
-  if (k === "[") { const i = shutterIndex(state.shutter); if (i > 0) state.shutter = SHUTTERS[i - 1]; drawHud(); }
-  if (k === "]") { const i = shutterIndex(state.shutter); if (i < SHUTTERS.length - 1) state.shutter = SHUTTERS[i + 1]; drawHud(); }
+  if (k === "[") stepShutter(-1);
+  if (k === "]") stepShutter(1);
   if (k === "z") { state.pull = (state.pull + 1) % PULLS.length; if (state.camera) refreshFocus(); else drawHud(); }
   if (k === "escape") packUp();
   const nudge = 24;
@@ -943,8 +1098,8 @@ for (const b of document.querySelectorAll("#pad button")) {
   b.addEventListener("click", () => {
     if (!state.playing) { if (act === "camera") begin(); return; }
     if (act === "camera") { if (state.camera) fire(); else toggleCamera(); }
-    if (act === "slower") { const i = shutterIndex(state.shutter); if (i > 0) state.shutter = SHUTTERS[i - 1]; drawHud(); }
-    if (act === "faster") { const i = shutterIndex(state.shutter); if (i < SHUTTERS.length - 1) state.shutter = SHUTTERS[i + 1]; drawHud(); }
+    if (act === "slower") stepShutter(-1);
+    if (act === "faster") stepShutter(1);
     if (act === "next") cycleFocus();
     if (act === "pull") { state.pull = (state.pull + 1) % PULLS.length; if (state.camera) refreshFocus(); else drawHud(); }
     if (act === "pack") packUp();
