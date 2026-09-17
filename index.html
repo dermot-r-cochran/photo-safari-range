@@ -166,6 +166,7 @@
     <div class="row" id="body-pick"></div>
     <div class="row" id="light-pick"></div>
     <p class="note" id="camp-note"></p>
+    <p class="note" id="wanted"></p>
     <div class="row"><button class="primary" id="go">Drive the range</button></div>
     <p class="note">The driver drives, stops when the spotter calls, and moves on · left and right arrows (or A and D) ask him for closer or back · Space raises the camera and fires it · with the camera up the arrows move the aim · M turns the mode dial through S, A and M · [ and ] change the shutter · , and . change the aperture · B rests the camera on the beanbag, or the tripod on foot · the camera focuses on what is under the centre of the frame, and Tab picks another animal in it · Z zooms · N skips to the next part of the day · Esc packs up.</p>
   </div>
@@ -601,6 +602,7 @@ const WORDS = {
   diffSoft: "f/11: diffraction is starting to soften the pixels on this body.",
   diffPlain: "f/16 or smaller: diffraction is plain at fourteen megapixels. The depth was bought with softness.",
   aDropped: "In A the camera held ISO 100 as long as it could, hit the cap, and let the shutter drop under the floor.",
+  wanted:   "No frame of this yet. One to make.",
   cut:      "Cut by the frame edge.",
   small:    "A speck. Pull tighter or get closer.",
   filling:  "It fills the plate.",
@@ -834,6 +836,10 @@ function mulberry(seed) {
 
 // The frame a plate shows: same animal and behaviour first, then any frame
 // of the animal, else null (the crop stands alone).
+// The animals a range casts that have no frame yet: the shooting list.
+function wantedFor(rangeKey) {
+  return Object.keys(RANGES[rangeKey].cast).filter(k => !PLATES.some(p => p.animal === k));
+}
 function plateFor(animal, behaviour, rnd) {
   const exact = PLATES.filter(p => p.animal === animal && p.behaviours.includes(behaviour));
   const any = exact.length ? exact : PLATES.filter(p => p.animal === animal);
@@ -843,7 +849,7 @@ function plateFor(animal, behaviour, rnd) {
 
 const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, STILL, DAYS, CLOCK_RATE,
                 APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
-                score, askedFor, measureFrame, spawnPlan, plateFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, pick, mulberry };
+                score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
 
 // ---- page section: everything below needs a document ----
@@ -905,6 +911,10 @@ function buildCamp() {
     if (day) { const s = document.createElement("span"); s.className = "note"; s.textContent = " · " + day.map(l => l.name + " " + l.from).join(" · "); lp.appendChild(s); }
   }
   $("camp-note").textContent = R.place + ". " + R.note;
+  const wanted = wantedFor(state.range);
+  $("wanted").textContent = wanted.length
+    ? "Wanted, no frame of these yet: " + wanted.map(k => ANIMALS[k].name).join(", ") + "."
+    : "Every animal on this range has a frame.";
   $("go").textContent = R.seat === "hide" ? "Sit the hide" : R.seat === "walk" ? "Walk the range" : R.seat === "tripod" ? "Set up the tripod" : "Drive the range";
   $("range-line").textContent = R.name + " · " + LIGHTS[state.light].name;
 }
@@ -1248,7 +1258,13 @@ function showPlate(plate, img, frame) {
     cap.innerHTML = "<b>The frame this was learned on — " + frame.title + ".</b> " + frame.caption;
     fig.append(pic, img, cap);
     div.insertBefore(fig, div.children[1]);
-  } else div.insertBefore(img, div.children[1]);
+  } else {
+    div.insertBefore(img, div.children[1]);
+    if (plate.animal && plate.stars > 0 && !PLATES.some(p => p.animal === plate.animal)) {
+      const w = document.createElement("p"); w.className = "note"; w.textContent = WORDS.wanted;
+      div.insertBefore(w, div.children[2]);
+    }
+  }
   const row = document.createElement("div"); row.className = "row";
   const keep = document.createElement("button"); keep.className = "primary"; keep.textContent = "Keep this";
   const drop = document.createElement("button"); drop.textContent = "Discard";

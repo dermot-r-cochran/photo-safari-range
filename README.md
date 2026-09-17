@@ -185,8 +185,10 @@ corner and a caption that says what the frame is. It is a comparison, not
 the answer: the stars and the verdict are about your plate; the photograph
 is what the same moment looked like when it was got. Twenty-eight frames
 so far, under `images/`, at portfolio size, chosen by animal and
-behaviour; an animal with no frame yet (the meerkat, the hippo, the puku)
-shows the crop alone, and the page works with no picture files at all.
+behaviour; an animal with no frame yet shows the crop alone with the line
+"No frame of this yet. One to make.", and each range's camp lists the
+animals still wanting one, which is the shooting list for the next trip.
+The page works with no picture files at all.
 
 The animals on the range are placeholder silhouettes drawn on the canvas.
 The author's portfolio carries no generated images; if generated sprites

@@ -260,6 +260,13 @@ for (const p of R.PLATES) {
   ok();
 }
 for (const f of onDisk) if (!referenced.has(f)) fail("images/" + f + " is not shown on any plate");
+// the wanted list: exactly the cast animals with no frame, and never one with a frame
+for (const k in R.RANGES) {
+  const w = R.wantedFor(k);
+  for (const a of w) { if (!R.RANGES[k].cast[a]) fail("wanted list for " + k + " names " + a + ", not in its cast"); if (R.PLATES.some(p => p.animal === a)) fail("wanted list for " + k + " names " + a + ", which has a frame"); }
+  for (const a in R.RANGES[k].cast) if (!R.PLATES.some(p => p.animal === a) && !w.includes(a)) fail("wanted list for " + k + " misses " + a);
+  ok();
+}
 // plateFor: exact before any, deterministic, null for an animal with no frame
 for (const a in R.ANIMALS) for (const b in R.ANIMALS[a].states) {
   const p = R.plateFor(a, b, R.mulberry(3));
