@@ -166,7 +166,7 @@
     <div class="row" id="light-pick"></div>
     <p class="note" id="camp-note"></p>
     <div class="row"><button class="primary" id="go">Drive the range</button></div>
-    <p class="note">The driver drives, stops when the spotter calls, and moves on · left and right arrows (or A and D) ask him for closer or back · Space raises the camera and fires it · with the camera up the arrows move the aim · M turns the mode dial through S, A and M · [ and ] change the shutter · , and . change the aperture · B rests the camera on the beanbag, or the tripod on foot · Tab picks another animal in the frame · Z zooms · N skips to the next part of the day · Esc packs up.</p>
+    <p class="note">The driver drives, stops when the spotter calls, and moves on · left and right arrows (or A and D) ask him for closer or back · Space raises the camera and fires it · with the camera up the arrows move the aim · M turns the mode dial through S, A and M · [ and ] change the shutter · , and . change the aperture · B rests the camera on the beanbag, or the tripod on foot · the camera focuses on what is under the centre of the frame, and Tab picks another animal in it · Z zooms · N skips to the next part of the day · Esc packs up.</p>
   </div>
   <div id="plates"></div>
 </main>
@@ -1095,10 +1095,14 @@ function inLamp(a) {
   const b = boxOf(a), cx = b.x + b.w / 2, cy = b.y + b.h / 2;
   return Math.hypot(cx - state.aim.x, cy - state.aim.y) < LAMP;
 }
+// The animals in the plate, nearest the centre first: the camera's
+// autofocus takes whatever sits under the middle of the frame, and Tab
+// walks the rest.
 function inFrame() {
   const p = plateRect();
+  const dist = (a) => { const b = boxOf(a); return Math.hypot(b.x + b.w / 2 - state.aim.x, b.y + b.h / 2 - state.aim.y); };
   return state.animals.filter(a => !a.gone && inLamp(a) && measureFrame(boxOf(a), p).inside)
-    .sort((a, b) => boxOf(b).w - boxOf(a).w);
+    .sort((a, b) => dist(a) - dist(b));
 }
 
 function refreshFocus() {

@@ -36,8 +36,9 @@ The loop, in four beats:
 2. **Camera** up (Space). The plate rectangle follows the mouse or the
    arrow keys; Z zooms through wide, normal and tight (on the macro range,
    1:4, 1:2 and 1:1).
-3. **Match** the shutter to what the spotter asked ([ and ]). Tab picks
-   another animal when several are in the frame.
+3. **Match** the shutter to what the spotter asked ([ and ]). The camera
+   focuses on whatever is under the centre of the frame; Tab picks another
+   animal when several are in it.
 4. **Shoot** (Space). Keep the plate or discard it.
 
 Drive at an animal fast and the shy ones run; the plate is the tail end.
