@@ -122,9 +122,18 @@ for (const k in R.LIGHTS) {
   for (const s of R.SCALES[l.scale || "day"]) if (!(l.iso[s] > 0)) fail("light " + k + " has no ISO for " + s);
   ok();
 }
-// pulls
+// pulls, the default set and any range's own
 if (R.PULLS.length < 2) fail("fewer than two pulls on the glass");
 for (const p of R.PULLS) if (!(p.frac > 0 && p.frac <= 1)) fail("pull " + p.name + " has a bad fraction");
+for (const k in R.RANGES) {
+  const pulls = R.pullsFor(k);
+  if (pulls.length < 2) fail("range " + k + " has fewer than two pulls");
+  for (const p of pulls) {
+    if (!p.name || !p.note || !(p.frac > 0 && p.frac <= 1)) fail("range " + k + " pull " + (p.name || "?") + " is missing name, note or a good fraction");
+    if (p.verdict !== undefined && typeof p.verdict !== "string") fail("range " + k + " pull " + p.name + " has a verdict that is not words");
+  }
+  ok();
+}
 
 // plates: every frame has a file, an animal, behaviours the animal has, words
 const imagesDir = path.join(root, "images");

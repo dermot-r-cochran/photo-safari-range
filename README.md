@@ -52,6 +52,16 @@ Cats and elephants do not run from a jeep. Nothing is killed on the range.
   a star; an animal that fills the working pull is the plate you wanted.
   Tighter is head and shoulders, and the note is the field's: long glass
   stacks the background, which is compression, not walking closer.
+- **Home Ground is the macro range.** A beech wood and a garden near home,
+  the week after, on foot with the 70 mm macro: mushrooms, roses, a spear
+  thistle, wild angelica, a sloe and a bramble, bumblebees, a hoverfly and
+  a ladybird. The pulls on the glass become magnification, 1:4, 1:2 and
+  1:1, and the verdict says what each costs in depth of field: a few
+  millimetres at 1:2, about a millimetre at 1:1 at f/8, with f/16 buying
+  depth in diffraction. A still subject asks for the hand-held floor at
+  70 mm, 1/125; a breeze asks for 1/250; a bee working a flower asks for
+  1/500 and in flight 1/2000. Walk at the bees and they leave. Seventeen
+  frames from the portfolio's Macro and Nature pages are the reveal.
 - **The country is a subject too.** A flat-topped acacia stands on the
   range like anything else and asks for the hand-held floor, about 1/30 at
   the wide end on this body, or 1/125 when the wind is in the canopy. A

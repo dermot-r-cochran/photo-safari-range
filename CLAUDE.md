@@ -105,6 +105,25 @@ from before the change carry a numeric shutter; `shutterLabel` reads both.
 The numbers are one camera's again: the 500 rule at the 18 mm end of the
 zoom on the crop body, and ISO 3200 as its ceiling.
 
+## Home Ground, the macro range
+
+Added 2026-09-17 at Dermot's "a macro range for flowers, insects and
+mushrooms". Same day scale, `seat: "walk"`, `wood: 1` (trunks instead of
+crowns on the horizon), and the first range with its own `pulls`: the
+three magnifications 1:4, 1:2 and 1:1, each with a `note` for the HUD and
+the last two with a `verdict` line the scorer appends to any plate that
+hit (`pullsFor`). The depth-of-field numbers are the tutorial's: about a
+millimetre at 1:1 and f/8, a few millimetres at 1:2, diffraction from
+f/11 and the effective aperture two stops darker at 1:1. Behaviours
+`still` (1/125, the hand-held floor at 70 mm), `breeze` (1/250),
+`working` (1/500) and `crawling` (1/250); insects `spook` on foot. Three
+lights: bright overcast (the macro light), dappled sun, the woodland
+floor. Seventeen frames from the portfolio's Macro and Nature pages;
+two are stored under their page slug because the site file is a camera
+name (dsc_1030, dsc_1000). Aperture is still not a control the player
+sets; the pulls carry its cost in words. If that ever changes, it is a
+second axis on the scorer, not a new range.
+
 ## Adding to the world
 
 An animal: add to `ANIMALS` with `name`, `latin`, `size`, `shape` (one of

@@ -205,6 +205,11 @@ const BEHAVIOURS = {
   // trees and the country: nothing moves but the light
   standing: { asked: "1/30",   verb: "Standing", note: "Nothing moves but the light. The floor is the hand-held rule, one over the focal length and a half; at the wide end, about 1/30." },
   wind:     { asked: "1/125",  verb: "In wind",  note: "The trunk stands, the leaves do not. 1/125 holds the canopy." },
+  // home ground, on the 70 mm macro
+  still:    { asked: "1/125",  verb: "Still",    note: "Nothing moves. The floor is the hand-held rule at 70 mm on this body, so 1/125; on a support with the mirror up, anything." },
+  breeze:   { asked: "1/250",  verb: "In a breeze", note: "The stem moves a finger's width and back. 1/250 holds a petal; the frame in between is soft." },
+  working:  { asked: "1/500",  verb: "Working",  note: "On the flower and never still: legs, antennae, the head in the pollen. 1/500 holds the body. The wings are their own problem." },
+  crawling: { asked: "1/250",  verb: "Crawling", note: "Across a seed head at its own pace. 1/250 is enough, and the depth of field is the real question." },
   // the night sky, on the sky scale
   sunlit:   { asked: "1/250",  verb: "Sunlit",   note: "A rock in full sun, however dark the night. Meter it like a daylight scene or it goes to a white disc." },
   points:   { asked: "15s",    verb: "Points",   note: "Five hundred over the focal length, in seconds, before the Earth turns them into lines. At 30 mm on this body, about fifteen." },
@@ -232,6 +237,17 @@ const ANIMALS = {
   giraffe:  { name: "Masai Giraffe",     latin: "Giraffa tippelskirchi", size: 170, shape: "giraffe", colour: "#9a6a36", states: { sentinel: 3, walking: 3, grazing: 2 }, spook: 0 },
   hyena:    { name: "Spotted Hyena",     latin: "Crocuta crocuta",      size: 100, shape: "cat",      colour: "#6e5a44", states: { resting: 5, walking: 2 }, spook: 0 },
   vulture:  { name: "Vulture",           latin: "Gyps africanus",       size: 75,  shape: "bird",     colour: "#3a302a", states: { flight: 4, feeding: 3, sentinel: 1 }, fly: 1, spook: 0 },
+  // Home ground, the week after, on the 70 mm macro. Small, low, and the
+  // insects leave if you walk at them.
+  mushroom: { name: "Mushroom",          latin: "A cap on the floor",   size: 70,  shape: "mushroom", colour: "#d9cfb8", states: { still: 1 }, spook: 0 },
+  rose:     { name: "Rose",              latin: "In the garden",        size: 90,  shape: "flower",   colour: "#e0b04a", states: { still: 3, breeze: 2 }, spook: 0 },
+  thistle:  { name: "Spear Thistle",     latin: "Cirsium vulgare",      size: 90,  shape: "flower",   colour: "#8a5aa8", states: { still: 2, breeze: 2 }, spook: 0 },
+  angelica: { name: "Wild Angelica",     latin: "Angelica sylvestris",  size: 90,  shape: "flower",   colour: "#efe9dc", states: { still: 2, breeze: 3 }, spook: 0 },
+  sloe:     { name: "Sloe",              latin: "Prunus spinosa",       size: 44,  shape: "berry",    colour: "#2e2a4a", states: { still: 1 }, spook: 0 },
+  bramble:  { name: "Bramble",           latin: "Rubus fruticosus",     size: 60,  shape: "berry",    colour: "#1e1418", states: { still: 3, breeze: 1 }, spook: 0 },
+  bee:      { name: "Bumblebee",         latin: "Bombus",               size: 34,  shape: "insect",   colour: "#3a3020", states: { working: 4, flight: 2 }, spook: 2 },
+  hoverfly: { name: "Hoverfly",          latin: "Syrphidae",            size: 26,  shape: "insect",   colour: "#c89a2a", states: { working: 2, flight: 3 }, spook: 2, prize: 1 },
+  ladybird: { name: "Ladybird",          latin: "Coccinella",           size: 28,  shape: "ladybird", colour: "#c8321e", states: { still: 2, crawling: 2 }, spook: 1, prize: 1 },
   // The country itself: a subject that does not move, and does not run.
   acacia:   { name: "Flat-topped Acacia", latin: "Vachellia tortilis", size: 300, shape: "tree",     colour: "#2f2a1e", states: { standing: 4, wind: 2 }, spook: 0 },
   // South Luangwa. `prize` marks the small hard subjects that are the point
@@ -337,6 +353,58 @@ const PLATES = [
   { file: "vulture-landing.jpg", animal: "vulture", behaviours: ["flight", "sentinel"], title: "Vulture Landing",
     alt: "A vulture with both wings still raised, settling onto the crown of a thorn bush against a pale sky",
     caption: "Both wings still up as it settles on the thorn. The frame was got on the shooting-birds setting, not the walking-around one." },
+  // home ground
+  { file: "a-single-mushroom.jpg", animal: "mushroom", behaviours: ["still"], title: "A Single Mushroom",
+    alt: "One small pale mushroom seen from above, its cap finely striated from the centre to the rim, isolated against a soft blur of green moss and amber leaf litter, with a single strand of spider silk crossing the frame beside it",
+    caption: "From above, the cap's striations sharp and the floor gone soft. The strand of silk stayed because it was there." },
+  { file: "puffball-with-a-fly.jpg", animal: "mushroom", behaviours: ["still"], title: "Puffball with a Fly",
+    alt: "A white puffball covered in short conical spines, resting among dark brown beech leaves on the woodland floor, with a small fly perched on the very top of it and the background falling away into shadow",
+    caption: "The fly on top is the plate. Wait for it; a puffball is not going anywhere." },
+  { file: "turkeytail.jpg", animal: "mushroom", behaviours: ["still"], title: "Turkeytail",
+    alt: "A row of turkeytail bracket fungi hanging from the underside of a dark fallen log that runs diagonally across the frame, each cap banded in concentric rings of grey, brown and violet and edged with a wavy cream-white margin, above a bed of bright green moss",
+    caption: "Brackets on the underside of a log. The camera has to be lower than the fungus, which means the leaf litter." },
+  { file: "the-troop.jpg", animal: "mushroom", behaviours: ["still"], title: "The Troop",
+    alt: "A square frame packed edge to edge with rounded tawny fungus caps, each finely grooved and flecked with pale granules, pressed together in a dense mass with a wedge of dark wood and bright green moss at the top",
+    caption: "Edge to edge with caps. At 1:2 the near ones are sharp and the far ones are not, and the frame is about the pattern, not the one." },
+  { file: "amber-rose-in-dappled-light.jpg", animal: "rose", behaviours: ["still"], title: "Amber Rose in Dappled Light",
+    alt: "A yellow rose with amber-edged petals, lit unevenly by dappled sunlight against a soft garden backdrop",
+    caption: "Sun through leaves, so the light is uneven by nature. The petals hold it; the shadow side is where the colour is." },
+  { file: "blush-rose-unfurling.jpg", animal: "rose", behaviours: ["still"], title: "Blush Rose Unfurling",
+    alt: "A pale pink rose caught mid-bloom, its inner petals spiralling around a soft glowing centre",
+    caption: "Mid-bloom, the spiral. The depth of field is a few petals; pick which." },
+  { file: "golden-rose-in-full-bloom.jpg", animal: "rose", behaviours: ["still", "breeze"], title: "Golden Rose in Full Bloom",
+    alt: "A fully open yellow rose with orange-tinged petal edges, glowing in warm sunlight",
+    caption: "Fully open in warm sun. Vivid would blow the yellow; this is the standard setting and the colour is the flower's own." },
+  { file: "spear-thistle.jpg", animal: "thistle", behaviours: ["still", "breeze"], title: "Spear Thistle",
+    alt: "A spear thistle in full flower, a dense purple crown of florets tipped with white pollen rising from a green spine-covered base, against soft green background",
+    caption: "The crown in flower, the spines below it. A thistle stands still in more wind than a rose does." },
+  { file: "wild-angelica.jpg", animal: "angelica", behaviours: ["still", "breeze"], title: "Wild Angelica",
+    alt: "A domed umbel of tiny white flowers flushed with pink, carried on pale green spokes radiating from a single point, sharp against a deep green background thrown completely out of focus",
+    caption: "An umbel on a tall stem, the kind that moves in any air. The background is gone because the lens was close, not because of the aperture." },
+  { file: "a-single-sloe.jpg", animal: "sloe", behaviours: ["still"], title: "A Single Sloe",
+    alt: "A single blue-black sloe hanging from a blackthorn twig, its waxy pale bloom intact and unmarked, with one green leaf below it and the rest of the hedge dissolved into soft green behind",
+    caption: "The bloom on the skin is the point, and a thumb would have taken it off. Nothing touched." },
+  { file: "blackberries-ripening.jpg", animal: "bramble", behaviours: ["still", "breeze"], title: "Blackberries Ripening",
+    alt: "A cluster of bramble fruit at three stages on one stem, two berries fully ripe and glossy black with the dried styles still standing up from them, others still red and hard above, set against green bramble leaves and a softly blurred bank",
+    caption: "Three stages on one stem. The frame is a calendar." },
+  { file: "bee-approaching-an-amber-rose.jpg", animal: "bee", behaviours: ["flight"], title: "Bee Approaching an Amber Rose",
+    alt: "A bee in flight, wings blurred with motion, coming in to land on a yellow rose with amber-pink edges",
+    caption: "Coming in to land, the wings a blur and the body sharp. The wings beat faster than any shutter here; the body is what 1/2000 holds." },
+  { file: "bee-foraging-in-a-sunlit-rose.jpg", animal: "bee", behaviours: ["working"], title: "Bee Foraging in a Sunlit Rose",
+    alt: "A bee working the golden stamens at the centre of a yellow rose with pink-tinged petal edges",
+    caption: "Head down in the stamens. It stayed while it fed, which is the only time a bee stays." },
+  { file: "bumblebee-on-golden-rose.jpg", animal: "bee", behaviours: ["working"], title: "Bumblebee on Golden Rose",
+    alt: "A bumblebee working its way across the petals of a bright yellow rose",
+    caption: "Across the petals rather than into the centre. The legs never stopped; 1/500 held the body." },
+  { file: "bumblebee-on-giant-scabious.jpg", animal: "bee", behaviours: ["working"], title: "Bumblebee on Giant Scabious",
+    alt: "A bumblebee with a tawny thorax feeding on the pale primrose-yellow pincushion head of a giant scabious, seen from below against a bright overcast sky, with dark out-of-focus conifers closing both sides and the flower's tall stem running down out of the frame",
+    caption: "From below, against a white sky. Bright overcast is the macro light: no hard shadow, and the meter can be trusted." },
+  { file: "hoverfly-on-thistle-flower.jpg", animal: "hoverfly", behaviours: ["working"], title: "Hoverfly on Thistle Flower",
+    alt: "A hoverfly on a purple thistle flower",
+    caption: "A hoverfly holds still on a flower for a second at a time. That second is the plate." },
+  { file: "ladybird-on-thistle.jpg", animal: "ladybird", behaviours: ["still", "crawling"], title: "Ladybird on Thistle",
+    alt: "A ladybird resting on a spiky thistle seed head",
+    caption: "On a seed head, the spikes for scale. At 1:1 the shell is sharp and the spikes behind it are not." },
   { file: "acacia-in-the-dawn-haze.jpg", animal: "acacia", behaviours: ["standing"], title: "Acacia in the Dawn Haze",
     alt: "A flat-topped acacia silhouetted in golden dawn haze, with wildebeest and zebra grazing beneath it",
     caption: "Amboseli at dawn, the tree a shape in the haze and the herd small beneath it. Nothing moved but the light; the shutter had all the time it wanted." },
@@ -364,6 +432,15 @@ const RANGES = {
              note: "Walking country, single file behind the guide. Stop when he stops. After the gate, a night drive: the small ones are the plate.",
              cast: { puku: 3, elephant: 2, hippo: 2, leopard: 2, serval: 3, hyrax: 3, genet: 3, beeeater: 3, acacia: 2 },
              lights: ["first", "heat", "last", "night"] },
+  home:    { name: "Home Ground",   place: "A beech wood and a garden, Dublin, Ireland", seat: "walk", wood: 1, sky: ["#d6dcd2", "#b8c2b0"], ground: "#5e4b34", far: "#3a4a2c",
+             note: "The week after, on foot, with the 70 mm macro. The pulls are magnification now: at 1:1 the depth of field is about a millimetre at f/8. Get low, and do not walk at the bees.",
+             cast: { mushroom: 4, rose: 3, thistle: 2, angelica: 2, sloe: 2, bramble: 2, bee: 3, hoverfly: 2, ladybird: 2 },
+             lights: ["overcast", "dappled", "shade"],
+             pulls: [
+               { name: "1:4", frac: 0.55, note: "A quarter life-size. The plant and its ground." },
+               { name: "1:2", frac: 0.34, note: "Half life-size. Depth a few millimetres at f/8.", verdict: "At 1:2 the depth of field is a few millimetres: the near petals are sharp, the far ones are not." },
+               { name: "1:1", frac: 0.20, note: "Life-size. Depth about a millimetre at f/8; f/16 buys depth with diffraction, and the effective aperture is already two stops darker.", verdict: "At 1:1 the depth of field is about a millimetre at f/8. The eye is sharp; the rest is not. Stopping down to f/16 buys depth and pays in diffraction." }
+             ] },
   sky:     { name: "Night Sky",     place: "South Luangwa, Zambia, after the fire", seat: "tripod", scale: "sky", sky: ["#070a1c", "#1a1f3a"], ground: "#0b0a10", far: "#14121c",
              note: "A tripod on the airstrip, the camp behind you. Nothing to drive. The Earth turns; that is the movement. Wait for your eyes.",
              cast: { stars: 3, pole: 2, milky: 2, moon: 2, meteor: 3 },
@@ -378,6 +455,10 @@ const LIGHTS = {
   heat:  { name: "Heat",        tint: "rgba(255,255,230,0.10)", iso: { "1/30": 100, "1/60": 100, "1/125": 100, "1/250": 100, "1/500": 200, "1/1000": 400, "1/2000": 800 } },
   last:  { name: "Last light",  tint: "rgba(200,90,60,0.22)",   iso: { "1/30": 100, "1/60": 200, "1/125": 400, "1/250": 800, "1/500": 1600, "1/1000": 3200, "1/2000": 3200 } },
   night: { name: "Night drive", tint: "rgba(10,18,40,0.55)", lamp: 1, iso: { "1/30": 1600, "1/60": 3200, "1/125": 3200, "1/250": 3200, "1/500": 3200, "1/1000": 3200, "1/2000": 3200 } },
+  // home ground: bright overcast, sun through the leaves, and the wood's floor
+  overcast: { name: "Bright overcast", tint: "rgba(220,226,230,0.12)", iso: { "1/30": 100, "1/60": 100, "1/125": 200, "1/250": 400, "1/500": 800, "1/1000": 1600, "1/2000": 3200 } },
+  dappled:  { name: "Dappled sun",     tint: "rgba(255,240,180,0.12)", iso: { "1/30": 100, "1/60": 100, "1/125": 100, "1/250": 200, "1/500": 400, "1/1000": 800, "1/2000": 1600 } },
+  shade:    { name: "Woodland floor",  tint: "rgba(30,50,30,0.22)",    iso: { "1/30": 200, "1/60": 400, "1/125": 800, "1/250": 1600, "1/500": 3200, "1/1000": 3200, "1/2000": 3200 } },
   // the sky scale: what the meter wants at f/3.5 on the 18 mm end, and the
   // moon is a daylight subject whatever the hour
   newmoon: { name: "New moon",  scale: "sky", tint: "rgba(0,0,0,0)", iso: { "8m": 100, "2m": 400, "30s": 1600, "15s": 3200, "4s": 3200, "1s": 3200, "1/60": 3200, "1/250": 100 } },
@@ -416,7 +497,7 @@ const WORDS = {
   fast2:    "Two stops faster than it needed. Noise for nothing.",
   fastfree: "Faster than it needed, and the light paid for it, not the ISO.",
   cut:      "Cut by the frame edge.",
-  small:    "A speck. Pull tighter or drive closer.",
+  small:    "A speck. Pull tighter or get closer.",
   filling:  "It fills the plate.",
   noise:    "ISO 1600 or more: chroma noise in the shadows, fine at web size, a competition master wants less.",
   keeper:   "Keeper.",
@@ -466,8 +547,10 @@ function score(shutter, behaviour, framing, light, animal, scale) {
   return { stars, lines, keeper, iso, prize };
 }
 
-// The light windows a range offers.
+// The light windows a range offers, and its pulls on the glass (a macro
+// range's pulls are magnifications, and may carry a verdict line).
 function lightsFor(rangeKey) { return RANGES[rangeKey].lights || DEFAULT_LIGHTS; }
+function pullsFor(rangeKey) { return RANGES[rangeKey].pulls || PULLS; }
 
 // Where an animal's box sits against the plate rectangle.
 function measureFrame(box, plate) {
@@ -539,7 +622,7 @@ function plateFor(animal, behaviour, rnd) {
   return any[Math.floor(rnd() * any.length) % any.length];
 }
 
-const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, score, measureFrame, spawnPlan, plateFor, lightsFor, scaleFor, shutterIndex, shutterLabel, pick, mulberry };
+const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, score, measureFrame, spawnPlan, plateFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
 
 // ---- page section: everything below needs a document ----
@@ -591,6 +674,7 @@ function begin() {
   state.worldX = 0; state.speed = 0; state.t = 0; state.camera = false; state.focus = null;
   const scale = SCALES[scaleFor(state.range)];
   if (!scale.includes(state.shutter)) state.shutter = scale[3];
+  if (state.pull >= pullsFor(state.range).length) state.pull = 1;
   state.animals = spawnPlan(state.range, R.seat === "tripod" ? 6 : 14, state.rnd, state.light).map(makeAnimal);
   if (R.seat === "hide") for (const a of state.animals) { a.x = W * 0.15 + (a.x - 80) * 0.45; }
   if (R.seat === "tripod") state.animals.forEach((a, i) => { a.x = 120 + ((i * 0.37 + 0.1) % 1) * (W - 240); a.dir = 1; });
@@ -600,7 +684,7 @@ function begin() {
   say(R.seat === "walk" || R.seat === "tripod" ? "Guide" : "Spotter",
       R.seat === "tripod" ? "Your eyes take twenty minutes. The camp lights are behind you. The Earth turns; that is the movement." :
       R.seat === "hide" ? "Sit still. The water brings them." :
-      R.seat === "walk" ? (LIGHTS[state.light].lamp ? "The lamp is the frame. Whatever is in it is what you have." : "Single file. Stop when I stop. Nothing runs from a still person.") :
+      R.seat === "walk" ? (LIGHTS[state.light].lamp ? "The lamp is the frame. Whatever is in it is what you have." : R.wood ? "Get low. Knees in the leaf litter. The bees leave if you walk at them." : "Single file. Stop when I stop. Nothing runs from a still person.") :
       "Stay in the vehicle. A cat in the grass means you stay seated.");
   stage.focus();
 }
@@ -625,7 +709,8 @@ function say(who, text) {
 
 // Behaviour speeds in scene units per second at the near line.
 const SPEED = { resting: 0, sentinel: 0, grazing: 8, drinking: 0, walking: 40, stalking: 22, running: 220, feeding: 0, flight: 140,
-                sunlit: 0, points: 0, core: 0, wheel: 0, streak: 320, standing: 0, wind: 0 };
+                sunlit: 0, points: 0, core: 0, wheel: 0, streak: 320, standing: 0, wind: 0,
+                still: 0, breeze: 0, working: 3, crawling: 6 };
 
 function step(dt) {
   const R = RANGES[state.range];
@@ -697,7 +782,8 @@ function boxOf(a) {
     const w = A.size, h = A.shape === "core" ? A.size * 0.45 : A.shape === "meteor" ? A.size * 0.3 : A.size;
     return { x: a.x - state.worldX + JEEP_X - w / 2, y: H * a.depth, w, h, scale: 1 };
   }
-  const w = A.size * scale, h = (A.shape === "bird" ? A.size * 0.5 : A.shape === "upright" ? A.size * 1.6 : A.shape === "giraffe" ? A.size * 1.3 : A.shape === "blob" ? A.size * 1.1 : A.shape === "tree" ? A.size * 0.95 : A.size * 0.6) * scale;
+  const tall = { bird: 0.5, upright: 1.6, giraffe: 1.3, blob: 1.1, tree: 0.95, mushroom: 0.75, flower: 0.9, berry: 0.95, insect: 0.9, ladybird: 0.45 };
+  const w = A.size * scale, h = A.size * (tall[A.shape] || 0.6) * scale;
   const x = a.x - state.worldX + JEEP_X - w / 2;
   let y;
   if (A.fly) y = HORIZON - 140 * scale - 40 * Math.sin(a.phase * 0.5);
@@ -706,7 +792,7 @@ function boxOf(a) {
 }
 
 function plateRect() {
-  const frac = PULLS[state.pull].frac;
+  const frac = pullsFor(state.range)[state.pull].frac;
   const w = W * frac, h = w * 9 / 16;
   return { x: state.aim.x - w / 2, y: state.aim.y - h / 2, w, h };
 }
@@ -791,6 +877,8 @@ function fire() {
   const behaviour = a ? a.behaviour : "resting";
   const v = score(state.shutter, behaviour, framing, state.light, a ? a.key : null, scaleFor(state.range));
   if (a && a.spooked > 0 && v.stars > 0) { v.lines.unshift(RANGES[state.range].seat === "walk" ? WORDS.walked : WORDS.spooked); }
+  const pullNow = pullsFor(state.range)[state.pull];
+  if (v.stars > 0 && pullNow.verdict) v.lines.push(pullNow.verdict);
   const frame = a && v.stars > 0 ? plateFor(a.key, behaviour, state.rnd) : null;
   const plate = { when: Date.now(), range: state.range, light: state.light, shutter: state.shutter,
                   animal: a ? a.key : null, behaviour: a ? behaviour : null, stars: v.stars, keeper: v.keeper, lines: v.lines, iso: v.iso,
@@ -857,12 +945,18 @@ function draw(withFinder = true) {
   g.addColorStop(0, R.sky[0]); g.addColorStop(1, R.sky[1]);
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, HORIZON);
   ctx.fillStyle = R.far; ctx.fillRect(0, HORIZON - 30, W, 30);
-  // distant trees, parallax
+  // distant trees, parallax: acacia crowns on the range, trunks in the wood
   ctx.fillStyle = "rgba(60,50,30,0.55)";
   for (let i = 0; i < 12; i++) {
     const x = ((i * 310 - state.worldX * 0.25) % (W + 300) + W + 300) % (W + 300) - 150;
-    ctx.beginPath(); ctx.ellipse(x, HORIZON - 34, 46, 14, 0, 0, 6.28); ctx.fill();
-    ctx.fillRect(x - 2, HORIZON - 34, 4, 32);
+    if (R.wood) {
+      ctx.fillStyle = "rgba(50,45,35,0.6)"; ctx.fillRect(x - 9, 0, 18, HORIZON - 20);
+      ctx.fillStyle = "rgba(70,90,50,0.35)"; ctx.beginPath(); ctx.ellipse(x, HORIZON * 0.35, 120, 90, 0, 0, 6.28); ctx.fill();
+      ctx.fillStyle = "rgba(60,50,30,0.55)";
+    } else {
+      ctx.beginPath(); ctx.ellipse(x, HORIZON - 34, 46, 14, 0, 0, 6.28); ctx.fill();
+      ctx.fillRect(x - 2, HORIZON - 34, 4, 32);
+    }
   }
   ctx.fillStyle = R.ground; ctx.fillRect(0, HORIZON, W, H - HORIZON);
   // grass rows, parallax by depth
@@ -1001,6 +1095,35 @@ function drawAnimal(a) {
     ctx.beginPath(); ctx.moveTo(-sz * 0.05, -sz * 0.27); ctx.lineTo(-sz * 0.5, -sz * 0.27 - sz * 0.3 * flap); ctx.lineTo(-sz * 0.1, -sz * 0.2); ctx.fill();
     ctx.beginPath(); ctx.moveTo(sz * 0.05, -sz * 0.27); ctx.lineTo(sz * 0.5, -sz * 0.27 - sz * 0.3 * flap); ctx.lineTo(sz * 0.1, -sz * 0.2); ctx.fill();
     ctx.fillStyle = "#f5f0e4"; ctx.beginPath(); ctx.arc(sz * 0.2, -sz * 0.3, sz * 0.06, 0, 6.28); ctx.fill();
+  } else if (A.shape === "mushroom") {
+    ctx.fillStyle = "#e8e0cc"; ctx.fillRect(-sz * 0.08, -sz * 0.5, sz * 0.16, sz * 0.5);
+    ctx.fillStyle = A.colour; ctx.beginPath(); ctx.ellipse(0, -sz * 0.5, sz * 0.36, sz * 0.2, 0, 3.14, 6.28); ctx.fill();
+    ctx.fillStyle = "rgba(90,70,50,0.5)"; ctx.fillRect(-sz * 0.36, -sz * 0.5, sz * 0.72, sz * 0.03);
+  } else if (A.shape === "flower") {
+    const sway = a.behaviour === "breeze" ? Math.sin(state.t * 5 + a.phase) * sz * 0.04 : 0;
+    ctx.strokeStyle = "#4d6b2f"; ctx.lineWidth = sz * 0.035; ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(sway, -sz * 0.4, sway * 1.5, -sz * 0.7); ctx.stroke();
+    ctx.fillStyle = "#4d6b2f"; ctx.beginPath(); ctx.ellipse(-sz * 0.12, -sz * 0.3, sz * 0.12, sz * 0.05, -0.5, 0, 6.28); ctx.fill();
+    ctx.fillStyle = A.colour;
+    for (let i = 0; i < 8; i++) { const ang = i * 0.785; ctx.beginPath(); ctx.ellipse(sway * 1.5 + Math.cos(ang) * sz * 0.13, -sz * 0.72 + Math.sin(ang) * sz * 0.13, sz * 0.12, sz * 0.06, ang, 0, 6.28); ctx.fill(); }
+    ctx.fillStyle = "#c9a227"; ctx.beginPath(); ctx.arc(sway * 1.5, -sz * 0.72, sz * 0.07, 0, 6.28); ctx.fill();
+  } else if (A.shape === "berry") {
+    ctx.strokeStyle = "#3a3020"; ctx.lineWidth = sz * 0.05; ctx.beginPath(); ctx.moveTo(-sz * 0.5, -sz * 0.9); ctx.lineTo(sz * 0.4, -sz * 0.5); ctx.stroke();
+    ctx.fillStyle = "#4d6b2f"; ctx.beginPath(); ctx.ellipse(-sz * 0.15, -sz * 0.55, sz * 0.18, sz * 0.09, 0.6, 0, 6.28); ctx.fill();
+    ctx.fillStyle = A.colour; ctx.beginPath(); ctx.arc(sz * 0.1, -sz * 0.35, sz * 0.22, 0, 6.28); ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.35)"; ctx.beginPath(); ctx.arc(sz * 0.03, -sz * 0.42, sz * 0.06, 0, 6.28); ctx.fill();
+  } else if (A.shape === "insect") {
+    const fly = a.behaviour === "flight", flap = fly ? Math.sin(a.phase * 3) : 0.3;
+    const lift = fly ? sz * 0.8 : sz * 0.1;
+    ctx.fillStyle = A.colour; ctx.beginPath(); ctx.ellipse(0, -lift, sz * 0.4, sz * 0.24, 0, 0, 6.28); ctx.fill();
+    ctx.fillStyle = "#e0b040"; ctx.fillRect(-sz * 0.05, -lift - sz * 0.22, sz * 0.14, sz * 0.44);
+    ctx.fillStyle = "rgba(220,230,240,0.6)";
+    ctx.beginPath(); ctx.ellipse(-sz * 0.05, -lift - sz * 0.25, sz * 0.3, sz * 0.1 + sz * 0.1 * Math.abs(flap), -0.8, 0, 6.28); ctx.fill();
+    ctx.fillStyle = "#2a2420"; ctx.beginPath(); ctx.arc(sz * 0.42, -lift, sz * 0.1, 0, 6.28); ctx.fill();
+  } else if (A.shape === "ladybird") {
+    ctx.fillStyle = "#4d6b2f"; ctx.fillRect(-sz * 0.6, -sz * 0.06, sz * 1.2, sz * 0.06);
+    ctx.fillStyle = A.colour; ctx.beginPath(); ctx.ellipse(0, -sz * 0.2, sz * 0.4, sz * 0.2, 0, 3.14, 6.28); ctx.fill();
+    ctx.fillStyle = "#2a2420"; ctx.beginPath(); ctx.arc(sz * 0.36, -sz * 0.22, sz * 0.1, 0, 6.28); ctx.fill();
+    for (const [dx, dy] of [[-0.2, -0.28], [0.05, -0.32], [-0.05, -0.16]]) { ctx.beginPath(); ctx.arc(dx * sz, dy * sz, sz * 0.05, 0, 6.28); ctx.fill(); }
   } else if (A.shape === "tree") {
     // a flat-topped acacia: trunk, three limbs, a wide shallow canopy
     const sway = a.behaviour === "wind" ? Math.sin(state.t * 3 + a.phase) * sz * 0.02 : 0;
@@ -1099,7 +1222,8 @@ function drawHud() {
     e.onclick = () => { state.shutter = s; drawHud(); };
   }
   add("ISO " + LIGHTS[state.light].iso[state.shutter]);
-  const pull = add(PULLS[state.pull].name + " (Z)"); pull.onclick = () => { state.pull = (state.pull + 1) % PULLS.length; refreshFocus(); };
+  const pulls = pullsFor(state.range);
+  const pull = add(pulls[state.pull].name + " (Z)"); pull.title = pulls[state.pull].note; pull.onclick = () => { state.pull = (state.pull + 1) % pulls.length; if (state.camera) refreshFocus(); else drawHud(); };
   const cam = add(state.camera ? "Space: shoot" : "Space: camera"); cam.onclick = () => toggleCamera();
   if (state.camera) { const lo = add("Lower (C)"); lo.onclick = () => toggleCamera(); }
   const pk = add("Esc: pack up"); pk.onclick = packUp;
@@ -1134,7 +1258,7 @@ stage.addEventListener("keydown", (e) => {
   if (k === "tab") cycleFocus();
   if (k === "[") stepShutter(-1);
   if (k === "]") stepShutter(1);
-  if (k === "z") { state.pull = (state.pull + 1) % PULLS.length; if (state.camera) refreshFocus(); else drawHud(); }
+  if (k === "z") { state.pull = (state.pull + 1) % pullsFor(state.range).length; if (state.camera) refreshFocus(); else drawHud(); }
   if (k === "escape") packUp();
   const nudge = 24;
   if (k === "arrowleft") state.aim.x = Math.max(0, state.aim.x - nudge);
@@ -1174,7 +1298,7 @@ for (const b of document.querySelectorAll("#pad button")) {
     if (act === "slower") stepShutter(-1);
     if (act === "faster") stepShutter(1);
     if (act === "next") cycleFocus();
-    if (act === "pull") { state.pull = (state.pull + 1) % PULLS.length; if (state.camera) refreshFocus(); else drawHud(); }
+    if (act === "pull") { state.pull = (state.pull + 1) % pullsFor(state.range).length; if (state.camera) refreshFocus(); else drawHud(); }
     if (act === "pack") packUp();
   });
 }
