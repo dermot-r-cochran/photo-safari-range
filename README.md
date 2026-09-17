@@ -43,6 +43,19 @@ The loop, in four beats:
 Drive at an animal fast and the shy ones run; the plate is the tail end.
 Cats and elephants do not run from a jeep. Nothing is killed on the range.
 
+## The day
+
+A safari day runs on a clock, a minute and a half of the day for each
+second at the keyboard: out at first light, breakfast under a tree at
+nine, the heat until half eleven, back to camp for lunch and a siesta
+through the hottest hours, out again at half three, and the gate at
+sunset. South Luangwa adds a sundowner and the night drive. Home Ground
+is a club walkabout: ten till two with a coffee stop at half twelve, and
+one frame for Saturday Shutters at the end. The light follows the clock,
+so nobody picks it; the night sky keeps its choice of moon. Breakfast,
+camp and the coffee stop are cards with the sheet so far on them; N (or
+the pad's Skip ahead) jumps to the next part of the day.
+
 ## What it teaches
 
 - **Behaviour first.** A resting lion wants 1/60; a walking zebra 1/250; a

@@ -70,6 +70,14 @@
     border-radius: 4px; background: rgba(0,0,0,0.25); }
   #hud .k.on { background: #f5f0e4; color: var(--ink); }
   #hud .k.asked { border-color: #f5f0e4; font-weight: bold; }
+  #pause {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: min(28rem, 90%); background: var(--panel); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.4);
+  }
+  #pause h2 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+  #pause p { margin: 0.4rem 0; }
   #radio {
     position: absolute; left: 0.8rem; top: 0.6rem; max-width: 60%;
     background: rgba(20,15,8,0.7); color: #f5f0e4; padding: 0.4rem 0.7rem;
@@ -134,6 +142,7 @@
     <div id="radio" hidden></div>
     <div id="focus"></div>
     <div id="hud"></div>
+    <div id="pause" hidden></div>
   </div>
   <div id="pad" aria-label="Touch controls">
     <button data-act="left">◀</button>
@@ -144,6 +153,7 @@
     <button data-act="next">Next</button>
     <button data-act="pull">Zoom</button>
     <button data-act="support">Beanbag</button>
+    <button data-act="skip">Skip ahead</button>
     <button data-act="pack">Pack up</button>
   </div>
   <div class="card" id="camp">
@@ -152,7 +162,7 @@
     <div class="row" id="light-pick"></div>
     <p class="note" id="camp-note"></p>
     <div class="row"><button class="primary" id="go">Drive the range</button></div>
-    <p class="note">The driver drives, stops when the spotter calls, and moves on · left and right arrows (or A and D) ask him for closer or back · Space raises the camera and fires it · with the camera up the arrows move the aim · [ and ] change the shutter · B rests the camera on the beanbag, or the tripod on foot · Tab picks another animal in the frame · Z zooms · Esc packs up.</p>
+    <p class="note">The driver drives, stops when the spotter calls, and moves on · left and right arrows (or A and D) ask him for closer or back · Space raises the camera and fires it · with the camera up the arrows move the aim · [ and ] change the shutter · B rests the camera on the beanbag, or the tripod on foot · Tab picks another animal in the frame · Z zooms · N skips to the next part of the day · Esc packs up.</p>
   </div>
   <div id="plates"></div>
 </main>
@@ -423,17 +433,17 @@ const PLATES = [
 // species and how often each turns up; `lights` the windows the range
 // offers (all three by default).
 const RANGES = {
-  amber:   { name: "Amber Range",  place: "Maasai Mara, Kenya", seat: "drive", sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
+  amber:   { name: "Amber Range",  place: "Maasai Mara, Kenya", seat: "drive", day: "safari", sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
              note: "Open grassland. The pride, the cheetah on the mound, the meerkat on sentry. Stay in the vehicle.",
              cast: { zebra: 5, topi: 3, gazelle: 4, buffalo: 2, elephant: 2, giraffe: 2, lion: 2, cheetah: 2, hyena: 2, vulture: 2, meerkat: 2, acacia: 3 } },
-  zambezi: { name: "Zambezi Hide", place: "Lower Zambezi, Zambia", seat: "hide", sky: ["#d9c9a8", "#b9a684"], ground: "#8fa0a4", far: "#6f7f5a",
+  zambezi: { name: "Zambezi Hide", place: "Lower Zambezi, Zambia", seat: "hide", day: "safari", sky: ["#d9c9a8", "#b9a684"], ground: "#8fa0a4", far: "#6f7f5a",
              note: "A floating hide, eye level with the drinking line. Nothing to drive. Wait, and the water brings them.",
              cast: { puku: 5, hippo: 3, elephant: 2, buffalo: 2, eagle: 3 } },
-  luangwa: { name: "South Luangwa", place: "South Luangwa, Zambia", seat: "walk", sky: ["#e8d6a8", "#c9a86a"], ground: "#a8905c", far: "#6a6a3a",
+  luangwa: { name: "South Luangwa", place: "South Luangwa, Zambia", seat: "walk", day: "luangwa", sky: ["#e8d6a8", "#c9a86a"], ground: "#a8905c", far: "#6a6a3a",
              note: "Walking country, single file behind the guide. Stop when he stops. After the gate, a night drive: the small ones are the plate.",
              cast: { puku: 3, elephant: 2, hippo: 2, leopard: 2, serval: 3, hyrax: 3, genet: 3, beeeater: 3, acacia: 2 },
              lights: ["first", "heat", "last", "night"] },
-  home:    { name: "Home Ground",   place: "A beech wood and a garden, Dublin, Ireland", seat: "walk", wood: 1, sky: ["#d6dcd2", "#b8c2b0"], ground: "#5e4b34", far: "#3a4a2c",
+  home:    { name: "Home Ground",   place: "A beech wood and a garden, Dublin, Ireland", seat: "walk", day: "walkabout", wood: 1, sky: ["#d6dcd2", "#b8c2b0"], ground: "#5e4b34", far: "#3a4a2c",
              note: "The week after, on foot, with the 70 mm macro. The pulls are magnification now: at 1:1 the depth of field is about a millimetre at f/8. Get low, and do not walk at the bees.",
              cast: { mushroom: 4, rose: 3, thistle: 2, angelica: 2, sloe: 2, bramble: 2, bee: 3, hoverfly: 2, ladybird: 2 },
              lights: ["overcast", "dappled", "shade"],
@@ -447,6 +457,44 @@ const RANGES = {
              cast: { stars: 3, pole: 2, milky: 2, moon: 2, meteor: 3 },
              lights: ["newmoon", "moonlit"] }
 };
+
+// The day. A range with a `day` runs a clock instead of offering a light
+// window: each leg sets the light, a `pause` leg stops the outing for a
+// card (breakfast, camp, refreshments) and jumps the clock to its end,
+// and an `end` leg packs up. Times are "HH:MM"; the clock runs at
+// CLOCK_RATE safari minutes per real second.
+const CLOCK_RATE = 1.5;
+const DAYS = {
+  safari: [
+    { name: "First light", from: "06:15", to: "09:00", light: "first" },
+    { name: "Breakfast", from: "09:00", to: "09:30", light: "heat", pause: "Breakfast under a tree. Flask, eggs, the sheet so far. The driver has a look at the tyres." },
+    { name: "Heat", from: "09:30", to: "11:30", light: "heat" },
+    { name: "Camp", from: "11:30", to: "15:30", pause: "Back to camp for the hottest part of the day. Lunch, a siesta, and the cards copied. Out again at half three." },
+    { name: "Last light", from: "15:30", to: "18:45", light: "last" },
+    { name: "Sunset", from: "18:45", to: "18:45", end: "Sunset. Pack up; the gate closes." }
+  ],
+  luangwa: [
+    { name: "First light", from: "06:15", to: "09:00", light: "first" },
+    { name: "Breakfast", from: "09:00", to: "09:30", light: "heat", pause: "Breakfast on the bank. The guide checks the rifle he hopes not to need, and the flask." },
+    { name: "Heat", from: "09:30", to: "11:30", light: "heat" },
+    { name: "Camp", from: "11:30", to: "15:30", pause: "Back to camp for the hottest part of the day. Lunch, a siesta, and the cards copied. Out again at half three." },
+    { name: "Last light", from: "15:30", to: "18:45", light: "last" },
+    { name: "Sundowner", from: "18:45", to: "19:15", light: "night", pause: "Sundowner on the airstrip. The light goes; the lamp comes out. Small things now." },
+    { name: "Night drive", from: "19:15", to: "21:00", light: "night" },
+    { name: "Camp", from: "21:00", to: "21:00", end: "Back to camp. The fire, and the sheet." }
+  ],
+  walkabout: [
+    { name: "Walkabout", from: "10:00", to: "12:30" },
+    { name: "Refreshments", from: "12:30", to: "13:00", pause: "Refreshments. The club's coffee stop: sheets compared, one frame each on the table." },
+    { name: "Walkabout", from: "13:00", to: "14:00" },
+    { name: "Home", from: "14:00", to: "14:00", end: "Two o'clock. Home, and one frame for Saturday Shutters." }
+  ]
+};
+function hm(s) { const [h, m] = s.split(":").map(Number); return h * 60 + m; }
+function clockLabel(min) { const h = Math.floor(min / 60) % 24, m = Math.floor(min % 60); return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m; }
+function dayFor(rangeKey) { return RANGES[rangeKey].day ? DAYS[RANGES[rangeKey].day] : null; }
+// The leg the clock is in: the last leg whose start the clock has reached.
+function legAt(day, min) { let i = 0; for (let k = 0; k < day.length; k++) if (min >= hm(day[k].from)) i = k; return i; }
 
 // Light windows: the sky, and the ISO the meter lands on at each shutter.
 // ISO 400 clean, 800 fine, 1600 shows chroma noise, 3200 a last resort.
@@ -640,7 +688,7 @@ function plateFor(animal, behaviour, rnd) {
   return any[Math.floor(rnd() * any.length) % any.length];
 }
 
-const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, STILL, score, askedFor, measureFrame, spawnPlan, plateFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, pick, mulberry };
+const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, STILL, DAYS, CLOCK_RATE, score, askedFor, measureFrame, spawnPlan, plateFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
 
 // ---- page section: everything below needs a document ----
@@ -673,13 +721,23 @@ function buildCamp() {
   const lp = $("light-pick"); lp.innerHTML = "";
   const lights = lightsFor(state.range);
   if (!lights.includes(state.light)) state.light = lights[0];
-  for (const k of lights) {
-    const b = document.createElement("button");
-    b.textContent = LIGHTS[k].name; b.className = k === state.light ? "on" : "";
-    b.onclick = () => { state.light = k; buildCamp(); };
-    lp.appendChild(b);
-  }
   const R = RANGES[state.range];
+  const day = dayFor(state.range);
+  const dayHasLights = day && day.some(l => l.light);
+  if (dayHasLights) {
+    // the clock sets the light: show the day instead of a choice
+    const s = document.createElement("span"); s.className = "note";
+    s.textContent = "The day: " + day.map(l => l.name + " " + l.from).join(" · ");
+    lp.appendChild(s);
+  } else {
+    for (const k of lights) {
+      const b = document.createElement("button");
+      b.textContent = LIGHTS[k].name; b.className = k === state.light ? "on" : "";
+      b.onclick = () => { state.light = k; buildCamp(); };
+      lp.appendChild(b);
+    }
+    if (day) { const s = document.createElement("span"); s.className = "note"; s.textContent = " · " + day.map(l => l.name + " " + l.from).join(" · "); lp.appendChild(s); }
+  }
   $("camp-note").textContent = R.place + ". " + R.note;
   $("go").textContent = R.seat === "hide" ? "Sit the hide" : R.seat === "walk" ? "Walk the range" : R.seat === "tripod" ? "Set up the tripod" : "Drive the range";
   $("range-line").textContent = R.name + " · " + LIGHTS[state.light].name;
@@ -696,6 +754,11 @@ function begin() {
   // the support you brought: at the tripod range it is the tripod, always;
   // elsewhere the camera starts in your hands
   state.support = R.seat === "tripod" ? "tripod" : null;
+  // the day's clock, from its first leg
+  const day = dayFor(state.range);
+  state.paused = false; $("pause").hidden = true;
+  if (day) { state.clock = hm(day[0].from); state.leg = 0; if (day[0].light) state.light = day[0].light; }
+  else state.clock = null;
   state.animals = spawnPlan(state.range, R.seat === "tripod" ? 6 : 14, state.rnd, state.light).map(makeAnimal);
   if (R.seat === "hide") for (const a of state.animals) { a.x = W * 0.15 + (a.x - 80) * 0.45; }
   if (R.seat === "tripod") state.animals.forEach((a, i) => { a.x = 120 + ((i * 0.37 + 0.1) % 1) * (W - 240); a.dir = 1; });
@@ -717,7 +780,7 @@ function makeAnimal(p) {
 }
 
 function packUp() {
-  state.playing = false; state.camera = false; state.animals = [];
+  state.playing = false; state.camera = false; state.animals = []; state.paused = false; state.clock = null; $("pause").hidden = true;
   $("camp").hidden = false; $("radio").hidden = true; $("focus").innerHTML = "";
   $("asked").textContent = "On the range the spotter calls each animal as it comes into view. Raise the camera on one and the panel names what it is doing and the shutter that needs.";
   buildCamp(); drawHud();
@@ -733,9 +796,68 @@ const SPEED = { resting: 0, sentinel: 0, grazing: 8, drinking: 0, walking: 40, s
                 sunlit: 0, points: 0, core: 0, wheel: 0, streak: 320, standing: 0, wind: 0,
                 still: 0, breeze: 0, working: 3, crawling: 6 };
 
+// The clock: advance it, and when it enters a new leg set the light, or
+// stop for the card, or end the day.
+function tickClock(dt) {
+  const day = dayFor(state.range);
+  if (!day || state.paused) return;
+  state.clock += dt * CLOCK_RATE;
+  const i = legAt(day, state.clock);
+  if (i === state.leg) return;
+  enterLeg(i);
+}
+function enterLeg(i) {
+  const day = dayFor(state.range), leg = day[i];
+  state.leg = i;
+  if (leg.end) { showPause(leg.name, leg.end, true); return; }
+  if (leg.pause) { showPause(leg.name, leg.pause, false); return; }
+  if (leg.light && leg.light !== state.light) {
+    state.light = leg.light;
+    // a new light window brings a new cast (the night's animals, for one)
+    state.animals = spawnPlan(state.range, RANGES[state.range].seat === "tripod" ? 6 : 14, state.rnd, state.light).map(makeAnimal);
+    for (const a of state.animals) a.x += state.worldX;
+    say(RANGES[state.range].seat === "walk" ? "Guide" : "Spotter", leg.name + "." + (LIGHTS[state.light].name !== leg.name ? " " + LIGHTS[state.light].name + "." : ""));
+    if (state.camera) refreshFocus(); else refreshRange();
+  }
+  $("range-line").textContent = RANGES[state.range].name + " · " + LIGHTS[state.light].name;
+  drawHud();
+}
+function showPause(title, text, isEnd) {
+  state.paused = true;
+  const p = $("pause");
+  const kept = state.sheet.length, keepers = state.sheet.filter(x => x.keeper).length;
+  p.innerHTML = "<h2>" + title + " · " + clockLabel(state.clock) + "</h2><p>" + text + "</p>" +
+    "<p class='note'>" + (kept ? kept + (kept === 1 ? " plate" : " plates") + " on the sheet, " + keepers + (keepers === 1 ? " keeper." : " keepers.") : "Nothing on the sheet yet.") + "</p>";
+  const b = document.createElement("button"); b.className = "primary";
+  b.textContent = isEnd ? "Pack up" : "Continue";
+  b.onclick = () => { if (isEnd) { packUp(); return; } resumeAfterPause(); };
+  p.appendChild(b); p.hidden = false;
+  if (state.camera) toggleCamera();
+  drawHud();
+}
+function resumeAfterPause() {
+  const day = dayFor(state.range), leg = day[state.leg];
+  state.paused = false; $("pause").hidden = true;
+  state.clock = hm(leg.to);
+  // step into the leg the clock now sits in, which sets its light
+  const i = legAt(day, state.clock);
+  if (i !== state.leg) enterLeg(i); else drawHud();
+  stage.focus({ preventScroll: true });
+}
+function skipLeg() {
+  const day = dayFor(state.range);
+  if (!day || !state.playing) return;
+  if (state.paused) { resumeAfterPause(); return; }
+  const next = Math.min(day.length - 1, state.leg + 1);
+  state.clock = hm(day[next].from);
+  enterLeg(next);
+}
+
 function step(dt) {
   const R = RANGES[state.range];
+  if (state.paused) return;
   state.t += dt;
+  tickClock(dt);
   if (state.radio && state.t > state.radioUntil) { $("radio").hidden = true; state.radio = null; }
   // driving, or walking: on foot the pace is a third and the shy ones
   // run from anyone moving nearby
@@ -1248,6 +1370,10 @@ function drawHud() {
   drawPad();
   if (!state.playing) { h.innerHTML = "<span class='k'>At camp: pick a range and a light</span>"; return; }
   const add = (txt, cls) => { const s = document.createElement("span"); s.className = "k " + (cls || ""); s.textContent = txt; h.appendChild(s); return s; };
+  if (state.clock !== null && state.clock !== undefined) {
+    const day = dayFor(state.range);
+    const clk = add(clockLabel(state.clock) + " · " + day[state.leg].name + " (N)"); clk.title = "N: skip to the next part of the day"; clk.onclick = skipLeg;
+  }
   const asked = state.focus ? askedFor(state.focus.behaviour, state.support, scaleFor(state.range)) : null;
   for (const s of SCALES[scaleFor(state.range)]) {
     const e = add(s, (s === state.shutter ? "on " : "") + (s === asked ? "asked" : ""));
@@ -1299,6 +1425,7 @@ stage.addEventListener("keydown", (e) => {
   const k = e.key.toLowerCase();
   if (["a", "d", " ", "tab", "[", "]", "z", "c", "escape", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) e.preventDefault();
   if (!state.playing) { if (k === " " || k === "enter") begin(); return; }
+  if (state.paused && k !== "n" && k !== "escape") return;
   // A and D drive (the left hand's keys, from the WASD habit); with the
   // camera down the left and right arrows drive too, and with it up they
   // move the aim
@@ -1317,6 +1444,8 @@ stage.addEventListener("keydown", (e) => {
   if (k === "]") stepShutter(1);
   if (k === "z") { state.pull = (state.pull + 1) % pullsFor(state.range).length; if (state.camera) refreshFocus(); else drawHud(); }
   if (k === "b") toggleSupport();
+  if (k === "n") skipLeg();
+  if (state.paused) return;
   if (k === "escape") packUp();
   const nudge = 24;
   if (k === "arrowleft") state.aim.x = Math.max(0, state.aim.x - nudge);
@@ -1341,6 +1470,7 @@ stage.addEventListener("click", (e) => {
   if (e.target !== canvas) return;
   stage.focus({ preventScroll: true });
   if (!state.playing) return;
+  if (state.paused) return;
   aimAt(e);
   if (state.camera) { refreshFocus(); fire(); } else toggleCamera();
 });
@@ -1363,6 +1493,7 @@ for (const b of document.querySelectorAll("#pad button")) {
     if (act === "pull") { state.pull = (state.pull + 1) % pullsFor(state.range).length; if (state.camera) refreshFocus(); else drawHud(); }
     if (act === "pack") packUp();
     if (act === "support") toggleSupport();
+    if (act === "skip") skipLeg();
   });
 }
 function drawPad() {
@@ -1375,6 +1506,8 @@ function drawPad() {
     const name = supportFor(seat);
     sup.textContent = state.support ? "In the hand" : name.charAt(0).toUpperCase() + name.slice(1);
   }
+  const sk = document.querySelector('#pad button[data-act="skip"]');
+  if (sk) sk.hidden = !dayFor(state.range);
 }
 $("go").onclick = begin;
 $("clear").onclick = () => { state.sheet = []; save(); };

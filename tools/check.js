@@ -116,6 +116,30 @@ for (const k in R.RANGES) for (const l of R.lightsFor(k)) {
     if (A.only && !A.only.includes(l)) fail("range " + k + " spawns " + p.key + " under " + l + ", which it does not appear in");
   }
 }
+// days: legs in order and touching, lights real and on the range's scale,
+// pause and end legs with words, the last leg an end
+for (const d in R.DAYS) {
+  const day = R.DAYS[d];
+  if (day.length < 2) fail("day " + d + " has fewer than two legs");
+  for (let i = 0; i < day.length; i++) {
+    const l = day[i];
+    if (!l.name || !l.from || !l.to) fail("day " + d + " leg " + i + " is missing name, from or to");
+    if (R.hm(l.to) < R.hm(l.from)) fail("day " + d + " leg " + l.name + " ends before it starts");
+    if (i > 0 && R.hm(l.from) !== R.hm(day[i - 1].to)) fail("day " + d + " leg " + l.name + " does not start when " + day[i - 1].name + " ends");
+    if (l.light && !R.LIGHTS[l.light]) fail("day " + d + " leg " + l.name + " has light " + l.light + ", which does not exist");
+    if (l.pause && typeof l.pause !== "string") fail("day " + d + " leg " + l.name + " pause is not words");
+    if (l.end && typeof l.end !== "string") fail("day " + d + " leg " + l.name + " end is not words");
+  }
+  if (!day[day.length - 1].end) fail("day " + d + " does not end");
+  if (R.legAt(day, R.hm(day[0].from)) !== 0) fail("day " + d + ": the clock at its start is not in its first leg");
+  ok();
+}
+for (const k in R.RANGES) {
+  const day = R.dayFor(k); if (!day) continue;
+  for (const l of day) if (l.light && !R.lightsFor(k).includes(l.light)) fail("range " + k + " day sets light " + l.light + ", which the range does not offer");
+  ok();
+}
+if (R.clockLabel(R.hm("06:15")) !== "06:15" || R.clockLabel(R.hm("18:45")) !== "18:45") fail("clockLabel does not round-trip");
 // lights
 for (const k in R.LIGHTS) {
   const l = R.LIGHTS[k];
