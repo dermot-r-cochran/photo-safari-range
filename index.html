@@ -142,7 +142,7 @@
     <button data-act="slower">1/− slower</button>
     <button data-act="faster">faster 1/+</button>
     <button data-act="next">Next</button>
-    <button data-act="pull">Pull</button>
+    <button data-act="pull">Zoom</button>
     <button data-act="pack">Pack up</button>
   </div>
   <div class="card" id="camp">
@@ -151,7 +151,7 @@
     <div class="row" id="light-pick"></div>
     <p class="note" id="camp-note"></p>
     <div class="row"><button class="primary" id="go">Drive the range</button></div>
-    <p class="note">A / D drive · Space raises the camera and fires it · [ and ] change the shutter · Tab picks another animal in the frame · Z pulls the glass · Esc packs up.</p>
+    <p class="note">Left and right arrows drive (A and D do too) · Space raises the camera and fires it · with the camera up the arrows move the aim · [ and ] change the shutter · Tab picks another animal in the frame · Z zooms · Esc packs up.</p>
   </div>
   <div id="plates"></div>
 </main>
@@ -482,9 +482,9 @@ const SCALE_WORDS = {
 
 // The three pulls on the glass: how much of the scene the plate takes.
 const PULLS = [
-  { name: "Context", frac: 0.55, note: "The country stays in the plate." },
-  { name: "Working", frac: 0.34, note: "Fills the animal. Honest glass." },
-  { name: "Tighter", frac: 0.20, note: "Head and shoulders. Compression, not walking closer." }
+  { name: "Wide", frac: 0.55, note: "The country stays in the plate." },
+  { name: "Normal", frac: 0.34, note: "Fills the animal. An honest lens." },
+  { name: "Tight", frac: 0.20, note: "Head and shoulders. A long lens stacks the background: compression, not walking closer." }
 ];
 
 // Verdict words. Stars come from the asked shutter and the framing.
@@ -1223,7 +1223,7 @@ function drawHud() {
   }
   add("ISO " + LIGHTS[state.light].iso[state.shutter]);
   const pulls = pullsFor(state.range);
-  const pull = add(pulls[state.pull].name + " (Z)"); pull.title = pulls[state.pull].note; pull.onclick = () => { state.pull = (state.pull + 1) % pulls.length; if (state.camera) refreshFocus(); else drawHud(); };
+  const pull = add("Zoom: " + pulls[state.pull].name + " (Z)"); pull.title = pulls[state.pull].note; pull.onclick = () => { state.pull = (state.pull + 1) % pulls.length; if (state.camera) refreshFocus(); else drawHud(); };
   const cam = add(state.camera ? "Space: shoot" : "Space: camera"); cam.onclick = () => toggleCamera();
   if (state.camera) { const lo = add("Lower (C)"); lo.onclick = () => toggleCamera(); }
   const pk = add("Esc: pack up"); pk.onclick = packUp;
@@ -1248,10 +1248,16 @@ stage.addEventListener("keydown", (e) => {
   const k = e.key.toLowerCase();
   if (["a", "d", " ", "tab", "[", "]", "z", "c", "escape", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) e.preventDefault();
   if (!state.playing) { if (k === " " || k === "enter") begin(); return; }
-  if (k === "a" || k === "d") {
-    state.keys[k] = true;
+  // A and D drive (the left hand's keys, from the WASD habit); with the
+  // camera down the left and right arrows drive too, and with it up they
+  // move the aim
+  let kk = k;
+  if (!state.camera && (k === "arrowleft" || k === "arrowright")) kk = k === "arrowleft" ? "a" : "d";
+  if (kk === "a" || kk === "d") {
+    state.keys[kk] = true;
     // a tap moves the jeep a little; a held key builds speed
-    if (RANGES[state.range].seat !== "hide" && !state.camera) state.worldX += (k === "d" ? 1 : -1) * (RANGES[state.range].seat === "walk" ? 6 : 14);
+    if (RANGES[state.range].seat !== "hide" && !state.camera) state.worldX += (kk === "d" ? 1 : -1) * (RANGES[state.range].seat === "walk" ? 6 : 14);
+    if (kk !== k) return;
   }
   if (k === " ") { if (state.camera) fire(); else toggleCamera(); }
   if (k === "c") { if (state.camera) toggleCamera(); }
@@ -1266,7 +1272,11 @@ stage.addEventListener("keydown", (e) => {
   if (k === "arrowup") state.aim.y = Math.max(0, state.aim.y - nudge);
   if (k === "arrowdown") state.aim.y = Math.min(H, state.aim.y + nudge);
 });
-stage.addEventListener("keyup", (e) => { const k = e.key.toLowerCase(); if (k === "a" || k === "d") state.keys[k] = false; });
+stage.addEventListener("keyup", (e) => {
+  const k = e.key.toLowerCase();
+  if (k === "a" || k === "arrowleft") state.keys.a = false;
+  if (k === "d" || k === "arrowright") state.keys.d = false;
+});
 function aimAt(e) {
   const r = canvas.getBoundingClientRect();
   state.aim.x = Math.max(0, Math.min(W, (e.clientX - r.left) * W / r.width));

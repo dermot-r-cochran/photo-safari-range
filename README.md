@@ -28,10 +28,11 @@ silhouettes are a map, not a quiz.
 
 The loop, in four beats:
 
-1. **Drive** to the animals (A and D), or sit still in the hide.
+1. **Drive** to the animals (the left and right arrows, or A and D, the
+   left hand's keys from the WASD habit), or sit still in the hide.
 2. **Camera** up (Space). The plate rectangle follows the mouse or the
-   arrow keys; Z walks the three pulls on the glass — context, working,
-   tighter.
+   arrow keys; Z zooms through wide, normal and tight (on the macro range,
+   1:4, 1:2 and 1:1).
 3. **Match** the shutter to what the spotter asked ([ and ]). Tab picks
    another animal when several are in the frame.
 4. **Shoot** (Space). Keep the plate or discard it.
