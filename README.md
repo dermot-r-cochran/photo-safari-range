@@ -9,8 +9,10 @@ localStorage only.
 
 ## What it is
 
-You are in a vehicle on open grassland, or sitting a floating hide on the
-Zambezi at eye level with the drinking line. Animals are on the range, and
+You are in a vehicle on open grassland, sitting a floating hide on the
+Zambezi at eye level with the drinking line, or on foot in South Luangwa
+behind the guide, by day or on a night drive where only the lamp's circle
+can be seen or shot. Animals are on the range, and
 each one is always doing something: resting, grazing, on sentry, walking,
 stalking, running, in flight. Raise the camera and the spotter names the
 animal, what it is doing, and the shutter that needs. Set the shutter,
@@ -44,7 +46,14 @@ Cats and elephants do not run from a jeep. Nothing is killed on the range.
   a star; an animal that fills the working pull is the plate you wanted.
   Tighter is head and shoulders, and the note is the field's: long glass
   stacks the background, which is compression, not walking closer.
-- **Stay in the vehicle.** The guide's one hard rule, and the game's.
+- **Stay in the vehicle.** The guide's one hard rule, and the game's. On
+  foot the rule is the walking guide's: single file, stop when he stops,
+  because nothing runs from a still person and everything runs from a
+  moving one.
+- **The small ones are the range.** In South Luangwa a keeper of a serval,
+  a hyrax, a genet or a carmine bee-eater is a hard plate and the sheet
+  says so; an elephant is an elephant. The genet only comes out on the
+  night drive, and on a night drive everything is ISO 3200.
 
 ## Where it came from
 

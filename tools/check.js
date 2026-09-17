@@ -54,13 +54,33 @@ for (const k in R.ANIMALS) {
 // ranges
 for (const k in R.RANGES) {
   const r = R.RANGES[k];
-  if (!["drive", "hide"].includes(r.seat)) fail("range " + k + " seat is " + r.seat);
+  if (!["drive", "hide", "walk"].includes(r.seat)) fail("range " + k + " seat is " + r.seat);
   if (!r.name || !r.place || !r.note) fail("range " + k + " is missing name, place or note");
-  let n = 0;
-  for (const s in r.cast) { if (!R.ANIMALS[s]) fail("range " + k + " casts " + s + ", not an animal"); n++; }
+  let n = 0, day = 0;
+  for (const s in r.cast) { if (!R.ANIMALS[s]) fail("range " + k + " casts " + s + ", not an animal"); else if (!R.ANIMALS[s].night) day++; n++; }
   if (n < 2) fail("range " + k + " casts fewer than two animals");
+  if (day < 2) fail("range " + k + " has fewer than two animals by day");
+  const lights = R.lightsFor(k);
+  if (!lights.length) fail("range " + k + " offers no light");
+  for (const l of lights) if (!R.LIGHTS[l]) fail("range " + k + " offers light " + l + ", which does not exist");
+  const hasNightOnly = Object.keys(r.cast).some(s => R.ANIMALS[s] && R.ANIMALS[s].night);
+  if (hasNightOnly && !lights.some(l => R.LIGHTS[l] && R.LIGHTS[l].lamp)) fail("range " + k + " casts a night animal but offers no night drive");
+  // a day plan never spawns a night-only animal; a night plan can
+  const dayPlan = R.spawnPlan(k, 40, R.mulberry(11), lights[0]);
+  if (!R.LIGHTS[lights[0]].lamp && dayPlan.some(p => R.ANIMALS[p.key].night)) fail("range " + k + " spawns a night animal by day");
   ok();
 }
+// a keeper on a prize animal says so
+for (const a in R.ANIMALS) if (R.ANIMALS[a].prize) {
+  const b = Object.keys(R.ANIMALS[a].states)[0];
+  const v = R.score(R.BEHAVIOURS[b].asked, b, { inside: true, cut: false, fill: 0.3 }, "heat", a);
+  if (!v.prize || !v.lines.includes(R.WORDS.prize)) fail("a keeper of " + a + " is not marked a hard plate");
+  const w = R.score(R.SHUTTERS[0], "flight", { inside: true, cut: false, fill: 0.3 }, "heat", a);
+  if (w.prize) fail("a folder plate of " + a + " is marked a hard plate");
+  ok();
+}
+// dark plates score nothing
+if (R.score(250, "walking", { inside: true, cut: false, fill: 0.3, dark: true }, "night").stars !== 0) fail("a plate outside the lamp scored");
 // lights
 for (const k in R.LIGHTS) {
   const l = R.LIGHTS[k];

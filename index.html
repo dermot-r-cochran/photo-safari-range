@@ -216,7 +216,14 @@ const ANIMALS = {
   gazelle:  { name: "Thomson's Gazelle", latin: "Eudorcas thomsonii",  size: 70,  shape: "antelope", colour: "#b07a3c", states: { grazing: 4, sentinel: 2, walking: 3, running: 2 }, spook: 2 },
   giraffe:  { name: "Masai Giraffe",     latin: "Giraffa tippelskirchi", size: 170, shape: "giraffe", colour: "#9a6a36", states: { sentinel: 3, walking: 3, grazing: 2 }, spook: 0 },
   hyena:    { name: "Spotted Hyena",     latin: "Crocuta crocuta",      size: 100, shape: "cat",      colour: "#6e5a44", states: { resting: 5, walking: 2 }, spook: 0 },
-  vulture:  { name: "Vulture",           latin: "Gyps africanus",       size: 75,  shape: "bird",     colour: "#3a302a", states: { flight: 4, feeding: 3, sentinel: 1 }, fly: 1, spook: 0 }
+  vulture:  { name: "Vulture",           latin: "Gyps africanus",       size: 75,  shape: "bird",     colour: "#3a302a", states: { flight: 4, feeding: 3, sentinel: 1 }, fly: 1, spook: 0 },
+  // South Luangwa. `prize` marks the small hard subjects that are the point
+  // of that range; `night` marks an animal that only comes out on a night drive.
+  leopard:  { name: "Leopard",           latin: "Panthera pardus",      size: 120, shape: "cat",      colour: "#9a7a3e", states: { resting: 4, stalking: 2, walking: 2 }, spook: 0 },
+  serval:   { name: "Serval",            latin: "Leptailurus serval",   size: 70,  shape: "cat",      colour: "#b48a48", states: { stalking: 3, walking: 2, sentinel: 2, running: 1 }, spook: 2, prize: 1 },
+  hyrax:    { name: "Rock Hyrax",        latin: "Procavia capensis",    size: 34,  shape: "blob",     colour: "#6a5a44", states: { sentinel: 4, resting: 3, walking: 1 }, spook: 2, prize: 1 },
+  genet:    { name: "Large-spotted Genet", latin: "Genetta maculata",   size: 55,  shape: "cat",      colour: "#8a7a5a", states: { walking: 4, resting: 2 }, spook: 2, prize: 1, night: 1 },
+  beeeater: { name: "Carmine Bee-eater", latin: "Merops nubicoides",    size: 40,  shape: "bird",     colour: "#b8384a", states: { flight: 5, sentinel: 2 }, fly: 1, spook: 1, prize: 1 }
 };
 
 // The frames the range was learned on: the author's own photographs, at
@@ -311,25 +318,34 @@ const PLATES = [
     caption: "Two species at the carcass, one wing thrown open. Feeding is a bout, and the bout is what the plate is for." }
 ];
 
-// Ranges. `seat` is drive (the jeep moves along a track) or hide (you sit
-// still and the animals come to the water). `cast` lists the species and
-// how often each turns up.
+// Ranges. `seat` is drive (the jeep moves along a track), hide (you sit
+// still and the animals come to the water) or walk (on foot behind the
+// guide: slow, and the shy ones run from a moving person). `cast` lists the
+// species and how often each turns up; `lights` the windows the range
+// offers (all three by default).
 const RANGES = {
   amber:   { name: "Amber Range",  place: "Maasai Mara, Kenya", seat: "drive", sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
              note: "Open grassland. The pride, the cheetah on the mound, the meerkat on sentry. Stay in the vehicle.",
              cast: { zebra: 5, topi: 3, gazelle: 4, buffalo: 2, elephant: 2, giraffe: 2, lion: 2, cheetah: 2, hyena: 2, vulture: 2, meerkat: 2 } },
   zambezi: { name: "Zambezi Hide", place: "Lower Zambezi, Zambia", seat: "hide", sky: ["#d9c9a8", "#b9a684"], ground: "#8fa0a4", far: "#6f7f5a",
              note: "A floating hide, eye level with the drinking line. Nothing to drive. Wait, and the water brings them.",
-             cast: { puku: 5, hippo: 3, elephant: 2, buffalo: 2, eagle: 3 } }
+             cast: { puku: 5, hippo: 3, elephant: 2, buffalo: 2, eagle: 3 } },
+  luangwa: { name: "South Luangwa", place: "South Luangwa, Zambia", seat: "walk", sky: ["#e8d6a8", "#c9a86a"], ground: "#a8905c", far: "#6a6a3a",
+             note: "Walking country, single file behind the guide. Stop when he stops. After the gate, a night drive: the small ones are the plate.",
+             cast: { puku: 3, elephant: 2, hippo: 2, leopard: 2, serval: 3, hyrax: 3, genet: 3, beeeater: 3 },
+             lights: ["first", "heat", "last", "night"] }
 };
 
 // Light windows: the sky, and the ISO the meter lands on at each shutter.
 // ISO 400 clean, 800 fine, 1600 shows chroma noise, 3200 a last resort.
+// A `lamp` window is dark outside the spotlight, which follows the aim.
 const LIGHTS = {
   first: { name: "First light", tint: "rgba(240,160,80,0.18)",  iso: { 30: 100, 60: 100, 125: 200, 250: 400, 500: 800, 1000: 1600, 2000: 3200 } },
   heat:  { name: "Heat",        tint: "rgba(255,255,230,0.10)", iso: { 30: 100, 60: 100, 125: 100, 250: 100, 500: 200, 1000: 400, 2000: 800 } },
-  last:  { name: "Last light",  tint: "rgba(200,90,60,0.22)",   iso: { 30: 100, 60: 200, 125: 400, 250: 800, 500: 1600, 1000: 3200, 2000: 3200 } }
+  last:  { name: "Last light",  tint: "rgba(200,90,60,0.22)",   iso: { 30: 100, 60: 200, 125: 400, 250: 800, 500: 1600, 1000: 3200, 2000: 3200 } },
+  night: { name: "Night drive", tint: "rgba(10,18,40,0.55)", lamp: 1, iso: { 30: 1600, 60: 3200, 125: 3200, 250: 3200, 500: 3200, 1000: 3200, 2000: 3200 } }
 };
+const DEFAULT_LIGHTS = ["first", "heat", "last"];
 
 // The three pulls on the glass: how much of the scene the plate takes.
 const PULLS = [
@@ -352,7 +368,10 @@ const WORDS = {
   noise:    "ISO 1600 or more: chroma noise in the shadows, fine at web size, a competition master wants less.",
   keeper:   "Keeper.",
   folder:   "One for the folder.",
-  spooked:  "You drove at it. It ran, and the plate is the tail end."
+  spooked:  "You drove at it. It ran, and the plate is the tail end.",
+  walked:   "You walked at it. It ran, and the plate is the tail end.",
+  prize:    "A hard plate. The small ones are the range.",
+  dark:     "Outside the lamp. Nothing to expose."
 };
 
 /* ================================ ENGINE ================================ */
@@ -363,10 +382,11 @@ function shutterIndex(s) { return SHUTTERS.indexOf(s); }
 
 // Score a plate. `framing` is { inside, cut, fill } from measureFrame.
 // Returns { stars 0..3, lines[], keeper }.
-function score(shutter, behaviour, framing, light) {
+function score(shutter, behaviour, framing, light, animal) {
   const B = BEHAVIOURS[behaviour];
   const lines = [];
   if (!framing || !framing.inside) return { stars: 0, lines: [WORDS.miss], keeper: false };
+  if (framing.dark) return { stars: 0, lines: [WORDS.dark], keeper: false };
   const d = shutterIndex(shutter) - shutterIndex(B.asked);
   let stars = 3;
   if (d === 0) lines.push(WORDS.match);
@@ -380,8 +400,14 @@ function score(shutter, behaviour, framing, light) {
   const iso = LIGHTS[light].iso[shutter];
   if (iso >= 1600) lines.push(WORDS.noise);
   stars = Math.max(0, stars);
-  return { stars, lines, keeper: stars >= 2, iso };
+  const keeper = stars >= 2;
+  const prize = !!(keeper && animal && ANIMALS[animal] && ANIMALS[animal].prize);
+  if (prize) lines.push(WORDS.prize);
+  return { stars, lines, keeper, iso, prize };
 }
+
+// The light windows a range offers.
+function lightsFor(rangeKey) { return RANGES[rangeKey].lights || DEFAULT_LIGHTS; }
 
 // Where an animal's box sits against the plate rectangle.
 function measureFrame(box, plate) {
@@ -407,12 +433,15 @@ function pick(weights, rnd) {
 // A deterministic spawn plan: n animals for a range, spaced at least a
 // jeep-length apart, never overlapping. Positions are world x along the
 // track and depth 0..1 (1 = near line).
-function spawnPlan(rangeKey, n, rnd) {
+function spawnPlan(rangeKey, n, rnd, light) {
   const R = RANGES[rangeKey];
+  const night = !!(light && LIGHTS[light] && LIGHTS[light].lamp);
+  const cast = {};
+  for (const k in R.cast) if (!ANIMALS[k].night || night) cast[k] = R.cast[k];
   const out = [];
   let x = 80;
   for (let i = 0; i < n; i++) {
-    const key = pick(R.cast, rnd);
+    const key = pick(cast, rnd);
     const A = ANIMALS[key];
     const gap = 260 + A.size + rnd() * 400;
     x += gap;
@@ -443,7 +472,7 @@ function plateFor(animal, behaviour, rnd) {
   return any[Math.floor(rnd() * any.length) % any.length];
 }
 
-const RANGE = { SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, PULLS, WORDS, PLATES, score, measureFrame, spawnPlan, plateFor, pick, mulberry };
+const RANGE = { SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, PULLS, WORDS, PLATES, score, measureFrame, spawnPlan, plateFor, lightsFor, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
 
 // ---- page section: everything below needs a document ----
@@ -474,7 +503,9 @@ function buildCamp() {
     rp.appendChild(b);
   }
   const lp = $("light-pick"); lp.innerHTML = "";
-  for (const k in LIGHTS) {
+  const lights = lightsFor(state.range);
+  if (!lights.includes(state.light)) state.light = lights[0];
+  for (const k of lights) {
     const b = document.createElement("button");
     b.textContent = LIGHTS[k].name; b.className = k === state.light ? "on" : "";
     b.onclick = () => { state.light = k; buildCamp(); };
@@ -482,7 +513,7 @@ function buildCamp() {
   }
   const R = RANGES[state.range];
   $("camp-note").textContent = R.place + ". " + R.note;
-  $("go").textContent = R.seat === "hide" ? "Sit the hide" : "Drive the range";
+  $("go").textContent = R.seat === "hide" ? "Sit the hide" : R.seat === "walk" ? "Walk the range" : "Drive the range";
   $("range-line").textContent = R.name + " · " + LIGHTS[state.light].name;
 }
 
@@ -491,12 +522,15 @@ function begin() {
   const R = RANGES[state.range];
   state.rnd = mulberry((Date.now() / 1000) | 0);
   state.worldX = 0; state.speed = 0; state.t = 0; state.camera = false; state.focus = null;
-  state.animals = spawnPlan(state.range, 14, state.rnd).map(makeAnimal);
+  state.animals = spawnPlan(state.range, 14, state.rnd, state.light).map(makeAnimal);
   if (R.seat === "hide") for (const a of state.animals) { a.x = W * 0.15 + (a.x - 80) * 0.45; }
   state.playing = true;
   $("camp").hidden = true;
   drawHud();
-  say("Spotter", R.seat === "hide" ? "Sit still. The water brings them." : "Stay in the vehicle. A cat in the grass means you stay seated.");
+  say(R.seat === "walk" ? "Guide" : "Spotter",
+      R.seat === "hide" ? "Sit still. The water brings them." :
+      R.seat === "walk" ? (LIGHTS[state.light].lamp ? "The lamp is the frame. Whatever is in it is what you have." : "Single file. Stop when I stop. Nothing runs from a still person.") :
+      "Stay in the vehicle. A cat in the grass means you stay seated.");
   stage.focus();
 }
 
@@ -525,11 +559,14 @@ function step(dt) {
   const R = RANGES[state.range];
   state.t += dt;
   if (state.radio && state.t > state.radioUntil) { $("radio").hidden = true; state.radio = null; }
-  // driving
-  const drive = R.seat === "drive" && !state.camera;
-  const want = drive ? ((state.keys.d ? 1 : 0) - (state.keys.a ? 1 : 0)) * 260 : 0;
+  // driving, or walking: on foot the pace is a third and the shy ones
+  // run from anyone moving nearby
+  const moving = R.seat !== "hide" && !state.camera;
+  const top = R.seat === "walk" ? 90 : 260;
+  const want = moving ? ((state.keys.d ? 1 : 0) - (state.keys.a ? 1 : 0)) * top : 0;
   state.speed += (want - state.speed) * Math.min(1, dt * 3);
   state.worldX += state.speed * dt;
+  const spookSpeed = R.seat === "walk" ? 40 : 200, spookRange = R.seat === "walk" ? 520 : 420;
   // animals
   for (const a of state.animals) {
     if (a.gone) continue;
@@ -542,7 +579,7 @@ function step(dt) {
     }
     // a fast jeep sends the shy ones running
     const sx = a.x - state.worldX + JEEP_X;
-    if (A.spook && !a.spooked && Math.abs(state.speed) > 200 && Math.abs(sx - JEEP_X) < 420) {
+    if (A.spook && !a.spooked && Math.abs(state.speed) > spookSpeed && Math.abs(sx - JEEP_X) < spookRange) {
       a.spooked = 6 * A.spook; a.behaviour = A.fly ? "flight" : "running"; a.dir = sx > JEEP_X ? 1 : -1;
     }
     if (a.spooked > 0) { a.spooked -= dt; if (a.spooked <= 0) { a.spooked = 0; a.until = 0; } }
@@ -552,7 +589,7 @@ function step(dt) {
     if (a.behaviour === "running") a.phase += dt * 14;
     if (a.behaviour === "flight") a.phase += dt * 9;
     // the range has no edge: an animal far behind respawns far ahead
-    if (sx < -900) { const p = spawnPlan(state.range, 1, state.rnd)[0]; a.key = p.key; a.behaviour = p.behaviour; a.depth = p.depth; a.x = state.worldX + W + 600 + state.rnd() * 800; a.spooked = 0; }
+    if (sx < -900) { const p = spawnPlan(state.range, 1, state.rnd, state.light)[0]; a.key = p.key; a.behaviour = p.behaviour; a.depth = p.depth; a.x = state.worldX + W + 600 + state.rnd() * 800; a.spooked = 0; }
   }
   // focus list
   if (state.camera) refreshFocus();
@@ -562,7 +599,7 @@ function step(dt) {
 function boxOf(a) {
   const A = ANIMALS[a.key];
   const scale = 0.45 + 0.55 * a.depth;
-  const w = A.size * scale, h = (A.shape === "bird" ? A.size * 0.5 : A.shape === "upright" ? A.size * 1.6 : A.shape === "giraffe" ? A.size * 1.3 : A.size * 0.6) * scale;
+  const w = A.size * scale, h = (A.shape === "bird" ? A.size * 0.5 : A.shape === "upright" ? A.size * 1.6 : A.shape === "giraffe" ? A.size * 1.3 : A.shape === "blob" ? A.size * 1.1 : A.size * 0.6) * scale;
   const x = a.x - state.worldX + JEEP_X - w / 2;
   let y;
   if (A.fly) y = HORIZON - 140 * scale - 40 * Math.sin(a.phase * 0.5);
@@ -576,9 +613,16 @@ function plateRect() {
   return { x: state.aim.x - w / 2, y: state.aim.y - h / 2, w, h };
 }
 
+// On a night drive only what the lamp reaches can be seen or shot.
+const LAMP = 300;
+function inLamp(a) {
+  if (!LIGHTS[state.light].lamp) return true;
+  const b = boxOf(a), cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+  return Math.hypot(cx - state.aim.x, cy - state.aim.y) < LAMP;
+}
 function inFrame() {
   const p = plateRect();
-  return state.animals.filter(a => !a.gone && measureFrame(boxOf(a), p).inside)
+  return state.animals.filter(a => !a.gone && inLamp(a) && measureFrame(boxOf(a), p).inside)
     .sort((a, b) => boxOf(b).w - boxOf(a).w);
 }
 
@@ -611,13 +655,14 @@ function fire() {
   const a = state.focus;
   const p = plateRect();
   const framing = a ? measureFrame(boxOf(a), p) : null;
+  if (framing && !inLamp(a)) framing.dark = true;
   const behaviour = a ? a.behaviour : "resting";
-  const v = score(state.shutter, behaviour, framing, state.light);
-  if (a && a.spooked > 0 && v.stars > 0) { v.lines.unshift(WORDS.spooked); }
+  const v = score(state.shutter, behaviour, framing, state.light, a ? a.key : null);
+  if (a && a.spooked > 0 && v.stars > 0) { v.lines.unshift(RANGES[state.range].seat === "walk" ? WORDS.walked : WORDS.spooked); }
   const frame = a && v.stars > 0 ? plateFor(a.key, behaviour, state.rnd) : null;
   const plate = { when: Date.now(), range: state.range, light: state.light, shutter: state.shutter,
                   animal: a ? a.key : null, behaviour: a ? behaviour : null, stars: v.stars, keeper: v.keeper, lines: v.lines, iso: v.iso,
-                  frame: frame ? frame.title : null };
+                  prize: !!v.prize, frame: frame ? frame.title : null };
   // the plate image: the crop, drawn from the scene without the finder
   draw(false);
   const img = document.createElement("canvas");
@@ -662,14 +707,14 @@ function save() { localStorage.setItem("psr.sheet", JSON.stringify(state.sheet))
 
 function drawSheet() {
   const ul = $("sheet"); ul.innerHTML = "";
-  let keepers = 0;
+  let keepers = 0, hard = 0;
   for (const p of state.sheet.slice().reverse()) {
     const li = document.createElement("li");
     const A = ANIMALS[p.animal];
-    li.innerHTML = "<span class='s'>" + "★".repeat(p.stars) + "</span> " + (A ? A.name : "—") + (p.behaviour ? " · " + BEHAVIOURS[p.behaviour].verb.toLowerCase() : "") + " · 1/" + p.shutter + (p.frame ? " <span class='dim'>· " + p.frame + "</span>" : "");
-    ul.appendChild(li); if (p.keeper) keepers++;
+    li.innerHTML = "<span class='s'>" + "★".repeat(p.stars) + "</span> " + (A ? A.name : "—") + (p.behaviour ? " · " + BEHAVIOURS[p.behaviour].verb.toLowerCase() : "") + " · 1/" + p.shutter + (p.prize ? " <span class='s'>· hard plate</span>" : "") + (p.frame ? " <span class='dim'>· " + p.frame + "</span>" : "");
+    ul.appendChild(li); if (p.keeper) keepers++; if (p.prize) hard++;
   }
-  $("sheet-line").textContent = state.sheet.length ? state.sheet.length + (state.sheet.length === 1 ? " plate" : " plates") + " kept, " + keepers + (keepers === 1 ? " keeper" : " keepers") + "." : "No plates yet.";
+  $("sheet-line").textContent = state.sheet.length ? state.sheet.length + (state.sheet.length === 1 ? " plate" : " plates") + " kept, " + keepers + (keepers === 1 ? " keeper" : " keepers") + (hard ? ", " + hard + (hard === 1 ? " hard plate" : " hard plates") : "") + "." : "No plates yet.";
 }
 
 // ---- drawing ----
@@ -701,10 +746,29 @@ function draw(withFinder = true) {
   // animals, far to near
   const list = state.animals.filter(a => !a.gone).sort((a, b) => a.depth - b.depth);
   for (const a of list) drawAnimal(a);
-  // jeep or hide
-  if (R.seat === "drive") drawJeep(); else drawHide();
+  // jeep, hide or the walking party
+  if (R.seat === "drive") drawJeep(); else if (R.seat === "hide") drawHide(); else drawWalkers();
   ctx.fillStyle = L.tint; ctx.fillRect(0, 0, W, H);
+  if (L.lamp) {
+    // night: dark everywhere but the lamp, which follows the aim
+    const g = ctx.createRadialGradient(state.aim.x, state.aim.y, LAMP * 0.35, state.aim.x, state.aim.y, LAMP);
+    g.addColorStop(0, "rgba(8,10,24,0)"); g.addColorStop(1, "rgba(8,10,24,0.92)");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  }
   if (state.camera && withFinder) drawFinder();
+}
+
+function drawWalkers() {
+  // the guide ahead, you behind, on the near line
+  for (const [x, h, c] of [[JEEP_X + 60, 78, "#5d6b3a"], [JEEP_X, 72, "#7a4b1e"]]) {
+    ctx.fillStyle = "rgba(0,0,0,0.22)"; ctx.beginPath(); ctx.ellipse(x, NEAR + 8, 22, 6, 0, 0, 6.28); ctx.fill();
+    ctx.fillStyle = c;
+    const sway = Math.sin(state.t * 8) * Math.min(4, Math.abs(state.speed) / 20);
+    ctx.fillRect(x - 9, NEAR + 6 - h, 18, h * 0.55);
+    ctx.fillRect(x - 8, NEAR + 6 - h * 0.45, 6, h * 0.45 + sway); ctx.fillRect(x + 2, NEAR + 6 - h * 0.45, 6, h * 0.45 - sway);
+    ctx.fillStyle = "#c9a27a"; ctx.beginPath(); ctx.arc(x, NEAR - h + 2, 9, 0, 6.28); ctx.fill();
+    ctx.fillStyle = "#3a3630"; ctx.fillRect(x - 11, NEAR - h - 4, 22, 5);
+  }
 }
 
 function drawAnimal(a) {
@@ -726,6 +790,13 @@ function drawAnimal(a) {
     ctx.beginPath(); ctx.moveTo(-sz * 0.05, -sz * 0.27); ctx.lineTo(-sz * 0.5, -sz * 0.27 - sz * 0.3 * flap); ctx.lineTo(-sz * 0.1, -sz * 0.2); ctx.fill();
     ctx.beginPath(); ctx.moveTo(sz * 0.05, -sz * 0.27); ctx.lineTo(sz * 0.5, -sz * 0.27 - sz * 0.3 * flap); ctx.lineTo(sz * 0.1, -sz * 0.2); ctx.fill();
     ctx.fillStyle = "#f5f0e4"; ctx.beginPath(); ctx.arc(sz * 0.2, -sz * 0.3, sz * 0.06, 0, 6.28); ctx.fill();
+  } else if (A.shape === "blob") {
+    // a hyrax on its rock
+    ctx.fillStyle = "#8a8070"; ctx.beginPath(); ctx.ellipse(0, -sz * 0.1, sz * 0.9, sz * 0.35, 0, 0, 6.28); ctx.fill();
+    ctx.fillStyle = A.colour;
+    const up = a.behaviour === "sentinel";
+    ctx.beginPath(); ctx.ellipse(0, -sz * 0.55, sz * 0.5, up ? sz * 0.42 : sz * 0.3, 0, 0, 6.28); ctx.fill();
+    ctx.beginPath(); ctx.arc(sz * 0.42, up ? -sz * 0.9 : -sz * 0.62, sz * 0.2, 0, 6.28); ctx.fill();
   } else if (A.shape === "upright") {
     const up = a.behaviour === "sentinel";
     ctx.beginPath(); ctx.ellipse(0, up ? -sz * 0.8 : -sz * 0.25, sz * 0.22, up ? sz * 0.8 : sz * 0.25, 0, 0, 6.28); ctx.fill();
@@ -828,7 +899,7 @@ stage.addEventListener("keydown", (e) => {
   if (k === "a" || k === "d") {
     state.keys[k] = true;
     // a tap moves the jeep a little; a held key builds speed
-    if (RANGES[state.range].seat === "drive" && !state.camera) state.worldX += (k === "d" ? 1 : -1) * 14;
+    if (RANGES[state.range].seat !== "hide" && !state.camera) state.worldX += (k === "d" ? 1 : -1) * (RANGES[state.range].seat === "walk" ? 6 : 14);
   }
   if (k === " ") { if (state.camera) fire(); else toggleCamera(); }
   if (k === "c") { if (state.camera) toggleCamera(); }
@@ -850,6 +921,7 @@ function aimAt(e) {
   state.aim.y = Math.max(0, Math.min(H, (e.clientY - r.top) * H / r.height));
 }
 stage.addEventListener("pointermove", (e) => { if (e.target === canvas) aimAt(e); });
+stage.addEventListener("mousemove", (e) => { if (e.target === canvas) aimAt(e); });
 stage.addEventListener("pointerdown", (e) => { if (e.target === canvas) aimAt(e); });
 stage.addEventListener("click", (e) => {
   if (e.target !== canvas) return;
@@ -864,7 +936,7 @@ for (const b of document.querySelectorAll("#pad button")) {
   const act = b.dataset.act;
   if (act === "left" || act === "right") {
     const k = act === "left" ? "a" : "d";
-    b.addEventListener("pointerdown", (e) => { e.preventDefault(); if (!state.playing) return; padHold(k, true); if (!state.camera && RANGES[state.range].seat === "drive") state.worldX += (k === "d" ? 1 : -1) * 14; });
+    b.addEventListener("pointerdown", (e) => { e.preventDefault(); if (!state.playing) return; padHold(k, true); if (!state.camera && RANGES[state.range].seat !== "hide") state.worldX += (k === "d" ? 1 : -1) * (RANGES[state.range].seat === "walk" ? 6 : 14); });
     for (const ev of ["pointerup", "pointercancel", "pointerleave"]) b.addEventListener(ev, () => padHold(k, false));
     continue;
   }

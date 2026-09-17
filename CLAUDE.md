@@ -76,6 +76,18 @@ or more. Change a threshold only when the field notes in
 - The portfolio carries no generated images. This game may, under
   `images/`, at its own address, never inside the portfolio's pages.
 
+## South Luangwa
+
+Added 2026-09-17 for Dermot's 2027 Zambia trip, on his choice of small hard
+subjects over elephants: `seat: "walk"` (a third of the jeep's pace, and
+the shy ones run from anyone moving within a longer range), a `night`
+light with `lamp: 1` (dark outside a circle that follows the aim; an
+animal outside it cannot be focused or shot, and the ISO is 3200 at every
+shutter), animals marked `prize` (a keeper is a "hard plate", counted on
+the sheet) and `night` (spawns only on a lamp light). A range lists its
+`lights`; the default is the three day windows. There are no frames for
+these animals yet; the plate shows the crop alone until he has been.
+
 ## Adding to the world
 
 An animal: add to `ANIMALS` with `name`, `latin`, `size`, `shape` (one of
