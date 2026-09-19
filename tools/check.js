@@ -153,8 +153,31 @@ for (const d in R.DAYS) {
 for (const k in R.RANGES) {
   const day = R.dayFor(k); if (!day) continue;
   for (const l of day) if (l.light && !R.lightsFor(k).includes(l.light)) fail("range " + k + " day sets light " + l.light + ", which the range does not offer");
+  // the level by the clock: a window's own value at the middle of its
+  // leg, EDGE_DROP darker at the day's first and last lit minute, never
+  // outside that band, a lamp the lamp's at any hour, and no NaN
+  const lit = day.filter(l => l.light && !R.LIGHTS[l.light].lamp && R.hm(l.to) > R.hm(l.from));
+  for (const l of lit) {
+    const mid = (R.hm(l.from) + R.hm(l.to)) / 2;
+    if (Math.abs(R.evAt(k, mid, l.light) - R.LIGHTS[l.light].ev) > 1e-9) fail("range " + k + " at the middle of " + l.name + " is not the window's own level");
+  }
+  if (lit.length) {
+    if (Math.abs(R.evAt(k, R.hm(lit[0].from), lit[0].light) - (R.LIGHTS[lit[0].light].ev - R.EDGE_DROP)) > 1e-9) fail("range " + k + " first lit minute is not EDGE_DROP darker");
+    if (Math.abs(R.evAt(k, R.hm(lit[lit.length - 1].to), lit[lit.length - 1].light) - (R.LIGHTS[lit[lit.length - 1].light].ev - R.EDGE_DROP)) > 1e-9) fail("range " + k + " last lit minute is not EDGE_DROP darker");
+  }
+  for (const light of R.lightsFor(k)) {
+    const evs = R.lightsFor(k).filter(x => !R.LIGHTS[x].lamp).map(x => R.LIGHTS[x].ev);
+    const lo = Math.min(...evs) - R.EDGE_DROP, hi = Math.max(...evs);
+    for (let t = R.hm(day[0].from); t <= R.hm(day[day.length - 1].from); t += 7) {
+      const ev = R.evAt(k, t, light);
+      if (!Number.isFinite(ev)) fail("range " + k + " light " + light + " at " + R.clockLabel(t) + ": level is " + ev);
+      if (R.LIGHTS[light].lamp) { if (ev !== R.LIGHTS[light].ev) fail("range " + k + ": the lamp's level moved with the clock"); }
+      else if (ev < lo - 1e-9 || ev > hi + 1e-9) fail("range " + k + " light " + light + " at " + R.clockLabel(t) + ": level " + ev + " outside " + lo + ".." + hi);
+    }
+  }
   ok();
 }
+for (const k in R.RANGES) if (!R.dayFor(k)) for (const light of R.lightsFor(k)) if (R.evAt(k, 600, light) !== R.LIGHTS[light].ev) fail("range " + k + " has no day, but its level moved");
 if (R.clockLabel(R.hm("06:15")) !== "06:15" || R.clockLabel(R.hm("18:45")) !== "18:45") fail("clockLabel does not round-trip");
 // lights
 for (const k in R.LIGHTS) {

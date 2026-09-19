@@ -194,6 +194,35 @@ on", "A or D: drive on") say walk on a walk seat. `buildCamp` calls
 begins. Keyed on `seat`, not `country`: a future walked range anywhere
 gets it, and a driven one in Ireland would not.
 
+## Three mode buttons, the range sets out, the level follows the clock
+
+Dermot, 2026-09-19, three directions in one line. **The mode dial is
+three exclusive buttons** (*Mode dial on range game as three exclusive
+buttons*): the rotating dial and its face are gone; `#modes` holds S, A
+and M, `setMode` picks one, `drawPad` lights it, and the M key still
+walks them through `cycleMode`. **Picking a range sets out** (*Once the
+hide or range is selected the sit/drive/walk should be automatic*): the
+camp card is the body row first (the range's own body, the DSLR, the
+mirrorless: `state.bodyChoice`, null for the range's own), then the two
+light choices the day does not make, then the ranges by country, and a
+range button calls `begin` straight away; the Go button is gone, and
+Space or Enter at camp still begins on the last range. **The light level
+follows the clock** (*light level should depend on clock time of day*):
+`evAt(range, clock, light)` in the pure section gives the exposure value
+the clock has, a window's `ev` at the middle of its leg, straight between
+the middles of the day's light legs, and `EDGE_DROP` (1.5 stops) darker
+at the first lit minute and the last, so first light at a quarter past
+six is not first light at half eight. A day whose legs name no light (the
+wood's walkabout) keeps the window chosen at camp and still falls off to
+its two ends; a lamp light is the lamp's at any hour; a range with no day
+keeps its window's value. `lightNow()` in the page hands `{ key, ev }` to
+`exposeFor` through `evOf`, which takes a key or such an object, so the
+check's calls by key stand; the LCD shows the EV. The wood's weather and
+the sky's moon are `state.lightChoice[range]`, the only lights still
+chosen, and the check holds `evAt` to the window's own value at a leg's
+middle, `EDGE_DROP` darker at the day's lit ends, inside the band between,
+the lamp's value at any hour, and unmoved on a range with no day.
+
 ## The camera and the dial
 
 Added 2026-09-17 at Dermot's "Shutter Speed, Aperture, ISO and other
