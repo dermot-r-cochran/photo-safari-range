@@ -33,8 +33,10 @@ The loop, in four beats:
    when the spotter calls something, a wait while you work, then on. A and
    D (or the left and right arrows while the camera is down) are requests,
    closer or back, and he obliges; a tap is a nudge at his own pace, a key
-   held past a second is hurrying him. On foot the guide walks the same
-   way. In the hide and at the tripod nothing moves but the animals.
+   held past a second is hurrying him. On foot the same keys walk you
+   closer or back, and the pad's buttons say Walk rather than Driver. In
+   the hide and at the tripod nothing moves but the animals, and the pad
+   shows no mover at all.
 2. **Camera** up. At the stop it comes up by itself on what was called;
    Space raises it at any other time. The plate rectangle follows the
    mouse or the arrow keys; Z zooms through wide, normal and tight (on the

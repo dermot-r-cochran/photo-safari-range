@@ -214,8 +214,8 @@
       </div>
     </div>
     <div class="off" aria-label="Off the camera">
-      <button data-act="left" title="Ask the driver for closer or back (A, or the left arrow with the camera down)">◀ Driver</button>
-      <button data-act="right" title="Ask the driver for closer or back (D, or the right arrow with the camera down)">Driver ▶</button>
+      <button data-act="left" id="btn-left">◀ Driver</button>
+      <button data-act="right" id="btn-right">Driver ▶</button>
       <button data-act="support" id="btn-support"></button>
       <button data-act="down" id="btn-down">Camera down<kbd>C</kbd></button>
       <button data-act="skip">Next part of the day<kbd>N</kbd></button>
@@ -1055,6 +1055,7 @@ function buildCamp() {
   $("camp-note").textContent = R.place + ". " + R.note;
   $("go").textContent = R.seat === "hide" ? "Sit the hide" : R.seat === "walk" ? "Walk the range" : R.seat === "tripod" ? "Set up the tripod" : "Drive the range";
   $("range-line").textContent = R.name + " · " + LIGHTS[state.light].name;
+  drawPad();
 }
 
 // ---- outing ----
@@ -1365,7 +1366,7 @@ function refreshFocus() {
       const tip = advise(previewExposure(), a.behaviour, scaleFor(state.range), state.support, pullsFor(state.range)[state.pull], RANGES[state.range].seat);
       if (tip) { say("Guide", tip); state.nextTip = state.t + 10; }
     }
-  } else $("asked").textContent = "Nothing in the frame. Move the aim, or drive closer.";
+  } else $("asked").textContent = "Nothing in the frame. Move the aim, or " + (RANGES[state.range].seat === "walk" ? "walk" : "drive") + " closer.";
   drawHud();
 }
 
@@ -1378,7 +1379,7 @@ function onRange() {
 function refreshRange() {
   const list = onRange();
   const el = $("asked");
-  if (!list.length) { el.textContent = "Nothing on the range yet. Drive on."; return; }
+  if (!list.length) { el.textContent = "Nothing on the range yet. " + (RANGES[state.range].seat === "walk" ? "Walk on." : "Drive on."); return; }
   el.innerHTML = "<span class='dim'>On the range, nearest first:</span><br>" + list.map(a => {
     const A = ANIMALS[a.key], B = BEHAVIOURS[a.behaviour], b = boxOf(a);
     const side = A.sky ? "" : (b.x + b.w / 2 > JEEP_X ? ", right" : ", left");
@@ -1797,7 +1798,7 @@ function drawHud() {
     if (apLive) e.onclick = () => { state.aperture = N; drawHud(); };
   }
   add("ISO " + exp.iso + (exp.under >= 0.5 ? " · dark" : exp.over >= 0.5 ? " · blown" : ""));
-  if (state.camera) add("Space: shoot · A or D: drive on", "dim");
+  if (state.camera) add("Space: shoot · A or D: " + (RANGES[state.range].seat === "walk" ? "walk on" : "drive on"), "dim");
 }
 
 // The support the seat offers: a beanbag on the sill of the jeep or the
@@ -1977,6 +1978,14 @@ function drawPad() {
     sup.innerHTML = (state.support ? "Back in the hand" : "On the " + name) + "<kbd>B</kbd>";
     sup.classList.toggle("on", !!state.support);
     sup.title = "Rest the camera on the " + name + " for a slower shutter, or take it back in the hand to move";
+  }
+  const lf = $("btn-left"), rt = $("btn-right");
+  if (lf && rt) {
+    const seat = RANGES[state.range].seat, onFoot = seat === "walk";
+    lf.hidden = rt.hidden = !(seat === "drive" || onFoot);
+    lf.textContent = onFoot ? "◀ Walk" : "◀ Driver"; rt.textContent = onFoot ? "Walk ▶" : "Driver ▶";
+    const how = onFoot ? "Walk closer or back" : "Ask the driver for closer or back";
+    lf.title = how + " (A, or the left arrow with the camera down)"; rt.title = how + " (D, or the right arrow with the camera down)";
   }
   const sk = q('#body button[data-act="skip"]');
   if (sk) sk.hidden = !dayFor(state.range);

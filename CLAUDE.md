@@ -181,6 +181,19 @@ the legs after it come at their own times. A light window is not held:
 it changes over the finder as before. The check holds `stopsFor` to the
 legs' own words and `clockAfter` to never turning the clock back.
 
+## The mover's buttons follow the seat
+
+Dermot, 2026-09-19: *Driver buttons would be just Walk or Move buttons
+for Ireland*. The pad's two off-camera buttons were "Driver" on every
+range. `drawPad` now labels them from the seat: "Driver" in the jeep,
+"Walk" on foot (the Irish ranges, and South Luangwa, which is walked
+too), and hidden in the hide and at the tripod, where `driveOn` does
+nothing. The three live lines that said "drive" ("drive closer", "Drive
+on", "A or D: drive on") say walk on a walk seat. `buildCamp` calls
+`drawPad` so the pad matches the range picked at camp before the outing
+begins. Keyed on `seat`, not `country`: a future walked range anywhere
+gets it, and a driven one in Ireland would not.
+
 ## The camera and the dial
 
 Added 2026-09-17 at Dermot's "Shutter Speed, Aperture, ISO and other
