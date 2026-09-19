@@ -95,6 +95,17 @@ spotter's calls are only worth anything if they are true.
 - The portfolio carries no generated images. This game may, under
   `images/`, at its own address, never inside the portfolio's pages.
 
+## The clock is the limit, not a stroke count
+
+Dermot, 2026-09-19: *Range game is time limited rather than counting
+shots. It was no penalty for non-keepers.* The tutorial scores like golf
+(every press a stroke, par one a stop); this game does not, and should
+not be made to. The day's clock is the whole constraint: a plate for the
+folder costs the minutes it took and nothing else, the sheet counts what
+was kept, and the end-of-day card gives keepers from shots as a tally
+with one piece of coaching, never as a score against par. Don't add
+strokes, par or a penalty for a miss here.
+
 ## South Luangwa
 
 Added 2026-09-17 for Dermot's 2027 Zambia trip, on his choice of small hard
@@ -163,6 +174,65 @@ a setting. Dermot's rule the same day, for this game and the tutorial:
 example frames need not be on the portfolio site, but every one must be a
 real photograph or an edit of a real photograph. No frame of the rut yet;
 the rut on 24 October 2026 is the shooting list.
+
+## A break never interrupts a shot
+
+Dermot, 2026-09-19: *don't suddenly stop for a break in the middle of an
+active shoot*. Until then `tickClock` showed the pause card the instant
+the clock crossed into a `pause` or `end` leg, and `showPause` put the
+camera down on whatever it was on. Now a leg that stops the outing
+(`stopsFor`) is held while the player is shooting (`shooting`: the camera
+up with an animal in focus, which on a hide clears when the plate
+empties): `holdLeg` records it in `state.waiting`, the guide says
+`WORDS.wait`, the HUD clock names the leg waiting, and the card comes on
+the first tick after the camera is down or the focus is gone, or at once
+on N. The clock runs on while a stop waits and `clockAfter` keeps
+`resumeAfterPause` from rewinding it, so a break taken late is short and
+the legs after it come at their own times. A light window is not held:
+it changes over the finder as before. The check holds `stopsFor` to the
+legs' own words and `clockAfter` to never turning the clock back.
+
+## The mover's buttons follow the seat
+
+Dermot, 2026-09-19: *Driver buttons would be just Walk or Move buttons
+for Ireland*. The pad's two off-camera buttons were "Driver" on every
+range. `drawPad` now labels them from the seat: "Driver" in the jeep,
+"Walk" on foot (the Irish ranges, and South Luangwa, which is walked
+too), and hidden in the hide and at the tripod, where `driveOn` does
+nothing. The three live lines that said "drive" ("drive closer", "Drive
+on", "A or D: drive on") say walk on a walk seat. `buildCamp` calls
+`drawPad` so the pad matches the range picked at camp before the outing
+begins. Keyed on `seat`, not `country`: a future walked range anywhere
+gets it, and a driven one in Ireland would not.
+
+## Three mode buttons, the range sets out, the level follows the clock
+
+Dermot, 2026-09-19, three directions in one line. **The mode dial is
+three exclusive buttons** (*Mode dial on range game as three exclusive
+buttons*): the rotating dial and its face are gone; `#modes` holds S, A
+and M, `setMode` picks one, `drawPad` lights it, and the M key still
+walks them through `cycleMode`. **Picking a range sets out** (*Once the
+hide or range is selected the sit/drive/walk should be automatic*): the
+camp card is the body row first (the range's own body, the DSLR, the
+mirrorless: `state.bodyChoice`, null for the range's own), then the two
+light choices the day does not make, then the ranges by country, and a
+range button calls `begin` straight away; the Go button is gone, and
+Space or Enter at camp still begins on the last range. **The light level
+follows the clock** (*light level should depend on clock time of day*):
+`evAt(range, clock, light)` in the pure section gives the exposure value
+the clock has, a window's `ev` at the middle of its leg, straight between
+the middles of the day's light legs, and `EDGE_DROP` (1.5 stops) darker
+at the first lit minute and the last, so first light at a quarter past
+six is not first light at half eight. A day whose legs name no light (the
+wood's walkabout) keeps the window chosen at camp and still falls off to
+its two ends; a lamp light is the lamp's at any hour; a range with no day
+keeps its window's value. `lightNow()` in the page hands `{ key, ev }` to
+`exposeFor` through `evOf`, which takes a key or such an object, so the
+check's calls by key stand; the LCD shows the EV. The wood's weather and
+the sky's moon are `state.lightChoice[range]`, the only lights still
+chosen, and the check holds `evAt` to the window's own value at a leg's
+middle, `EDGE_DROP` darker at the day's lit ends, inside the band between,
+the lamp's value at any hour, and unmoved on a range with no day.
 
 ## The camera and the dial
 

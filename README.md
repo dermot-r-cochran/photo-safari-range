@@ -33,8 +33,10 @@ The loop, in four beats:
    when the spotter calls something, a wait while you work, then on. A and
    D (or the left and right arrows while the camera is down) are requests,
    closer or back, and he obliges; a tap is a nudge at his own pace, a key
-   held past a second is hurrying him. On foot the guide walks the same
-   way. In the hide and at the tripod nothing moves but the animals.
+   held past a second is hurrying him. On foot the same keys walk you
+   closer or back, and the pad's buttons say Walk rather than Driver. In
+   the hide and at the tripod nothing moves but the animals, and the pad
+   shows no mover at all.
 2. **Camera** up. At the stop it comes up by itself on what was called;
    Space raises it at any other time. The plate rectangle follows the
    mouse or the arrow keys; Z zooms through wide, normal and tight (on the
@@ -47,7 +49,8 @@ The loop, in four beats:
    without moving, if you want him to drive on at his own pace.
 
 The controls under the picture are laid out as they sit on a camera: the
-mode dial, the top LCD and the shutter release on the top plate; the two
+three mode buttons (S, A and M, one lit; the M key walks them), the top
+LCD and the shutter release on the top plate; the two
 command wheels, the zoom ring and the focus point on the back; and under
 the body, off it, the things that are not the camera: the driver, the
 beanbag, the day, packing up. Every key is printed beside its control.
@@ -66,13 +69,26 @@ is a club walkabout: ten till two with a coffee stop at half twelve, and
 one frame for Saturday Shutters at the end. The Fifteen Acres is the
 club's deer morning in October: the rut at nine, the herd in mist until
 coffee at half eleven, back across the acres until one. The light follows the clock,
-so nobody picks it; the night sky keeps its choice of moon. Breakfast,
+so nobody picks it, and so does the level: a window's exposure value is
+its middle, the level runs between the windows' middles and falls a stop
+and a half to the day's first lit minute and its last, so first light at
+a quarter past six is dimmer than first light at half eight, and the LCD
+shows the EV the clock has. The wood's weather and the night sky's moon
+are the two choices the day does not make, and they are made at camp
+before the range is picked. Breakfast,
 camp and the coffee stop are cards with the sheet so far on them; N (or
-the pad's Skip ahead) jumps to the next part of the day.
+the pad's Skip ahead) jumps to the next part of the day. A break never
+interrupts a shot: with the camera up on an animal the guide says it can
+wait, the clock shows the break waiting, and the card comes when the
+camera goes down or the animal leaves the frame (or on N, to take it at
+once). The clock runs on while it waits, so a late break is a short one.
 
 ## The camera
 
-Two bodies, chosen at camp and each the default where it was carried.
+Two bodies, each the default where it was carried; at camp the range's
+own body is the first button, and either can be chosen over it. Picking
+a range sets out at once, sitting, driving or walking as the range is,
+so there is no button to press after it.
 They are named by kind, not by age, so the labels hold across makes and
 models, and they stand for a progression from basic kit to more advanced
 kit, with its trade-offs. The **DSLR** is the basic kit, the tutorial's

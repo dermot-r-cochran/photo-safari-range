@@ -54,7 +54,7 @@
   button.on { background: var(--earth); color: #fff; border-color: var(--earth); }
   button:disabled { opacity: 0.5; cursor: default; }
   .row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin: 0.5rem 0; }
-  #range-pick .group { width: 100%; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-top: 0.2rem; }
+  #range-pick .group, #light-pick .group { width: 100%; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-top: 0.2rem; }
   #stage {
     position: relative; width: 100%; aspect-ratio: 16 / 9;
     background: #c9b27f; border: 1px solid var(--line); border-radius: 8px;
@@ -123,11 +123,9 @@
   #body .lbl { display: block; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,240,228,0.7); white-space: nowrap; }
   #body .plate { display: grid; grid-template-columns: auto 1fr auto; gap: 0.9rem; align-items: center; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(245,240,228,0.15); }
   #body .dial-wrap, #body .release-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
-  #body .dial { position: relative; width: 4.6rem; height: 4.6rem; border-radius: 50%; padding: 0; border: 3px solid #1c1712; background: radial-gradient(circle at 40% 35%, #6b5a48, #2a241c 70%); box-shadow: 0 2px 4px rgba(0,0,0,0.5); color: #f5f0e4; }
-  #body .dial::before { content: ""; position: absolute; left: 50%; top: -0.55rem; width: 0; height: 0; margin-left: -0.3rem; border: 0.3rem solid transparent; border-top-color: #e8c97a; }
-  #body .dial .face { position: absolute; inset: 0; transition: transform 0.25s; }
-  #body .dial .face b { position: absolute; left: 50%; top: 50%; width: 1.35rem; height: 1.35rem; margin: -0.675rem 0 0 -0.675rem; line-height: 1.35rem; font-size: 0.95rem; text-align: center; border-radius: 50%; }
-  #body .dial .face b.on { background: #e8c97a; color: #2a241c; }
+  #body .modes { display: flex; gap: 0.3rem; }
+  #body .modes button { width: 2.3rem; height: 2.3rem; border-radius: 50%; padding: 0; border: 2px solid #1c1712; background: radial-gradient(circle at 40% 35%, #6b5a48, #2a241c 70%); box-shadow: 0 2px 4px rgba(0,0,0,0.5); color: #f5f0e4; font-weight: bold; font-size: 0.95rem; }
+  #body .modes button.on { background: #e8c97a; color: #2a241c; }
   #body .lcd { display: flex; flex-wrap: wrap; gap: 0.3rem 0.9rem; align-items: baseline; background: #aeb59b; color: #1e1a14; border: 2px solid #1c1712; border-radius: 5px; padding: 0.45rem 0.7rem; font: 1.05rem/1.3 "Courier New", Courier, monospace; min-height: 2.6rem; box-shadow: inset 0 1px 4px rgba(0,0,0,0.35); }
   #body .lcd .seg { white-space: nowrap; }
   #body .lcd .seg small { font-size: 0.65em; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; margin-right: 0.25em; }
@@ -186,7 +184,11 @@
   <div id="body" aria-label="Camera controls">
     <div class="plate">
       <div class="dial-wrap">
-        <button class="dial" data-act="mode" aria-label="Mode dial: shutter priority, aperture priority, manual" title="The mode dial. S: you set the shutter, the camera finds the rest. A: you set the aperture. M: you set both. (M cycles)"><span class="face" id="dial-face"><b data-m="S">S</b><b data-m="A">A</b><b data-m="M">M</b></span></button>
+        <div class="modes" id="modes" role="group" aria-label="Mode: shutter priority, aperture priority, manual">
+          <button data-act="setmode" data-mode="S" title="S: you set the shutter, the camera finds the aperture and the ISO">S</button>
+          <button data-act="setmode" data-mode="A" title="A: you set the aperture, the camera finds the shutter and the ISO">A</button>
+          <button data-act="setmode" data-mode="M" title="M: you set the shutter and the aperture, the camera finds the ISO">M</button>
+        </div>
         <span class="lbl">Mode<kbd>M</kbd></span>
       </div>
       <div class="lcd" id="lcd" aria-live="polite"></div>
@@ -214,8 +216,8 @@
       </div>
     </div>
     <div class="off" aria-label="Off the camera">
-      <button data-act="left" title="Ask the driver for closer or back (A, or the left arrow with the camera down)">◀ Driver</button>
-      <button data-act="right" title="Ask the driver for closer or back (D, or the right arrow with the camera down)">Driver ▶</button>
+      <button data-act="left" id="btn-left">◀ Driver</button>
+      <button data-act="right" id="btn-right">Driver ▶</button>
       <button data-act="support" id="btn-support"></button>
       <button data-act="down" id="btn-down">Camera down<kbd>C</kbd></button>
       <button data-act="skip">Next part of the day<kbd>N</kbd></button>
@@ -224,11 +226,10 @@
   </div>
   <div class="card" id="camp">
     <h2>Camp</h2>
-    <div class="row" id="range-pick"></div>
     <div class="row" id="body-pick"></div>
     <div class="row" id="light-pick"></div>
+    <div class="row" id="range-pick"></div>
     <p class="note" id="camp-note"></p>
-    <div class="row"><button class="primary" id="go">Drive the range</button></div>
     <p class="note">The driver drives and stops when the spotter calls; at the stop the camera comes up by itself on what was called · A and D (or the left and right arrows with the camera down) ask him for closer or back, and put the camera down to move on; hold a key past a second and you are hurrying him, which spooks the shy ones · Space fires; it also raises the camera if it is down · with the camera up the arrows or the mouse move the aim · the mode dial turns through S, A and M (M) · the wheels set the shutter ([ and ]) and the aperture (, and .) · B rests the camera on the beanbag, or the tripod on foot · the camera focuses on what is under the centre of the frame, and Tab picks another animal in it · Z zooms · C puts the camera down without moving · N skips to the next part of the day · Esc packs up.</p>
   </div>
   <div id="plates"></div>
@@ -557,7 +558,10 @@ const RANGES = {
 // window: each leg sets the light, a `pause` leg stops the outing for a
 // card (breakfast, camp, refreshments) and jumps the clock to its end,
 // and an `end` leg packs up. Times are "HH:MM"; the clock runs at
-// CLOCK_RATE safari minutes per real second.
+// CLOCK_RATE safari minutes per real second. A leg that stops the outing
+// never interrupts a shot: with the camera up on an animal it waits until
+// the camera comes down or the animal leaves the frame, and the clock
+// runs on meanwhile, so the break may start late and is never rewound.
 const CLOCK_RATE = 1.5;
 const DAYS = {
   safari: [
@@ -595,8 +599,43 @@ const DAYS = {
 function hm(s) { const [h, m] = s.split(":").map(Number); return h * 60 + m; }
 function clockLabel(min) { const h = Math.floor(min / 60) % 24, m = Math.floor(min % 60); return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m; }
 function dayFor(rangeKey) { return RANGES[rangeKey].day ? DAYS[RANGES[rangeKey].day] : null; }
+// The light level by the clock. A window's `ev` is the level at the
+// middle of its leg; between the middles of the day's light legs the
+// level runs straight, and it falls EDGE_DROP stops to the first minute
+// of the first light leg and the last minute of the last, so first light
+// at a quarter past six is not first light at half eight. A day whose
+// legs name no light (the wood's walkabout) keeps the window chosen at
+// camp and still falls off towards its two ends. A lamp light is the
+// lamp's, whatever the hour, and a range with no day keeps its window's
+// own value.
+const EDGE_DROP = 1.5;
+function evAt(rangeKey, clock, light) {
+  const L = LIGHTS[light];
+  if (!L) return 0;
+  const day = dayFor(rangeKey);
+  if (!day || clock === null || clock === undefined || L.lamp) return L.ev;
+  const legs = day.filter(l => l.light && !LIGHTS[l.light].lamp && hm(l.to) > hm(l.from));
+  const pts = legs.map(l => ({ t: (hm(l.from) + hm(l.to)) / 2, ev: LIGHTS[l.light].ev }));
+  const from = legs.length ? hm(legs[0].from) : hm(day[0].from);
+  const to = legs.length ? hm(legs[legs.length - 1].to) : hm(day[day.length - 1].from);
+  if (!pts.length) pts.push({ t: (from + to) / 2, ev: L.ev });
+  pts.unshift({ t: from, ev: pts[0].ev - EDGE_DROP });
+  pts.push({ t: to, ev: pts[pts.length - 1].ev - EDGE_DROP });
+  if (clock <= pts[0].t) return pts[0].ev;
+  for (let i = 1; i < pts.length; i++) {
+    if (clock <= pts[i].t) {
+      const a = pts[i - 1], b = pts[i];
+      return b.t === a.t ? b.ev : a.ev + (b.ev - a.ev) * (clock - a.t) / (b.t - a.t);
+    }
+  }
+  return pts[pts.length - 1].ev;
+}
 // The leg the clock is in: the last leg whose start the clock has reached.
 function legAt(day, min) { let i = 0; for (let k = 0; k < day.length; k++) if (min >= hm(day[k].from)) i = k; return i; }
+// A leg that stops the outing for a card: a pause or the end of the day.
+function stopsFor(leg) { return !!(leg.pause || leg.end); }
+// The clock after a stop: its end, or later if the stop was held for a shot.
+function clockAfter(clock, leg) { return Math.max(clock, hm(leg.to)); }
 
 // Light windows: the sky, and the ISO the meter lands on at each shutter.
 // ISO 400 clean, 800 fine, 1600 shows chroma noise, 3200 a last resort.
@@ -713,6 +752,7 @@ const COACH = {
 
 const WORDS = {
   miss:     "Nothing in the frame.",
+  wait:     "{leg} can wait. Finish the shot.",
   match:    "The shutter agrees with the animal.",
   slow1:    "A stop slow for that. Soft where it moved.",
   slow2:    "Two stops slow. The movement smeared.",
@@ -786,7 +826,8 @@ function isoStep(need, body) {
   if (need < steps[0]) return { iso: steps[0], under: 0, over: Math.log2(steps[0] / need) };
   return { iso: steps.find(x => x >= need - 1e-9), under: 0, over: 0 };
 }
-function evOf(light, behaviour) { const B = BEHAVIOURS[behaviour]; return B && B.ev !== undefined ? B.ev : LIGHTS[light].ev; }
+// `light` is a window's key, or { key, ev } when the clock has set the level
+function evOf(light, behaviour) { const B = BEHAVIOURS[behaviour]; return B && B.ev !== undefined ? B.ev : (typeof light === "object" ? light.ev : LIGHTS[light].ev); }
 function isoNeeded(N, sec, ev) { return 100 * Math.pow(2, Math.log2(N * N / sec) - ev); }
 function lensApertures(lens) { return APERTURES.filter(N => N >= lens.min - 1e-9 && N <= lens.max + 1e-9); }
 
@@ -976,7 +1017,7 @@ function plateFor(animal, behaviour, rnd) {
 
 const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, STILL, DAYS, CLOCK_RATE,
                 APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
-                score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, pick, mulberry };
+                score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, evAt, EDGE_DROP, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
 
 // ---- page section: everything below needs a document ----
@@ -993,6 +1034,8 @@ const state = {
   worldX: 0, speed: 0, animals: [], t: 0, rnd: null,
   camera: false, shutter: "1/250", aperture: 8, mode: "S", pull: 1, support: null, body: null, aim: { x: W / 2, y: H * 0.7 },
   focus: null, radio: null, radioUntil: 0,
+  waiting: null,
+  bodyChoice: null, lightChoice: {},
   sheet: JSON.parse(localStorage.getItem("psr.sheet") || "[]"),
   keys: {}
 };
@@ -1007,45 +1050,49 @@ function buildCamp() {
     for (const k in RANGES) {
       if (RANGES[k].country !== c) continue;
       const b = document.createElement("button");
-      b.textContent = RANGES[k].name; b.className = k === state.range ? "on" : "";
-      b.onclick = () => { state.range = k; state.body = null; buildCamp(); };
+      const R = RANGES[k], day = dayFor(k);
+      b.textContent = R.name; b.className = k === state.range ? "on" : "";
+      // the seat and the day are the range's own: picking it sets out
+      b.title = (R.seat === "hide" ? "Sit the hide" : R.seat === "walk" ? "Walk the range" : R.seat === "tripod" ? "Set up the tripod" : "Drive the range") +
+        (day ? " · " + day.map(l => l.name + " " + l.from).join(" · ") : "") + "\n" + R.place + ". " + R.note;
+      b.onclick = () => { state.range = k; begin(); };
       rp.appendChild(b);
     }
   }
-  // the body: the range's own by default, either on offer
-  if (!state.body) state.body = bodyFor(state.range);
+  // the body: the range's own unless one is chosen here
   const bp = $("body-pick"); bp.innerHTML = "";
+  const own = document.createElement("button");
+  own.textContent = "The range's own body"; own.className = state.bodyChoice ? "" : "on";
+  own.title = "Each range names the body it was shot on";
+  own.onclick = () => { state.bodyChoice = null; buildCamp(); };
+  bp.appendChild(own);
   for (const k in BODIES) {
     const b = document.createElement("button");
-    const lens = lensFor(state.range, k);
-    b.textContent = BODIES[k].name + " · " + lens.name; b.className = k === state.body ? "on" : "";
+    b.textContent = BODIES[k].name; b.className = k === state.bodyChoice ? "on" : "";
     b.title = BODIES[k].note;
-    b.onclick = () => { state.body = k; buildCamp(); };
+    b.onclick = () => { state.bodyChoice = k; buildCamp(); };
     bp.appendChild(b);
   }
+  // the light: the clock sets it wherever the day names one; where the day
+  // does not (the wood's weather, the sky's moon) the choice is made here
   const lp = $("light-pick"); lp.innerHTML = "";
-  const lights = lightsFor(state.range);
-  if (!lights.includes(state.light)) state.light = lights[0];
-  const R = RANGES[state.range];
-  const day = dayFor(state.range);
-  const dayHasLights = day && day.some(l => l.light);
-  if (dayHasLights) {
-    // the clock sets the light: show the day instead of a choice
-    const s = document.createElement("span"); s.className = "note";
-    s.textContent = "The day: " + day.map(l => l.name + " " + l.from).join(" · ");
-    lp.appendChild(s);
-  } else {
-    for (const k of lights) {
+  for (const k in RANGES) {
+    const day = dayFor(k);
+    if (day && day.some(l => l.light)) continue;
+    const lights = lightsFor(k);
+    if (!(lights.includes(state.lightChoice[k]))) state.lightChoice[k] = lights[0];
+    const h = document.createElement("span"); h.className = "group"; h.textContent = RANGES[k].name; lp.appendChild(h);
+    for (const l of lights) {
       const b = document.createElement("button");
-      b.textContent = LIGHTS[k].name; b.className = k === state.light ? "on" : "";
-      b.onclick = () => { state.light = k; buildCamp(); };
+      b.textContent = LIGHTS[l].name; b.className = l === state.lightChoice[k] ? "on" : "";
+      b.onclick = () => { state.lightChoice[k] = l; buildCamp(); };
       lp.appendChild(b);
     }
-    if (day) { const s = document.createElement("span"); s.className = "note"; s.textContent = " · " + day.map(l => l.name + " " + l.from).join(" · "); lp.appendChild(s); }
   }
+  const R = RANGES[state.range];
   $("camp-note").textContent = R.place + ". " + R.note;
-  $("go").textContent = R.seat === "hide" ? "Sit the hide" : R.seat === "walk" ? "Walk the range" : R.seat === "tripod" ? "Set up the tripod" : "Drive the range";
-  $("range-line").textContent = R.name + " · " + LIGHTS[state.light].name;
+  $("range-line").textContent = R.name;
+  drawPad();
 }
 
 // ---- outing ----
@@ -1057,7 +1104,10 @@ function begin() {
   if (!scale.includes(state.shutter)) state.shutter = scale[3];
   if (state.pull >= pullsFor(state.range).length) state.pull = 1;
   // the aperture the lens can give: f/8, the walking-around stop, or the lens's nearest
-  if (!state.body) state.body = bodyFor(state.range);
+  state.body = state.bodyChoice || bodyFor(state.range);
+  // the light: the day's first window, else the one chosen at camp
+  const lights = lightsFor(state.range);
+  state.light = lights.includes(state.lightChoice[state.range]) ? state.lightChoice[state.range] : lights[0];
   const aps = lensApertures(lensFor(state.range, state.body));
   if (!aps.includes(state.aperture)) state.aperture = aps.includes(8) ? 8 : aps[0];
   // the support you brought: at the tripod range it is the tripod, always;
@@ -1065,7 +1115,7 @@ function begin() {
   state.support = R.seat === "tripod" ? "tripod" : null;
   // the day's clock, from its first leg
   const day = dayFor(state.range);
-  state.paused = false; $("pause").hidden = true;
+  state.paused = false; state.waiting = null; $("pause").hidden = true;
   if (day) { state.clock = hm(day[0].from); state.leg = 0; if (day[0].light) state.light = day[0].light; }
   else state.clock = null;
   state.animals = spawnPlan(state.range, R.seat === "tripod" ? 6 : 14, state.rnd, state.light).map(makeAnimal);
@@ -1096,7 +1146,7 @@ function packUp(now) {
   // Esc with shots fired shows the day's card first; its button packs up
   if (!now && state.playing && !state.paused && state.day && state.day.length) { showPause("Packing up", COACH.packEarly, true); return; }
   state.day = [];
-  state.playing = false; state.camera = false; state.animals = []; state.paused = false; state.clock = null; $("pause").hidden = true;
+  state.playing = false; state.camera = false; state.animals = []; state.paused = false; state.waiting = null; state.clock = null; $("pause").hidden = true;
   $("camp").hidden = false; $("radio").hidden = true; $("focus").innerHTML = "";
   $("asked").textContent = "On the range the spotter calls each animal as it comes into view and the driver stops; the camera comes up on it and this panel names what it is doing and the shutter that needs.";
   buildCamp(); drawHud();
@@ -1113,18 +1163,30 @@ const SPEED = { resting: 0, sentinel: 0, grazing: 8, drinking: 0, walking: 40, s
                 still: 0, breeze: 0, working: 3, crawling: 6 };
 
 // The clock: advance it, and when it enters a new leg set the light, or
-// stop for the card, or end the day.
+// stop for the card, or end the day. A stop never interrupts a shot: with
+// the camera up on an animal the leg is held, the guide says so, and it
+// comes the moment the camera is down or the animal has left the frame.
+// A light window is not held; it changes over the finder as it always did.
+function shooting() { return !!(state.camera && state.focus); }
 function tickClock(dt) {
   const day = dayFor(state.range);
   if (!day || state.paused) return;
   state.clock += dt * CLOCK_RATE;
+  if (state.waiting !== null) { if (!shooting()) enterLeg(state.waiting); return; }
   const i = legAt(day, state.clock);
   if (i === state.leg) return;
+  if (stopsFor(day[i]) && shooting()) { holdLeg(i); return; }
   enterLeg(i);
+}
+function holdLeg(i) {
+  const day = dayFor(state.range);
+  state.waiting = i;
+  say(RANGES[state.range].seat === "walk" ? "Guide" : "Spotter", WORDS.wait.replace("{leg}", day[i].name));
+  drawHud();
 }
 function enterLeg(i) {
   const day = dayFor(state.range), leg = day[i];
-  state.leg = i;
+  state.leg = i; state.waiting = null;
   if (leg.end) { showPause(leg.name, leg.end, true); return; }
   if (leg.pause) { showPause(leg.name, leg.pause, false); return; }
   if (leg.light && leg.light !== state.light) {
@@ -1175,7 +1237,8 @@ function showPause(title, text, isEnd) {
 function resumeAfterPause() {
   const day = dayFor(state.range), leg = day[state.leg];
   state.paused = false; $("pause").hidden = true;
-  state.clock = hm(leg.to);
+  // the leg's end, or later: a break held for a shot ran the clock on
+  state.clock = clockAfter(state.clock, leg);
   // step into the leg the clock now sits in, which sets its light
   const i = legAt(day, state.clock);
   if (i !== state.leg) enterLeg(i); else drawHud();
@@ -1185,6 +1248,8 @@ function skipLeg() {
   const day = dayFor(state.range);
   if (!day || !state.playing) return;
   if (state.paused) { resumeAfterPause(); return; }
+  // a break held for a shot: N takes it now
+  if (state.waiting !== null) { enterLeg(state.waiting); return; }
   const next = Math.min(day.length - 1, state.leg + 1);
   state.clock = hm(day[next].from);
   enterLeg(next);
@@ -1341,7 +1406,7 @@ function refreshFocus() {
       const tip = advise(previewExposure(), a.behaviour, scaleFor(state.range), state.support, pullsFor(state.range)[state.pull], RANGES[state.range].seat);
       if (tip) { say("Guide", tip); state.nextTip = state.t + 10; }
     }
-  } else $("asked").textContent = "Nothing in the frame. Move the aim, or drive closer.";
+  } else $("asked").textContent = "Nothing in the frame. Move the aim, or " + (RANGES[state.range].seat === "walk" ? "walk" : "drive") + " closer.";
   drawHud();
 }
 
@@ -1354,7 +1419,7 @@ function onRange() {
 function refreshRange() {
   const list = onRange();
   const el = $("asked");
-  if (!list.length) { el.textContent = "Nothing on the range yet. Drive on."; return; }
+  if (!list.length) { el.textContent = "Nothing on the range yet. " + (RANGES[state.range].seat === "walk" ? "Walk on." : "Drive on."); return; }
   el.innerHTML = "<span class='dim'>On the range, nearest first:</span><br>" + list.map(a => {
     const A = ANIMALS[a.key], B = BEHAVIOURS[a.behaviour], b = boxOf(a);
     const side = A.sky ? "" : (b.x + b.w / 2 > JEEP_X ? ", right" : ", left");
@@ -1391,7 +1456,7 @@ function fire() {
   const framing = a ? measureFrame(boxOf(a), p) : null;
   if (framing && !inLamp(a)) framing.dark = true;
   const behaviour = a ? a.behaviour : "resting";
-  const exp = exposeFor(state.mode, state.shutter, state.aperture, state.light, a ? behaviour : null, scaleFor(state.range), lensFor(state.range, state.body), state.support, BODIES[state.body]);
+  const exp = exposeFor(state.mode, state.shutter, state.aperture, lightNow(), a ? behaviour : null, scaleFor(state.range), lensFor(state.range, state.body), state.support, BODIES[state.body]);
   const v = score(exp, behaviour, framing, state.light, a ? a.key : null, scaleFor(state.range), state.support, pullsFor(state.range)[state.pull], BODIES[state.body]);
   if (a && a.spooked > 0 && v.stars > 0) { v.lines.unshift(RANGES[state.range].seat === "walk" ? WORDS.walked : WORDS.spooked); }
   const frame = a && v.stars > 0 ? plateFor(a.key, behaviour, state.rnd) : null;
@@ -1748,11 +1813,13 @@ function drawFinder() {
 function drawHud() {
   const h = $("hud"); h.innerHTML = "";
   drawPad();
-  if (!state.playing) { h.innerHTML = "<span class='k'>At camp: pick a range and a light</span>"; return; }
+  if (!state.playing) { h.innerHTML = "<span class='k'>At camp: pick a range and set out</span>"; return; }
   const add = (txt, cls) => { const s = document.createElement("span"); s.className = "k " + (cls || ""); s.textContent = txt; h.appendChild(s); return s; };
   if (state.clock !== null && state.clock !== undefined) {
     const day = dayFor(state.range);
-    const clk = add(clockLabel(state.clock) + " · " + day[state.leg].name + " (N)"); clk.title = "N: skip to the next part of the day"; clk.onclick = skipLeg;
+    const held = state.waiting !== null ? day[state.waiting] : null;
+    const clk = add(clockLabel(state.clock) + " · " + day[state.leg].name + (held ? " · " + held.name + " waits" : "") + " (N)");
+    clk.title = held ? "N: " + held.name.toLowerCase() + " now" : "N: skip to the next part of the day"; clk.onclick = skipLeg;
   }
   const asked = state.focus ? askedFor(state.focus.behaviour, state.support, scaleFor(state.range)) : null;
   // the finder's readout: the two scales with the asked mark, and the ISO;
@@ -1771,7 +1838,7 @@ function drawHud() {
     if (apLive) e.onclick = () => { state.aperture = N; drawHud(); };
   }
   add("ISO " + exp.iso + (exp.under >= 0.5 ? " · dark" : exp.over >= 0.5 ? " · blown" : ""));
-  if (state.camera) add("Space: shoot · A or D: drive on", "dim");
+  if (state.camera) add("Space: shoot · A or D: " + (RANGES[state.range].seat === "walk" ? "walk on" : "drive on"), "dim");
 }
 
 // The support the seat offers: a beanbag on the sill of the jeep or the
@@ -1788,11 +1855,13 @@ function toggleSupport() {
   if (state.camera) refreshFocus(); else { refreshRange(); drawHud(); }
 }
 
+// The light now: the window's key, and its level as the clock has it.
+function lightNow() { return { key: state.light, ev: evAt(state.range, state.clock, state.light) }; }
 // The exposure the camera would make now, for the subject in focus or the
 // light alone.
 function previewExposure() {
   const b = state.focus ? state.focus.behaviour : null;
-  return exposeFor(state.mode, state.shutter, state.aperture, state.light, b, scaleFor(state.range), lensFor(state.range, state.body), state.support, BODIES[state.body]);
+  return exposeFor(state.mode, state.shutter, state.aperture, lightNow(), b, scaleFor(state.range), lensFor(state.range, state.body), state.support, BODIES[state.body]);
 }
 function stepAperture(dir) {
   const aps = lensApertures(lensFor(state.range, state.body));
@@ -1800,10 +1869,15 @@ function stepAperture(dir) {
   if (j >= 0 && j < aps.length) state.aperture = aps[j];
   drawHud();
 }
+function setMode(m) {
+  if (!MODES[m]) return;
+  state.mode = m;
+  drawHud();
+}
+// M on the keyboard walks the three modes; the buttons pick one outright
 function cycleMode() {
   const ms = Object.keys(MODES);
-  state.mode = ms[(ms.indexOf(state.mode) + 1) % ms.length];
-  drawHud();
+  setMode(ms[(ms.indexOf(state.mode) + 1) % ms.length]);
 }
 
 function stepShutter(dir) {
@@ -1913,7 +1987,7 @@ for (const b of document.querySelectorAll("#body button")) {
     if (act === "faster") stepShutter(1);
     if (act === "wider") stepAperture(-1);
     if (act === "narrower") stepAperture(1);
-    if (act === "mode") cycleMode();
+    if (act === "setmode") setMode(b.dataset.mode);
     if (act === "next") cycleFocus();
     if (act === "pull") { state.pull = (state.pull + 1) % pullsFor(state.range).length; if (state.camera) refreshFocus(); else drawHud(); }
     if (act === "pack") packUp();
@@ -1932,17 +2006,8 @@ function drawPad() {
     rel.classList.toggle("up", !!(state.playing && state.camera));
     relL.innerHTML = (!state.playing ? "Go" : state.camera ? "Shoot" : "Camera") + "<kbd>Space</kbd>";
   }
-  const face = $("dial-face");
-  if (face) {
-    const ms = Object.keys(MODES), spread = 62;
-    ms.forEach((m, i) => {
-      const b = face.querySelector('b[data-m="' + m + '"]');
-      const ang = (i - (ms.length - 1) / 2) * spread;
-      b.style.transform = "rotate(" + ang + "deg) translateY(-1.45rem)";
-      b.classList.toggle("on", m === state.mode);
-    });
-    face.style.transform = "rotate(" + (-(ms.indexOf(state.mode) - (ms.length - 1) / 2) * spread) + "deg)";
-  }
+  // the modes: one button lit, the others dark
+  for (const b of document.querySelectorAll("#modes button")) b.classList.toggle("on", b.dataset.mode === state.mode);
   const sup = $("btn-support");
   if (sup) {
     const seat = RANGES[state.range].seat;
@@ -1952,6 +2017,14 @@ function drawPad() {
     sup.classList.toggle("on", !!state.support);
     sup.title = "Rest the camera on the " + name + " for a slower shutter, or take it back in the hand to move";
   }
+  const lf = $("btn-left"), rt = $("btn-right");
+  if (lf && rt) {
+    const seat = RANGES[state.range].seat, onFoot = seat === "walk";
+    lf.hidden = rt.hidden = !(seat === "drive" || onFoot);
+    lf.textContent = onFoot ? "◀ Walk" : "◀ Driver"; rt.textContent = onFoot ? "Walk ▶" : "Driver ▶";
+    const how = onFoot ? "Walk closer or back" : "Ask the driver for closer or back";
+    lf.title = how + " (A, or the left arrow with the camera down)"; rt.title = how + " (D, or the right arrow with the camera down)";
+  }
   const sk = q('#body button[data-act="skip"]');
   if (sk) sk.hidden = !dayFor(state.range);
   const dn = $("btn-down");
@@ -1960,7 +2033,7 @@ function drawPad() {
   if (!lcd) return;
   lcd.innerHTML = "";
   const seg = (label, txt, cls, title) => { const e = document.createElement("span"); e.className = "seg " + (cls || ""); e.innerHTML = (label ? "<small>" + label + "</small>" : "") + txt; if (title) e.title = title; lcd.appendChild(e); return e; };
-  if (!state.playing) { seg("", "At camp: pick a range, a body and a light, then drive."); $("val-shutter").textContent = state.shutter; $("val-aperture").textContent = "f/" + state.aperture; return; }
+  if (!state.playing) { seg("", "At camp: a body if not the range's own, then a range, which sets out."); $("val-shutter").textContent = state.shutter; $("val-aperture").textContent = "f/" + state.aperture; return; }
   const exp = previewExposure();
   const shutterLive = state.mode !== "A", apLive = state.mode !== "S";
   const asked = state.focus ? askedFor(state.focus.behaviour, state.support, scaleFor(state.range)) : null;
@@ -1968,6 +2041,7 @@ function drawPad() {
   seg("", (shutterLive ? state.shutter : exp.shutter) + " s", (shutterLive ? "" : "auto ") + (asked && (shutterLive ? state.shutter : exp.shutter) === asked ? "asked" : ""), shutterLive ? "The shutter you set" : "In A the camera sets the shutter");
   seg("", "f/" + (apLive ? state.aperture : exp.aperture), apLive ? "" : "auto", apLive ? "The aperture you set" : "In S the camera sets the aperture");
   seg("ISO", String(exp.iso) + (exp.under >= 0.5 ? " dark" : exp.over >= 0.5 ? " blown" : ""), (exp.under >= 0.5 || exp.over >= 0.5) ? "warn" : "");
+  seg("light", "EV " + lightNow().ev.toFixed(1), "", LIGHTS[state.light].name + (state.clock !== null && state.clock !== undefined ? " at " + clockLabel(state.clock) + ": the level follows the clock" : ""));
   if (asked) seg("asks", asked, "", "The shutter the spotter says this behaviour needs");
   const pulls = pullsFor(state.range);
   seg("", pulls[state.pull].name, "", pulls[state.pull].note);
@@ -1979,7 +2053,6 @@ function drawPad() {
   $("wheel-aperture").classList.toggle("auto", !apLive); $("wheel-aperture").title = apLive ? "" : "In S the camera sets the aperture";
   const pl = $("btn-pull"); if (pl) { pl.textContent = pulls[state.pull].name; pl.title = pulls[state.pull].note; }
 }
-$("go").onclick = begin;
 $("clear").onclick = () => { state.sheet = []; save(); };
 
 // ---- loop ----
