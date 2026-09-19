@@ -30,17 +30,27 @@ silhouettes are a map, not a quiz.
 The loop, in four beats:
 
 1. **Ride.** The driver drives, without being asked: a steady pace, a stop
-   when the spotter calls something, a wait while you work, then on. The
-   left and right arrows (or A and D) are requests, closer or back, and he
-   obliges. On foot the guide walks the same way. In the hide and at the
-   tripod nothing moves but the animals.
-2. **Camera** up (Space). The plate rectangle follows the mouse or the
-   arrow keys; Z zooms through wide, normal and tight (on the macro range,
-   1:4, 1:2 and 1:1).
+   when the spotter calls something, a wait while you work, then on. A and
+   D (or the left and right arrows while the camera is down) are requests,
+   closer or back, and he obliges; a tap is a nudge at his own pace, a key
+   held past a second is hurrying him. On foot the guide walks the same
+   way. In the hide and at the tripod nothing moves but the animals.
+2. **Camera** up. At the stop it comes up by itself on what was called;
+   Space raises it at any other time. The plate rectangle follows the
+   mouse or the arrow keys; Z zooms through wide, normal and tight (on the
+   macro range, 1:4, 1:2 and 1:1).
 3. **Match** the shutter to what the spotter asked ([ and ]). The camera
    focuses on whatever is under the centre of the frame; Tab picks another
    animal when several are in it.
-4. **Shoot** (Space). Keep the plate or discard it.
+4. **Shoot** (Space). Keep the plate or discard it. Then ask the driver on
+   (A or D): that puts the camera down and releases him. C puts it down
+   without moving, if you want him to drive on at his own pace.
+
+The controls under the picture are laid out as they sit on a camera: the
+mode dial, the top LCD and the shutter release on the top plate; the two
+command wheels, the zoom ring and the focus point on the back; and under
+the body, off it, the things that are not the camera: the driver, the
+beanbag, the day, packing up. Every key is printed beside its control.
 
 Drive at an animal fast and the shy ones run; the plate is the tail end.
 Cats and elephants do not run from a jeep. Nothing is killed on the range.
