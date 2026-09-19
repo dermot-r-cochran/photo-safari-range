@@ -124,7 +124,7 @@ from before the change carry a numeric shutter; `shutterLabel` reads both.
 The numbers are one camera's again: the 500 rule at the 18 mm end of the
 zoom on the crop body, and ISO 3200 as its ceiling.
 
-## Home Ground, the macro range
+## Beech Wood, the macro range (named Home Ground until 2026-09-19)
 
 Added 2026-09-17 at Dermot's "a macro range for flowers, insects and
 mushrooms". Same day scale, `seat: "walk"`, `wood: 1` (trunks instead of
@@ -235,3 +235,12 @@ camp card until 2026-09-19 and read as an instruction (Dermot's note that
 day), so the page no longer shows it. `tools/check.js` prints it per
 range instead, and a plate of an unphotographed animal says only that
 the crop stands alone.
+
+## Ranges are named for a place and grouped by country
+
+Every range names a place or a feature, never a country (Dermot,
+2026-09-19: *name the place and group by country*). Each carries a
+`country`, and the camp card lists the ranges under a heading per
+country, in the order the countries first appear in `RANGES`. The macro
+range was Home Ground until that day and is Beech Wood now; the
+tutorial's route of the same old name covers three places and keeps it.
