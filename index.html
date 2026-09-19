@@ -1641,8 +1641,8 @@ function drawHud() {
     const sup = add((state.support ? "On the " + state.support : "In the hand") + " (B)", state.support ? "on" : "");
     sup.title = "B: rest the camera on the " + supportFor(seat) + ", or take it back in the hand"; sup.onclick = toggleSupport;
   }
-  const cam = add(state.camera ? "Space: shoot" : "Space: camera"); cam.onclick = () => toggleCamera();
-  if (state.camera) { const lo = add("Lower (C)"); lo.onclick = () => toggleCamera(); }
+  const cam = add(state.camera ? "Space: shoot" : "Space: camera"); cam.onclick = () => (state.camera ? fire() : toggleCamera());
+  if (state.camera) { const lo = add("Camera down (C)"); lo.title = "C: put the camera down and walk or drive on"; lo.onclick = () => toggleCamera(); }
   const pk = add("Esc: pack up"); pk.onclick = packUp;
 }
 
