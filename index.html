@@ -685,6 +685,32 @@ const PULLS = [
 function apertureBand(N) { return N <= 4 ? "wide" : N <= 8 ? "mid" : N <= 11 ? "stopped" : "narrow"; }
 
 // Verdict words. Stars come from the asked shutter and the framing.
+/* The end of the day: a short friendly summary and one piece of coaching,
+   from the shots fired that day (kept or not). Added 2026-09-19 at
+   Dermot's direction. `why` keys are set in fire(); the tip for the
+   commonest one is the coaching. */
+const COACH = {
+  none: "No shots today. The animals were there; next time raise the camera on one and see what the spotter says.",
+  all: "Every shot a keeper today. Nothing to coach: go and shoot.",
+  good: "A good day: {keepers} keepers from {shots} shots, {stars} with three stars.",
+  hard: "A hard day, and the honest kind: {keepers} keepers from {shots} shots. The folder is where the learning is.",
+  best: "The one to keep: {animal}, {verb}.",
+  once: "One thing for tomorrow. ",
+  often: "The same thing {n} times today, so one thing for tomorrow. ",
+  tips: {
+    miss: "Nothing was under the centre when you fired. Half-press on the animal, wait for the box to hold, then shoot.",
+    dark: "The light ran out before the ISO did. The beanbag lets the shutter run longer than the hand can hold.",
+    slow: "The shutter was slower than the spotter asked. Turn the shutter wheel up a click before the animal moves, not after.",
+    fast: "Faster than the animal needed, and the ISO paid for it. One click slower buys a cleaner file.",
+    small: "The animal was small in the frame. Let the driver bring you closer, or turn the zoom ring, before you fire.",
+    cut: "The frame cut into the animal. Give it room at the edge; a little sky costs nothing.",
+    noise: "The ISO climbed into the noise. A support, or a click slower on the shutter, keeps it down.",
+    diffraction: "Stopped down past where the pixels can follow. Open up a stop; the depth of field was there already.",
+    other: "The misses went for different reasons each time. Read the plates again; the pattern is yours to spot."
+  },
+  packEarly: "Packing up early. Here is the day so far."
+};
+
 const WORDS = {
   miss:     "Nothing in the frame.",
   match:    "The shutter agrees with the animal.",
@@ -1046,7 +1072,7 @@ function begin() {
   if (R.seat === "hide") for (const a of state.animals) { a.x = W * 0.15 + (a.x - 80) * 0.45; }
   if (R.seat === "tripod") state.animals.forEach((a, i) => { a.x = 120 + ((i * 0.37 + 0.1) % 1) * (W - 240); a.dir = 1; });
   state.playing = true;
-  state.held = 0; state.stayDown = false; state.holdUntil = 0;
+  state.held = 0; state.stayDown = false; state.holdUntil = 0; state.day = [];
   $("camp").hidden = true;
   // in the hide and at the tripod nothing moves but the animals, so there
   // is no camera-down to be in: it starts up
@@ -1066,7 +1092,10 @@ function makeAnimal(p) {
            vx: 0, until: 3 + state.rnd() * 6, phase: state.rnd() * 6.28, spooked: 0, gone: false, called: false };
 }
 
-function packUp() {
+function packUp(now) {
+  // Esc with shots fired shows the day's card first; its button packs up
+  if (!now && state.playing && !state.paused && state.day && state.day.length) { showPause("Packing up", COACH.packEarly, true); return; }
+  state.day = [];
   state.playing = false; state.camera = false; state.animals = []; state.paused = false; state.clock = null; $("pause").hidden = true;
   $("camp").hidden = false; $("radio").hidden = true; $("focus").innerHTML = "";
   $("asked").textContent = "On the range the spotter calls each animal as it comes into view and the driver stops; the camera comes up on it and this panel names what it is doing and the shutter that needs.";
@@ -1109,15 +1138,36 @@ function enterLeg(i) {
   $("range-line").textContent = RANGES[state.range].name + " · " + LIGHTS[state.light].name;
   drawHud();
 }
+// The day's summary and one piece of coaching, from the shots fired.
+function dayReport() {
+  const day = state.day || [];
+  if (!day.length) return [COACH.none];
+  const shots = day.length, keepers = day.filter(x => x.keeper).length, stars = day.filter(x => x.stars === 3).length;
+  const fill = (t, v) => t.replace(/\{(\w+)\}/g, (m, k) => v[k]);
+  const out = [];
+  if (keepers === shots) out.push(COACH.all);
+  else out.push(fill(keepers * 2 >= shots ? COACH.good : COACH.hard, { keepers, shots, stars }));
+  const best = day.filter(x => x.animal && x.keeper).sort((a, b) => b.stars - a.stars)[0];
+  if (best) out.push(fill(COACH.best, { animal: ANIMALS[best.animal].name, verb: BEHAVIOURS[best.behaviour].verb.toLowerCase() }));
+  if (keepers < shots) {
+    const counts = {};
+    for (const x of day) if (x.fault) counts[x.fault] = (counts[x.fault] || 0) + 1;
+    const top = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+    const n = top ? counts[top] : 0;
+    out.push((n >= 2 ? fill(COACH.often, { n }) : COACH.once) + (top ? COACH.tips[top] : COACH.tips.other));
+  }
+  return out;
+}
 function showPause(title, text, isEnd) {
   state.paused = true;
   const p = $("pause");
   const kept = state.sheet.length, keepers = state.sheet.filter(x => x.keeper).length;
-  p.innerHTML = "<h2>" + title + " · " + clockLabel(state.clock) + "</h2><p>" + text + "</p>" +
+  p.innerHTML = "<h2>" + title + (state.clock !== null && state.clock !== undefined ? " · " + clockLabel(state.clock) : "") + "</h2><p>" + text + "</p>" +
     "<p class='note'>" + (kept ? kept + (kept === 1 ? " plate" : " plates") + " on the sheet, " + keepers + (keepers === 1 ? " keeper." : " keepers.") : "Nothing on the sheet yet.") + "</p>";
+  if (isEnd) for (const line of dayReport()) { const q = document.createElement("p"); q.textContent = line; p.appendChild(q); }
   const b = document.createElement("button"); b.className = "primary";
   b.textContent = isEnd ? "Pack up" : "Continue";
-  b.onclick = () => { if (isEnd) { packUp(); return; } resumeAfterPause(); };
+  b.onclick = () => { if (isEnd) { packUp(true); return; } resumeAfterPause(); };
   p.appendChild(b); p.hidden = false;
   if (state.camera) toggleCamera();
   drawHud();
@@ -1345,6 +1395,12 @@ function fire() {
   const v = score(exp, behaviour, framing, state.light, a ? a.key : null, scaleFor(state.range), state.support, pullsFor(state.range)[state.pull], BODIES[state.body]);
   if (a && a.spooked > 0 && v.stars > 0) { v.lines.unshift(RANGES[state.range].seat === "walk" ? WORDS.walked : WORDS.spooked); }
   const frame = a && v.stars > 0 ? plateFor(a.key, behaviour, state.rnd) : null;
+  // the day's record, for the end-of-day card: every shot, kept or not
+  const why = !framing || !framing.inside ? "miss" : framing.dark ? "dark" : null;
+  const dd = why ? 0 : shutterIndex(exp.shutter, scaleFor(state.range)) - shutterIndex(v.asked, scaleFor(state.range));
+  const body = BODIES[state.body];
+  const fault = why || (exp.under >= 0.5 ? "dark" : dd <= -1 ? "slow" : framing.cut ? "cut" : framing.fill < 0.10 ? "small" : (dd >= 1 && exp.iso > 400) ? "fast" : exp.aperture >= body.diffraction.plain ? "diffraction" : exp.iso >= body.noiseFrom ? "noise" : null);
+  (state.day = state.day || []).push({ stars: v.stars, keeper: v.keeper, animal: a ? a.key : null, behaviour: a ? behaviour : null, fault: v.keeper && v.stars === 3 ? null : fault });
   const plate = { when: Date.now(), range: state.range, light: state.light, shutter: exp.shutter, aperture: exp.aperture, mode: exp.mode,
                   animal: a ? a.key : null, behaviour: a ? behaviour : null, stars: v.stars, keeper: v.keeper, lines: v.lines, iso: v.iso,
                   prize: !!v.prize, frame: frame ? frame.title : null, asked: v.asked, support: state.support, body: BODIES[state.body].name };
