@@ -12,12 +12,11 @@ an animal, reads what the animal is doing, matches the shutter the spotter
 asks for, and shoots. The plate scores on that match and on the framing.
 The contact sheet saves to localStorage.
 
-It began on 2026-09-17 as the rebuild of four Grok-builder prototypes
-(animal-photo-shoot, photo-safari, photo-tutorial, photo-safari-group, all
-on grok.me) that Dermot abandoned that day: the builder could not keep the
+It began on 2026-09-17 as the rebuild of four hosted-builder prototypes
+that Dermot abandoned that day (and retired outright on 2026-09-19: they
+are not named or linked anywhere in this repository): the builder could not keep the
 apps consistent across changes. The design features worth keeping were
-written down first (`F:\CLAUDE\Grok Apps Design Notes.md` on his machine,
-summarised in the README) and the source was not exported. This is not a
+written down first (in design notes on his machine, summarised in the README) and the source was not exported. This is not a
 port of any of them.
 
 ## The prime directive
