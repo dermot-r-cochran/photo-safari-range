@@ -111,9 +111,43 @@
   #sheet li { display: flex; gap: 0.5rem; align-items: baseline; }
   #sheet li .s { color: var(--earth); white-space: nowrap; }
   .note { color: var(--dim); font-size: 0.95rem; }
-  #pad { display: none; gap: 0.4rem; flex-wrap: wrap; margin: 0.5rem 0; }
-  #pad button { flex: 1 1 auto; min-width: 3.2rem; padding: 0.6rem 0.4rem; font-size: 1rem; touch-action: manipulation; }
-  #pad button.wide { flex: 2 1 auto; }
+  /* The camera body: the controls laid out as they sit on a camera. Top
+     plate left to right: mode dial, top LCD, shutter release. Below it the
+     back: the two command wheels, the zoom ring on the lens, the focus
+     point. Under the body, off it, the things that are not the camera:
+     the driver, the support, the day, packing up. */
+  #body { margin: 0.6rem 0 0.2rem; background: #3a3129; color: #f5f0e4; border-radius: 14px; padding: 0.7rem 0.9rem 0.6rem; box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 8px rgba(0,0,0,0.25); }
+  #body button { touch-action: manipulation; }
+  #body kbd { font: 0.7em/1 Georgia, serif; color: rgba(245,240,228,0.65); border: 1px solid rgba(245,240,228,0.35); border-radius: 3px; padding: 0 0.3em; margin-left: 0.25em; vertical-align: 0.1em; }
+  #body .lbl { display: block; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,240,228,0.7); white-space: nowrap; }
+  #body .plate { display: grid; grid-template-columns: auto 1fr auto; gap: 0.9rem; align-items: center; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(245,240,228,0.15); }
+  #body .dial-wrap, #body .release-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+  #body .dial { position: relative; width: 4.6rem; height: 4.6rem; border-radius: 50%; padding: 0; border: 3px solid #1c1712; background: radial-gradient(circle at 40% 35%, #6b5a48, #2a241c 70%); box-shadow: 0 2px 4px rgba(0,0,0,0.5); color: #f5f0e4; }
+  #body .dial::before { content: ""; position: absolute; left: 50%; top: -0.55rem; width: 0; height: 0; margin-left: -0.3rem; border: 0.3rem solid transparent; border-top-color: #e8c97a; }
+  #body .dial .face { position: absolute; inset: 0; transition: transform 0.25s; }
+  #body .dial .face b { position: absolute; left: 50%; top: 50%; width: 1.35rem; height: 1.35rem; margin: -0.675rem 0 0 -0.675rem; line-height: 1.35rem; font-size: 0.95rem; text-align: center; border-radius: 50%; }
+  #body .dial .face b.on { background: #e8c97a; color: #2a241c; }
+  #body .lcd { display: flex; flex-wrap: wrap; gap: 0.3rem 0.9rem; align-items: baseline; background: #aeb59b; color: #1e1a14; border: 2px solid #1c1712; border-radius: 5px; padding: 0.45rem 0.7rem; font: 1.05rem/1.3 "Courier New", Courier, monospace; min-height: 2.6rem; box-shadow: inset 0 1px 4px rgba(0,0,0,0.35); }
+  #body .lcd .seg { white-space: nowrap; }
+  #body .lcd .seg small { font-size: 0.65em; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; margin-right: 0.25em; }
+  #body .lcd .seg.auto { opacity: 0.55; }
+  #body .lcd .seg.warn { font-weight: bold; }
+  #body .lcd .seg.asked { border-bottom: 2px solid #1e1a14; }
+  #body .release { width: 3.4rem; height: 3.4rem; border-radius: 50%; padding: 0; border: 3px solid #1c1712; background: radial-gradient(circle at 40% 35%, #f2ede2, #9a9184 75%); box-shadow: 0 3px 5px rgba(0,0,0,0.5); }
+  #body .release:active { transform: translateY(2px); box-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+  #body .release.up { background: radial-gradient(circle at 40% 35%, #f0d48a, #b8862e 75%); }
+  #body .back { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; align-items: flex-end; padding: 0.6rem 0 0.2rem; }
+  #body .wheel { display: flex; flex-direction: column; gap: 0.25rem; }
+  #body .wheel .ctl { display: flex; align-items: center; gap: 0.3rem; }
+  #body .wheel .ctl button { width: 2.2rem; height: 2.2rem; padding: 0; border-radius: 50%; border: 2px solid #1c1712; background: linear-gradient(#5a4c3c, #2a241c); color: #f5f0e4; font-size: 1.1rem; line-height: 1; }
+  #body .wheel .ctl .val { min-width: 4.2rem; text-align: center; font: 1rem/1 "Courier New", Courier, monospace; }
+  #body .wheel.auto { opacity: 0.5; }
+  #body .wheel button.ring { border-radius: 999px; border: 2px solid #1c1712; background: repeating-linear-gradient(90deg, #4a3f32 0 4px, #2a241c 4px 7px); color: #f5f0e4; padding: 0.45rem 0.9rem; }
+  #body .wheel button.flat { border: 2px solid #1c1712; background: linear-gradient(#5a4c3c, #2a241c); color: #f5f0e4; padding: 0.45rem 0.8rem; white-space: nowrap; }
+  #body .off { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid rgba(245,240,228,0.15); }
+  #body .off button { background: rgba(245,240,228,0.1); color: #f5f0e4; border-color: rgba(245,240,228,0.35); }
+  #body .off button.on { background: #e8c97a; color: #2a241c; border-color: #e8c97a; }
+  #body .off button[hidden] { display: none; }
   @media (max-width: 60rem), (pointer: coarse) {
     .layout { flex-direction: column; padding: 0.6rem 0.8rem 3rem; gap: 0.8rem; }
     aside { position: static; flex: 1 1 auto; width: 100%; }
@@ -126,7 +160,10 @@
     #hud .k { padding: 0.05rem 0.3rem; }
     #radio { font-size: 0.75rem; padding: 0.25rem 0.5rem; max-width: 70%; }
     #focus button { font-size: 0.7rem; }
-    #pad { display: flex; }
+    #body { padding: 0.5rem 0.6rem; }
+    #body .plate { grid-template-columns: auto 1fr auto; gap: 0.5rem; }
+    #body .lcd { font-size: 0.85rem; gap: 0.2rem 0.6rem; padding: 0.35rem 0.5rem; }
+    #body .back { gap: 0.4rem 0.9rem; }
   }
 </style>
 </head>
@@ -145,20 +182,44 @@
     <div id="hud"></div>
     <div id="pause" hidden></div>
   </div>
-  <div id="pad" aria-label="Touch controls">
-    <button data-act="left">◀</button>
-    <button data-act="right">▶</button>
-    <button data-act="camera" class="wide">Camera</button>
-    <button data-act="mode">Mode</button>
-    <button data-act="slower">1/− slower</button>
-    <button data-act="faster">faster 1/+</button>
-    <button data-act="wider">f− wider</button>
-    <button data-act="narrower">narrower f+</button>
-    <button data-act="next">Next</button>
-    <button data-act="pull">Zoom</button>
-    <button data-act="support">Beanbag</button>
-    <button data-act="skip">Skip ahead</button>
-    <button data-act="pack">Pack up</button>
+  <div id="body" aria-label="Camera controls">
+    <div class="plate">
+      <div class="dial-wrap">
+        <button class="dial" data-act="mode" aria-label="Mode dial: shutter priority, aperture priority, manual" title="The mode dial. S: you set the shutter, the camera finds the rest. A: you set the aperture. M: you set both. (M cycles)"><span class="face" id="dial-face"><b data-m="S">S</b><b data-m="A">A</b><b data-m="M">M</b></span></button>
+        <span class="lbl">Mode<kbd>M</kbd></span>
+      </div>
+      <div class="lcd" id="lcd" aria-live="polite"></div>
+      <div class="release-wrap">
+        <button class="release" data-act="camera" aria-label="Shutter release" title="Press once to raise the camera; press again to fire. (Space)"></button>
+        <span class="lbl" id="release-lbl">Camera<kbd>Space</kbd></span>
+      </div>
+    </div>
+    <div class="back">
+      <div class="wheel" id="wheel-shutter">
+        <span class="lbl">Shutter<kbd>[</kbd><kbd>]</kbd></span>
+        <div class="ctl"><button data-act="slower" aria-label="Slower shutter">−</button><span class="val" id="val-shutter"></span><button data-act="faster" aria-label="Faster shutter">+</button></div>
+      </div>
+      <div class="wheel" id="wheel-aperture">
+        <span class="lbl">Aperture<kbd>,</kbd><kbd>.</kbd></span>
+        <div class="ctl"><button data-act="wider" aria-label="Wider aperture">−</button><span class="val" id="val-aperture"></span><button data-act="narrower" aria-label="Narrower aperture">+</button></div>
+      </div>
+      <div class="wheel">
+        <span class="lbl">Zoom ring<kbd>Z</kbd></span>
+        <div class="ctl"><button data-act="pull" class="ring" id="btn-pull">Zoom</button></div>
+      </div>
+      <div class="wheel">
+        <span class="lbl">Focus point<kbd>Tab</kbd></span>
+        <div class="ctl"><button data-act="next" class="flat" title="Move the focus to another animal in the frame">Next animal</button></div>
+      </div>
+    </div>
+    <div class="off" aria-label="Off the camera">
+      <button data-act="left" title="Ask the driver for closer or back (A, or the left arrow with the camera down)">◀ Driver</button>
+      <button data-act="right" title="Ask the driver for closer or back (D, or the right arrow with the camera down)">Driver ▶</button>
+      <button data-act="support" id="btn-support"></button>
+      <button data-act="down" id="btn-down">Camera down<kbd>C</kbd></button>
+      <button data-act="skip">Next part of the day<kbd>N</kbd></button>
+      <button data-act="pack">Pack up<kbd>Esc</kbd></button>
+    </div>
   </div>
   <div class="card" id="camp">
     <h2>Camp</h2>
@@ -168,14 +229,14 @@
     <p class="note" id="camp-note"></p>
     <p class="note" id="wanted"></p>
     <div class="row"><button class="primary" id="go">Drive the range</button></div>
-    <p class="note">The driver drives, stops when the spotter calls, and moves on · left and right arrows (or A and D) ask him for closer or back · Space raises the camera and fires it · with the camera up the arrows move the aim · M turns the mode dial through S, A and M · [ and ] change the shutter · , and . change the aperture · B rests the camera on the beanbag, or the tripod on foot · the camera focuses on what is under the centre of the frame, and Tab picks another animal in it · Z zooms · N skips to the next part of the day · Esc packs up.</p>
+    <p class="note">The driver drives and stops when the spotter calls; at the stop the camera comes up by itself on what was called · A and D (or the left and right arrows with the camera down) ask him for closer or back, and put the camera down to move on; hold a key past a second and you are hurrying him, which spooks the shy ones · Space fires; it also raises the camera if it is down · with the camera up the arrows or the mouse move the aim · the mode dial turns through S, A and M (M) · the wheels set the shutter ([ and ]) and the aperture (, and .) · B rests the camera on the beanbag, or the tripod on foot · the camera focuses on what is under the centre of the frame, and Tab picks another animal in it · Z zooms · C puts the camera down without moving · N skips to the next part of the day · Esc packs up.</p>
   </div>
   <div id="plates"></div>
 </main>
 <aside>
   <div class="card">
     <h2>Asked</h2>
-    <p id="asked" class="dim">Raise the camera on an animal and the spotter names what it is doing and the shutter that needs.</p>
+    <p id="asked" class="dim">When the driver stops for a call the camera comes up on the animal, and the spotter names what it is doing and the shutter that needs.</p>
   </div>
   <div class="card">
     <h2>Contact sheet</h2>
@@ -979,7 +1040,11 @@ function begin() {
   if (R.seat === "hide") for (const a of state.animals) { a.x = W * 0.15 + (a.x - 80) * 0.45; }
   if (R.seat === "tripod") state.animals.forEach((a, i) => { a.x = 120 + ((i * 0.37 + 0.1) % 1) * (W - 240); a.dir = 1; });
   state.playing = true;
+  state.held = 0; state.stayDown = false; state.holdUntil = 0;
   $("camp").hidden = true;
+  // in the hide and at the tripod nothing moves but the animals, so there
+  // is no camera-down to be in: it starts up
+  if (R.seat === "hide" || R.seat === "tripod") { state.camera = true; refreshFocus(); }
   drawHud();
   say(R.seat === "walk" || R.seat === "tripod" ? "Guide" : "Spotter",
       R.seat === "tripod" ? "Your eyes take twenty minutes. The camp lights are behind you. The Earth turns; that is the movement." :
@@ -998,7 +1063,7 @@ function makeAnimal(p) {
 function packUp() {
   state.playing = false; state.camera = false; state.animals = []; state.paused = false; state.clock = null; $("pause").hidden = true;
   $("camp").hidden = false; $("radio").hidden = true; $("focus").innerHTML = "";
-  $("asked").textContent = "On the range the spotter calls each animal as it comes into view. Raise the camera on one and the panel names what it is doing and the shutter that needs.";
+  $("asked").textContent = "On the range the spotter calls each animal as it comes into view and the driver stops; the camera comes up on it and this panel names what it is doing and the shutter that needs.";
   buildCamp(); drawHud();
 }
 
@@ -1086,9 +1151,21 @@ function step(dt) {
   const cruise = R.seat === "walk" ? 45 : 120;
   // he does not drive on while your beanbag is on the sill or your tripod is up
   const driverWants = state.t < (state.holdUntil || 0) || state.support ? 0 : cruise;
-  const want = !moving ? 0 : asked ? asked * top : driverWants;
+  // a tap or a short hold is a nudge at the driver's own pace; hold the
+  // key past a second and you are hurrying him, which is what spooks
+  state.held = asked ? (state.held || 0) + dt : 0;
+  const want = !moving ? 0 : asked ? asked * (state.held > 1.2 ? top : cruise * 1.3) : driverWants;
   state.speed += (want - state.speed) * Math.min(1, dt * 3);
   state.worldX += state.speed * dt;
+  // the stop is the cue: when the driver (or the guide) has pulled up for a
+  // call, the camera comes up by itself on what was called, unless you put
+  // it down since that call. It goes down again when you ask to move on.
+  const stops = R.seat === "drive" || R.seat === "walk";
+  if (stops && !state.camera && state.t < (state.holdUntil || 0) && !state.stayDown && !asked && Math.abs(state.speed) < 8) {
+    const c = state.called;
+    if (c && !c.gone) { const b = boxOf(c); state.aim.x = Math.max(0, Math.min(W, b.x + b.w / 2)); state.aim.y = Math.max(0, Math.min(H, b.y + b.h / 2)); }
+    toggleCamera();
+  }
   const spookSpeed = R.seat === "walk" ? 40 : 200, spookRange = R.seat === "walk" ? 520 : 420;
   // animals
   for (const a of state.animals) {
@@ -1133,7 +1210,7 @@ function step(dt) {
           A.name + ", " + (A.sky ? (b.y < H * 0.25 ? "high" : "low") : (b.x + b.w / 2 > JEEP_X ? "right" : "left")) + ". " + B.verb + "." +
           (drives ? (R.seat === "walk" ? " Stopping here." : " Stopping. Take your time.") : ""));
       state.nextCall = state.t + 2.5;
-      if (drives) state.holdUntil = state.t + 8;
+      if (drives) { state.holdUntil = state.t + 8; state.stayDown = false; state.called = a; }
       break;
     }
   }
@@ -1616,12 +1693,8 @@ function drawHud() {
     const clk = add(clockLabel(state.clock) + " · " + day[state.leg].name + " (N)"); clk.title = "N: skip to the next part of the day"; clk.onclick = skipLeg;
   }
   const asked = state.focus ? askedFor(state.focus.behaviour, state.support, scaleFor(state.range)) : null;
-  // the body, the dial, then what the camera will do with it for the subject in focus
-  const bd = add(BODIES[state.body].name); bd.title = BODIES[state.body].note + " Change the body at camp.";
-  for (const m of Object.keys(MODES)) {
-    const e = add(m, m === state.mode ? "on" : ""); e.title = MODES[m] + " (M cycles)";
-    e.onclick = () => { state.mode = m; drawHud(); };
-  }
+  // the finder's readout: the two scales with the asked mark, and the ISO;
+  // the dial, the wheels and the rest are on the camera body below
   const exp = previewExposure();
   const shutterLive = state.mode !== "A";
   for (const s of SCALES[scaleFor(state.range)]) {
@@ -1636,16 +1709,7 @@ function drawHud() {
     if (apLive) e.onclick = () => { state.aperture = N; drawHud(); };
   }
   add("ISO " + exp.iso + (exp.under >= 0.5 ? " · dark" : exp.over >= 0.5 ? " · blown" : ""));
-  const pulls = pullsFor(state.range);
-  const pull = add("Zoom: " + pulls[state.pull].name + " (Z)"); pull.title = pulls[state.pull].note; pull.onclick = () => { state.pull = (state.pull + 1) % pulls.length; if (state.camera) refreshFocus(); else drawHud(); };
-  const seat = RANGES[state.range].seat;
-  if (seat !== "tripod") {
-    const sup = add((state.support ? "On the " + state.support : "In the hand") + " (B)", state.support ? "on" : "");
-    sup.title = "B: rest the camera on the " + supportFor(seat) + ", or take it back in the hand"; sup.onclick = toggleSupport;
-  }
-  const cam = add(state.camera ? "Space: shoot" : "Space: camera"); cam.onclick = () => (state.camera ? fire() : toggleCamera());
-  if (state.camera) { const lo = add("Camera down (C)"); lo.title = "C: put the camera down and walk or drive on"; lo.onclick = () => toggleCamera(); }
-  const pk = add("Esc: pack up"); pk.onclick = packUp;
+  if (state.camera) add("Space: shoot · A or D: drive on", "dim");
 }
 
 // The support the seat offers: a beanbag on the sill of the jeep or the
@@ -1708,12 +1772,11 @@ stage.addEventListener("keydown", (e) => {
   if (!state.camera && (k === "arrowleft" || k === "arrowright")) kk = k === "arrowleft" ? "a" : "d";
   if (kk === "a" || kk === "d") {
     state.keys[kk] = true;
-    // a tap moves the jeep a little; a held key builds speed
-    if (RANGES[state.range].seat !== "hide" && !state.camera) state.worldX += (kk === "d" ? 1 : -1) * (RANGES[state.range].seat === "walk" ? 6 : 14);
+    driveOn(kk);
     if (kk !== k) return;
   }
   if (k === " ") { if (state.camera) fire(); else toggleCamera(); }
-  if (k === "c") { if (state.camera) toggleCamera(); }
+  if (k === "c") putDown();
   if (k === "tab") cycleFocus();
   if (k === "[") stepShutter(-1);
   if (k === "]") stepShutter(1);
@@ -1752,13 +1815,32 @@ stage.addEventListener("click", (e) => {
   aimAt(e);
   if (state.camera) { refreshFocus(); fire(); } else toggleCamera();
 });
-// touch pad: the same actions as the keys
+// Asking the driver for closer or back is also how you move on: it puts
+// the camera down (you cannot shoot from a moving jeep here) and releases
+// him from the stop, so C is never a step you have to remember. A tap
+// also moves the jeep a little on its own, so a nudge is felt at once.
+function driveOn(k) {
+  if (!state.playing) return;
+  const seat = RANGES[state.range].seat;
+  if (seat === "hide" || seat === "tripod") return;
+  state.holdUntil = 0; state.stayDown = true;
+  if (state.camera) toggleCamera();
+  state.worldX += (k === "d" ? 1 : -1) * (seat === "walk" ? 6 : 14);
+}
+// Putting the camera down on purpose (C) lets the driver drive on when his
+// wait is up, and stops it coming back up until the next call.
+function putDown() {
+  if (!state.playing || !state.camera) return;
+  state.stayDown = true;
+  toggleCamera();
+}
+// the camera body: the same actions as the keys
 const padHold = (dir, on) => { state.keys[dir] = on; };
-for (const b of document.querySelectorAll("#pad button")) {
+for (const b of document.querySelectorAll("#body button")) {
   const act = b.dataset.act;
   if (act === "left" || act === "right") {
     const k = act === "left" ? "a" : "d";
-    b.addEventListener("pointerdown", (e) => { e.preventDefault(); if (!state.playing) return; padHold(k, true); if (!state.camera && RANGES[state.range].seat !== "hide") state.worldX += (k === "d" ? 1 : -1) * (RANGES[state.range].seat === "walk" ? 6 : 14); });
+    b.addEventListener("pointerdown", (e) => { e.preventDefault(); if (!state.playing) return; padHold(k, true); driveOn(k); });
     for (const ev of ["pointerup", "pointercancel", "pointerleave"]) b.addEventListener(ev, () => padHold(k, false));
     continue;
   }
@@ -1775,22 +1857,65 @@ for (const b of document.querySelectorAll("#pad button")) {
     if (act === "pack") packUp();
     if (act === "support") toggleSupport();
     if (act === "skip") skipLeg();
+    if (act === "down") putDown();
   });
 }
+// Redraw the camera body from the state: the dial turned to the mode, the
+// top LCD showing what the camera will do, the wheel the mode hands to
+// the camera dimmed, the release lit while the camera is up.
 function drawPad() {
-  const cam = document.querySelector('#pad button[data-act="camera"]');
-  if (cam) cam.textContent = !state.playing ? "Go" : state.camera ? "Shoot" : "Camera";
-  const sup = document.querySelector('#pad button[data-act="support"]');
+  const q = (sel) => document.querySelector(sel);
+  const rel = q('#body .release'), relL = $("release-lbl");
+  if (rel) {
+    rel.classList.toggle("up", !!(state.playing && state.camera));
+    relL.innerHTML = (!state.playing ? "Go" : state.camera ? "Shoot" : "Camera") + "<kbd>Space</kbd>";
+  }
+  const face = $("dial-face");
+  if (face) {
+    const ms = Object.keys(MODES), spread = 62;
+    ms.forEach((m, i) => {
+      const b = face.querySelector('b[data-m="' + m + '"]');
+      const ang = (i - (ms.length - 1) / 2) * spread;
+      b.style.transform = "rotate(" + ang + "deg) translateY(-1.45rem)";
+      b.classList.toggle("on", m === state.mode);
+    });
+    face.style.transform = "rotate(" + (-(ms.indexOf(state.mode) - (ms.length - 1) / 2) * spread) + "deg)";
+  }
+  const sup = $("btn-support");
   if (sup) {
     const seat = RANGES[state.range].seat;
     sup.hidden = seat === "tripod";
     const name = supportFor(seat);
-    sup.textContent = state.support ? "In the hand" : name.charAt(0).toUpperCase() + name.slice(1);
+    sup.innerHTML = (state.support ? "Back in the hand" : "On the " + name) + "<kbd>B</kbd>";
+    sup.classList.toggle("on", !!state.support);
+    sup.title = "Rest the camera on the " + name + " for a slower shutter, or take it back in the hand to move";
   }
-  const sk = document.querySelector('#pad button[data-act="skip"]');
+  const sk = q('#body button[data-act="skip"]');
   if (sk) sk.hidden = !dayFor(state.range);
-  const md = document.querySelector('#pad button[data-act="mode"]');
-  if (md) md.textContent = "Mode: " + state.mode;
+  const dn = $("btn-down");
+  if (dn) dn.hidden = !(state.playing && state.camera);
+  const lcd = $("lcd");
+  if (!lcd) return;
+  lcd.innerHTML = "";
+  const seg = (label, txt, cls, title) => { const e = document.createElement("span"); e.className = "seg " + (cls || ""); e.innerHTML = (label ? "<small>" + label + "</small>" : "") + txt; if (title) e.title = title; lcd.appendChild(e); return e; };
+  if (!state.playing) { seg("", "At camp: pick a range, a body and a light, then drive."); $("val-shutter").textContent = state.shutter; $("val-aperture").textContent = "f/" + state.aperture; return; }
+  const exp = previewExposure();
+  const shutterLive = state.mode !== "A", apLive = state.mode !== "S";
+  const asked = state.focus ? askedFor(state.focus.behaviour, state.support, scaleFor(state.range)) : null;
+  seg("", MODES[state.mode]);
+  seg("", (shutterLive ? state.shutter : exp.shutter) + " s", (shutterLive ? "" : "auto ") + (asked && (shutterLive ? state.shutter : exp.shutter) === asked ? "asked" : ""), shutterLive ? "The shutter you set" : "In A the camera sets the shutter");
+  seg("", "f/" + (apLive ? state.aperture : exp.aperture), apLive ? "" : "auto", apLive ? "The aperture you set" : "In S the camera sets the aperture");
+  seg("ISO", String(exp.iso) + (exp.under >= 0.5 ? " dark" : exp.over >= 0.5 ? " blown" : ""), (exp.under >= 0.5 || exp.over >= 0.5) ? "warn" : "");
+  if (asked) seg("asks", asked, "", "The shutter the spotter says this behaviour needs");
+  const pulls = pullsFor(state.range);
+  seg("", pulls[state.pull].name, "", pulls[state.pull].note);
+  if (RANGES[state.range].seat !== "tripod") seg("", state.support ? "on the " + state.support : "hand-held");
+  if (state.clock !== null && state.clock !== undefined) seg("", clockLabel(state.clock));
+  $("val-shutter").textContent = shutterLive ? state.shutter : exp.shutter;
+  $("val-aperture").textContent = "f/" + (apLive ? state.aperture : exp.aperture);
+  $("wheel-shutter").classList.toggle("auto", !shutterLive); $("wheel-shutter").title = shutterLive ? "" : "In A the camera sets the shutter";
+  $("wheel-aperture").classList.toggle("auto", !apLive); $("wheel-aperture").title = apLive ? "" : "In S the camera sets the aperture";
+  const pl = $("btn-pull"); if (pl) { pl.textContent = pulls[state.pull].name; pl.title = pulls[state.pull].note; }
 }
 $("go").onclick = begin;
 $("clear").onclick = () => { state.sheet = []; save(); };
