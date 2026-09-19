@@ -227,6 +227,10 @@ const BEHAVIOURS = {
   breeze:   { asked: "1/250",  verb: "In a breeze", note: "The stem moves a finger's width and back. 1/250 holds a petal; the frame in between is soft." },
   working:  { asked: "1/500",  verb: "Working",  note: "On the flower and never still: legs, antennae, the head in the pollen. 1/500 holds the body. The wings are their own problem." },
   crawling: { asked: "1/250",  verb: "Crawling", note: "Across a seed head at its own pace. 1/250 is enough, and the depth of field is the real question." },
+  // the Fifteen Acres: the fallow herd at the park's distance
+  alert:    { asked: "1/125",  verb: "Alert",    note: "Every head up at once, ears forward. Something on the wind; this is the frame before they go." },
+  groaning: { asked: "1/250",  verb: "Groaning", note: "Neck out, belly drawn in, the rut's groan carrying across the acres. He stands to do it: the breath moves, the frame can be still." },
+  sparring: { asked: "1/1000", verb: "Sparring", note: "Antlers locked, the push and the twist, turf flying at the hooves. Fast, then nothing, then fast again." },
   // the night sky, on the sky scale
   sunlit:   { asked: "1/250",  verb: "Sunlit",   ev: 13, note: "A rock in full sun, however dark the night. Meter it like a daylight scene or it goes to a white disc." },
   points:   { asked: "15s",    verb: "Points",   note: "Five hundred over the focal length, in seconds, before the Earth turns them into lines. At 30 mm on this body, about fifteen." },
@@ -265,6 +269,14 @@ const ANIMALS = {
   bee:      { name: "Bumblebee",         latin: "Bombus",               size: 34,  shape: "insect",   colour: "#3a3020", states: { working: 4, flight: 2 }, spook: 2 },
   hoverfly: { name: "Hoverfly",          latin: "Syrphidae",            size: 26,  shape: "insect",   colour: "#c89a2a", states: { working: 2, flight: 3 }, spook: 2, prize: 1 },
   ladybird: { name: "Ladybird",          latin: "Coccinella",           size: 28,  shape: "ladybird", colour: "#c8321e", states: { still: 2, crawling: 2 }, spook: 1, prize: 1 },
+  // The Fifteen Acres, Phoenix Park. Fallow deer, in the park since the
+  // 1660s and wild there since; the herd keeps the park's fifty metres.
+  // `only` puts the rutting buck under the rut's light alone.
+  buck:     { name: "Fallow Buck",       latin: "Dama dama",            size: 110, shape: "antelope", colour: "#6e5a3c", states: { grazing: 4, alert: 2, walking: 3, running: 1 }, spook: 1 },
+  doe:      { name: "Fallow Doe",        latin: "Dama dama",            size: 95,  shape: "antelope", colour: "#a07a4c", states: { grazing: 5, alert: 2, walking: 2, running: 1 }, spook: 2 },
+  rutbuck:  { name: "Fallow Buck, in the rut", latin: "Dama dama",      size: 110, shape: "antelope", colour: "#4e3e2c", states: { groaning: 4, sparring: 3, walking: 2 }, spook: 0, only: ["rut"] },
+  jackdaw:  { name: "Jackdaw",           latin: "Corvus monedula",      size: 34,  shape: "bird",     colour: "#2a2a30", states: { flight: 4, walking: 2 }, fly: 1, spook: 1 },
+  crow:     { name: "Hooded Crow",       latin: "Corvus cornix",        size: 48,  shape: "bird",     colour: "#50505a", states: { walking: 3, flight: 3 }, fly: 1, spook: 1 },
   // The country itself: a subject that does not move, and does not run.
   acacia:   { name: "Flat-topped Acacia", latin: "Vachellia tortilis", size: 300, shape: "tree",     colour: "#2f2a1e", states: { standing: 4, wind: 2 }, spook: 0 },
   // South Luangwa. `prize` marks the small hard subjects that are the point
@@ -430,7 +442,15 @@ const PLATES = [
     caption: "Three trees on the Mara with the storm coming. Filed as landscape; the sky is the subject and the trees are its scale." },
   { file: "lappet-faced-vultures.jpg", animal: "vulture", behaviours: ["feeding"], title: "Lappet-faced Vultures",
     alt: "Lappet-faced and white-backed vultures squabbling over a carcass, one with a wing fully spread",
-    caption: "Two species at the carcass, one wing thrown open. Feeding is a bout, and the bout is what the plate is for." }
+    caption: "Two species at the carcass, one wing thrown open. Feeding is a bout, and the bout is what the plate is for." },
+  // The Fifteen Acres, 19 September 2026, in mist, at 50 mm: the field with
+  // deer in it, which is what that lens gives at the park's distance.
+  { file: "bucks-along-the-field.jpg", animal: "buck", behaviours: ["grazing", "alert"], title: "Bucks Along the Field",
+    alt: "Eight fallow deer spaced along a green field under a line of trees softened by mist, a dark buck in the middle, the others pale and spotted",
+    caption: "The Fifteen Acres in September mist, at 50 mm. The herd keeps the park's fifty metres, so the short lens gives the field and the weather with deer in it, a fortieth of the frame each. The long zoom is for the deer." },
+  { file: "the-herd-in-mist.jpg", animal: "doe", behaviours: ["grazing"], title: "The Herd in Mist",
+    alt: "A fallow deer herd bunched in a line on green grass, antlers among the does, a soft tree line and a grey sky behind",
+    caption: "The same morning, the herd bunched. Does and bucks together in September; by October the bucks have their own business, and no frame of that yet." }
 ];
 
 // Ranges. `seat` is drive (the jeep moves along a track), hide (you sit
@@ -462,6 +482,10 @@ const RANGES = {
                { name: "1:1", frac: 0.20, note: "Life-size. Depth about a millimetre at f/8; f/16 buys depth with diffraction, and the effective aperture is already two stops darker.",
                  depth: { wide: "At 1:1 and wide open the depth of field is a fraction of a millimetre: an eye, and nothing else.", mid: "At 1:1 the depth of field is about a millimetre at f/8. The eye is sharp; the rest is not.", stopped: "At 1:1 and f/11, two millimetres of depth and the first softness of diffraction; the effective aperture is already f/22.", narrow: "At 1:1 and f/16, depth bought with diffraction: the whole insect in, and none of it crisp." } }
              ] },
+  acres:   { name: "Fifteen Acres",  place: "Phoenix Park, Dublin, Ireland", seat: "walk", day: "shutters", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#cfd5d6", "#aeb8b6"], ground: "#6f8a48", far: "#3c4a34",
+             note: "A Saturday in October with the club, on foot across the Fifteen Acres. The park asks for fifty metres from the herd and the herd keeps it, so the long zoom is the lens: at 50 mm a buck is a fortieth of the frame. The bucks groan and spar in the first hour; after that the herd grazes and the mist lifts.",
+             cast: { doe: 5, buck: 4, rutbuck: 3, jackdaw: 2, crow: 2 },
+             lights: ["rut", "mist", "overcast"] },
   sky:     { name: "Night Sky",     place: "South Luangwa, Zambia, after the fire", seat: "tripod", scale: "sky", body: "newer", lens: { name: "18 mm end of the zoom", min: 4, max: 22, floor: "1/60" }, sky: ["#070a1c", "#1a1f3a"], ground: "#0b0a10", far: "#14121c",
              note: "A tripod on the airstrip, the camp behind you. Nothing to drive. The Earth turns; that is the movement. Wait for your eyes.",
              cast: { stars: 3, pole: 2, milky: 2, moon: 2, meteor: 3 },
@@ -493,6 +517,13 @@ const DAYS = {
     { name: "Night drive", from: "19:15", to: "21:00", light: "night" },
     { name: "Camp", from: "21:00", to: "21:00", end: "Back to camp. The fire, and the sheet." }
   ],
+  shutters: [
+    { name: "The rut, at nine", from: "09:00", to: "10:00", light: "rut" },
+    { name: "The Fifteen Acres", from: "10:00", to: "11:30", light: "mist" },
+    { name: "Coffee", from: "11:30", to: "12:00", pause: "Coffee at the tea rooms. Five of you, sheets compared, the deer discussed. The mist is lifting." },
+    { name: "Back across the acres", from: "12:00", to: "13:00", light: "overcast" },
+    { name: "Home", from: "13:00", to: "13:00", end: "One o'clock. Home, and one frame for Saturday Shutters, if the morning gave one." }
+  ],
   walkabout: [
     { name: "Walkabout", from: "10:00", to: "12:30" },
     { name: "Refreshments", from: "12:30", to: "13:00", pause: "Refreshments. The club's coffee stop: sheets compared, one frame each on the table." },
@@ -523,6 +554,9 @@ const LIGHTS = {
   overcast: { name: "Bright overcast", tint: "rgba(220,226,230,0.12)", ev: 11 },
   dappled:  { name: "Dappled sun",     tint: "rgba(255,240,180,0.12)", ev: 12 },
   shade:    { name: "Woodland floor",  tint: "rgba(30,50,30,0.22)",    ev: 9 },
+  // the Fifteen Acres: the rut's first hour in October, then mist, then the day
+  rut:   { name: "The rut, at nine", tint: "rgba(230,200,150,0.14)", ev: 11 },
+  mist:  { name: "Mist",             tint: "rgba(200,206,210,0.28)", ev: 12 },
   // the sky
   newmoon: { name: "New moon",  scale: "sky", tint: "rgba(0,0,0,0)", ev: -5 },
   moonlit: { name: "Moonlit",   scale: "sky", tint: "rgba(120,140,200,0.10)", ev: -3 }
