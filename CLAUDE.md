@@ -164,6 +164,23 @@ example frames need not be on the portfolio site, but every one must be a
 real photograph or an edit of a real photograph. No frame of the rut yet;
 the rut on 24 October 2026 is the shooting list.
 
+## A break never interrupts a shot
+
+Dermot, 2026-09-19: *don't suddenly stop for a break in the middle of an
+active shoot*. Until then `tickClock` showed the pause card the instant
+the clock crossed into a `pause` or `end` leg, and `showPause` put the
+camera down on whatever it was on. Now a leg that stops the outing
+(`stopsFor`) is held while the player is shooting (`shooting`: the camera
+up with an animal in focus, which on a hide clears when the plate
+empties): `holdLeg` records it in `state.waiting`, the guide says
+`WORDS.wait`, the HUD clock names the leg waiting, and the card comes on
+the first tick after the camera is down or the focus is gone, or at once
+on N. The clock runs on while a stop waits and `clockAfter` keeps
+`resumeAfterPause` from rewinding it, so a break taken late is short and
+the legs after it come at their own times. A light window is not held:
+it changes over the finder as before. The check holds `stopsFor` to the
+legs' own words and `clockAfter` to never turning the clock back.
+
 ## The camera and the dial
 
 Added 2026-09-17 at Dermot's "Shutter Speed, Aperture, ISO and other

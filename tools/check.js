@@ -141,6 +141,13 @@ for (const d in R.DAYS) {
   }
   if (!day[day.length - 1].end) fail("day " + d + " does not end");
   if (R.legAt(day, R.hm(day[0].from)) !== 0) fail("day " + d + ": the clock at its start is not in its first leg");
+  // a stop is a pause or the end and nothing else; a stop held for a shot
+  // never turns the clock back when it resumes
+  for (const l of day) {
+    if (R.stopsFor(l) !== !!(l.pause || l.end)) fail("day " + d + " leg " + l.name + ": stopsFor disagrees with its words");
+    if (R.stopsFor(l) && R.clockAfter(R.hm(l.to) + 20, l) !== R.hm(l.to) + 20) fail("day " + d + " leg " + l.name + ": a held stop rewound the clock");
+    if (R.stopsFor(l) && R.clockAfter(R.hm(l.from), l) !== R.hm(l.to)) fail("day " + d + " leg " + l.name + ": a stop taken on time does not end when it ends");
+  }
   ok();
 }
 for (const k in R.RANGES) {

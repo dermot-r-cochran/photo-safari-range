@@ -557,7 +557,10 @@ const RANGES = {
 // window: each leg sets the light, a `pause` leg stops the outing for a
 // card (breakfast, camp, refreshments) and jumps the clock to its end,
 // and an `end` leg packs up. Times are "HH:MM"; the clock runs at
-// CLOCK_RATE safari minutes per real second.
+// CLOCK_RATE safari minutes per real second. A leg that stops the outing
+// never interrupts a shot: with the camera up on an animal it waits until
+// the camera comes down or the animal leaves the frame, and the clock
+// runs on meanwhile, so the break may start late and is never rewound.
 const CLOCK_RATE = 1.5;
 const DAYS = {
   safari: [
@@ -597,6 +600,10 @@ function clockLabel(min) { const h = Math.floor(min / 60) % 24, m = Math.floor(m
 function dayFor(rangeKey) { return RANGES[rangeKey].day ? DAYS[RANGES[rangeKey].day] : null; }
 // The leg the clock is in: the last leg whose start the clock has reached.
 function legAt(day, min) { let i = 0; for (let k = 0; k < day.length; k++) if (min >= hm(day[k].from)) i = k; return i; }
+// A leg that stops the outing for a card: a pause or the end of the day.
+function stopsFor(leg) { return !!(leg.pause || leg.end); }
+// The clock after a stop: its end, or later if the stop was held for a shot.
+function clockAfter(clock, leg) { return Math.max(clock, hm(leg.to)); }
 
 // Light windows: the sky, and the ISO the meter lands on at each shutter.
 // ISO 400 clean, 800 fine, 1600 shows chroma noise, 3200 a last resort.
@@ -713,6 +720,7 @@ const COACH = {
 
 const WORDS = {
   miss:     "Nothing in the frame.",
+  wait:     "{leg} can wait. Finish the shot.",
   match:    "The shutter agrees with the animal.",
   slow1:    "A stop slow for that. Soft where it moved.",
   slow2:    "Two stops slow. The movement smeared.",
@@ -976,7 +984,7 @@ function plateFor(animal, behaviour, rnd) {
 
 const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, STILL, DAYS, CLOCK_RATE,
                 APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
-                score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, pick, mulberry };
+                score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
 
 // ---- page section: everything below needs a document ----
@@ -993,6 +1001,7 @@ const state = {
   worldX: 0, speed: 0, animals: [], t: 0, rnd: null,
   camera: false, shutter: "1/250", aperture: 8, mode: "S", pull: 1, support: null, body: null, aim: { x: W / 2, y: H * 0.7 },
   focus: null, radio: null, radioUntil: 0,
+  waiting: null,
   sheet: JSON.parse(localStorage.getItem("psr.sheet") || "[]"),
   keys: {}
 };
@@ -1065,7 +1074,7 @@ function begin() {
   state.support = R.seat === "tripod" ? "tripod" : null;
   // the day's clock, from its first leg
   const day = dayFor(state.range);
-  state.paused = false; $("pause").hidden = true;
+  state.paused = false; state.waiting = null; $("pause").hidden = true;
   if (day) { state.clock = hm(day[0].from); state.leg = 0; if (day[0].light) state.light = day[0].light; }
   else state.clock = null;
   state.animals = spawnPlan(state.range, R.seat === "tripod" ? 6 : 14, state.rnd, state.light).map(makeAnimal);
@@ -1096,7 +1105,7 @@ function packUp(now) {
   // Esc with shots fired shows the day's card first; its button packs up
   if (!now && state.playing && !state.paused && state.day && state.day.length) { showPause("Packing up", COACH.packEarly, true); return; }
   state.day = [];
-  state.playing = false; state.camera = false; state.animals = []; state.paused = false; state.clock = null; $("pause").hidden = true;
+  state.playing = false; state.camera = false; state.animals = []; state.paused = false; state.waiting = null; state.clock = null; $("pause").hidden = true;
   $("camp").hidden = false; $("radio").hidden = true; $("focus").innerHTML = "";
   $("asked").textContent = "On the range the spotter calls each animal as it comes into view and the driver stops; the camera comes up on it and this panel names what it is doing and the shutter that needs.";
   buildCamp(); drawHud();
@@ -1113,18 +1122,30 @@ const SPEED = { resting: 0, sentinel: 0, grazing: 8, drinking: 0, walking: 40, s
                 still: 0, breeze: 0, working: 3, crawling: 6 };
 
 // The clock: advance it, and when it enters a new leg set the light, or
-// stop for the card, or end the day.
+// stop for the card, or end the day. A stop never interrupts a shot: with
+// the camera up on an animal the leg is held, the guide says so, and it
+// comes the moment the camera is down or the animal has left the frame.
+// A light window is not held; it changes over the finder as it always did.
+function shooting() { return !!(state.camera && state.focus); }
 function tickClock(dt) {
   const day = dayFor(state.range);
   if (!day || state.paused) return;
   state.clock += dt * CLOCK_RATE;
+  if (state.waiting !== null) { if (!shooting()) enterLeg(state.waiting); return; }
   const i = legAt(day, state.clock);
   if (i === state.leg) return;
+  if (stopsFor(day[i]) && shooting()) { holdLeg(i); return; }
   enterLeg(i);
+}
+function holdLeg(i) {
+  const day = dayFor(state.range);
+  state.waiting = i;
+  say(RANGES[state.range].seat === "walk" ? "Guide" : "Spotter", WORDS.wait.replace("{leg}", day[i].name));
+  drawHud();
 }
 function enterLeg(i) {
   const day = dayFor(state.range), leg = day[i];
-  state.leg = i;
+  state.leg = i; state.waiting = null;
   if (leg.end) { showPause(leg.name, leg.end, true); return; }
   if (leg.pause) { showPause(leg.name, leg.pause, false); return; }
   if (leg.light && leg.light !== state.light) {
@@ -1175,7 +1196,8 @@ function showPause(title, text, isEnd) {
 function resumeAfterPause() {
   const day = dayFor(state.range), leg = day[state.leg];
   state.paused = false; $("pause").hidden = true;
-  state.clock = hm(leg.to);
+  // the leg's end, or later: a break held for a shot ran the clock on
+  state.clock = clockAfter(state.clock, leg);
   // step into the leg the clock now sits in, which sets its light
   const i = legAt(day, state.clock);
   if (i !== state.leg) enterLeg(i); else drawHud();
@@ -1185,6 +1207,8 @@ function skipLeg() {
   const day = dayFor(state.range);
   if (!day || !state.playing) return;
   if (state.paused) { resumeAfterPause(); return; }
+  // a break held for a shot: N takes it now
+  if (state.waiting !== null) { enterLeg(state.waiting); return; }
   const next = Math.min(day.length - 1, state.leg + 1);
   state.clock = hm(day[next].from);
   enterLeg(next);
@@ -1752,7 +1776,9 @@ function drawHud() {
   const add = (txt, cls) => { const s = document.createElement("span"); s.className = "k " + (cls || ""); s.textContent = txt; h.appendChild(s); return s; };
   if (state.clock !== null && state.clock !== undefined) {
     const day = dayFor(state.range);
-    const clk = add(clockLabel(state.clock) + " · " + day[state.leg].name + " (N)"); clk.title = "N: skip to the next part of the day"; clk.onclick = skipLeg;
+    const held = state.waiting !== null ? day[state.waiting] : null;
+    const clk = add(clockLabel(state.clock) + " · " + day[state.leg].name + (held ? " · " + held.name + " waits" : "") + " (N)");
+    clk.title = held ? "N: " + held.name.toLowerCase() + " now" : "N: skip to the next part of the day"; clk.onclick = skipLeg;
   }
   const asked = state.focus ? askedFor(state.focus.behaviour, state.support, scaleFor(state.range)) : null;
   // the finder's readout: the two scales with the asked mark, and the ISO;

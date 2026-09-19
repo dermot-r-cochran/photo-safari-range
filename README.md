@@ -68,7 +68,11 @@ club's deer morning in October: the rut at nine, the herd in mist until
 coffee at half eleven, back across the acres until one. The light follows the clock,
 so nobody picks it; the night sky keeps its choice of moon. Breakfast,
 camp and the coffee stop are cards with the sheet so far on them; N (or
-the pad's Skip ahead) jumps to the next part of the day.
+the pad's Skip ahead) jumps to the next part of the day. A break never
+interrupts a shot: with the camera up on an animal the guide says it can
+wait, the clock shows the break waiting, and the card comes when the
+camera goes down or the animal leaves the frame (or on N, to take it at
+once). The clock runs on while it waits, so a late break is a short one.
 
 ## The camera
 
