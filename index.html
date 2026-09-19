@@ -645,9 +645,11 @@ const MODES = { S: "Shutter priority", A: "Aperture priority", M: "Manual" };
 // screen. `af` is "centre" or "eye"; the keys keep their old names.
 const BODIES = {
   older: { name: "DSLR", af: "centre", isoSteps: [100, 200, 400, 800, 1600, 3200], cap: 3200, noiseFrom: 1600, diffraction: { soft: 11, plain: 16 },
-           note: "The basic kit. Optical finder, eleven points with one cross-type in the middle: put the animal under the centre and half-press. Noise from ISO 1600, cap 3200." },
+           note: "The basic kit. Optical finder, eleven points with one cross-type in the middle: put the animal under the centre and half-press. Noise from ISO 1600, cap 3200. Lenses: 18–400 mm zoom, 75–240 mm zoom, 50 mm prime, 70 mm macro.",
+           kit: ["18–400 mm zoom", "75–240 mm zoom", "50 mm prime", "70 mm macro"] },
   newer:   { name: "Mirrorless", af: "eye", isoSteps: [100, 200, 400, 800, 1600, 3200, 6400, 12800], cap: 12800, noiseFrom: 6400, diffraction: { soft: 8, plain: 16 },
-           note: "The step up. Subject detection across the frame finds the nearest animal's eye and holds it while it moves; clean to ISO 6400. The trade: smaller pixels, so diffraction a stop earlier, and a finder that is a screen." }
+           note: "The step up. Subject detection across the frame finds the nearest animal's eye and holds it while it moves; clean to ISO 6400. The trade: smaller pixels, so diffraction a stop earlier, and a finder that is a screen. Lens: 150–500 mm zoom.",
+           kit: ["150–500 mm zoom"] }
 };
 const DEFAULT_BODY = "older";
 // the DSLR's numbers, by name, for anything that does not ask for a body

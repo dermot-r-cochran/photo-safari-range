@@ -108,7 +108,9 @@ eye is sharp and the far ear is not; on the macro range 1:1 at f/8 is
 about a millimetre and wide open a fraction of one; f/11 starts to soften
 the pixels on this body and f/16 is plain diffraction, which costs a star.
 The lens sets the stops on offer: the long zoom at its 400 mm end from f/5.6,
-the 70 mm macro from f/2.8.
+the 70 mm macro from f/2.8. The kit, by focal range only: the DSLR carries an
+18–400 mm zoom, a 75–240 mm zoom, a 50 mm prime and a 70 mm macro; the
+mirrorless carries a 150–500 mm zoom. Both are crop sensors.
 
 **The guide gives advice on the settings**, when the camera comes up on a
 subject and only now and then: a dark frame at the cap, a blown one, A
