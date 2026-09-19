@@ -10,9 +10,10 @@ localStorage only.
 ## What it is
 
 You are in a vehicle on open grassland, sitting a floating hide on the
-Zambezi at eye level with the drinking line, or on foot in South Luangwa
+Zambezi at eye level with the drinking line, on foot in South Luangwa
 behind the guide, by day or on a night drive where only the lamp's circle
-can be seen or shot. Animals are on the range, and
+can be seen or shot, or on foot across the Fifteen Acres in Phoenix Park
+with the camera club, fifty metres from the fallow herd. Animals are on the range, and
 each one is always doing something: resting, grazing, on sentry, walking,
 stalking, running, in flight. Raise the camera and the spotter names the
 animal, what it is doing, and the shutter that needs. Set the shutter,
@@ -52,7 +53,9 @@ nine, the heat until half eleven, back to camp for lunch and a siesta
 through the hottest hours, out again at half three, and the gate at
 sunset. South Luangwa adds a sundowner and the night drive. Home Ground
 is a club walkabout: ten till two with a coffee stop at half twelve, and
-one frame for Saturday Shutters at the end. The light follows the clock,
+one frame for Saturday Shutters at the end. The Fifteen Acres is the
+club's deer morning in October: the rut at nine, the herd in mist until
+coffee at half eleven, back across the acres until one. The light follows the clock,
 so nobody picks it; the night sky keeps its choice of moon. Breakfast,
 camp and the coffee stop are cards with the sheet so far on them; N (or
 the pad's Skip ahead) jumps to the next part of the day.
@@ -183,7 +186,7 @@ learned on**: the author's own photograph of that animal doing that thing,
 from the outings the range was written from, with your crop inset in the
 corner and a caption that says what the frame is. It is a comparison, not
 the answer: the stars and the verdict are about your plate; the photograph
-is what the same moment looked like when it was got. Twenty-eight frames
+is what the same moment looked like when it was got. Forty-nine frames
 so far, under `images/`, at portfolio size, chosen by animal and
 behaviour; an animal with no frame yet shows the crop alone with the line
 "No frame of this yet. One to make.", and each range's camp lists the

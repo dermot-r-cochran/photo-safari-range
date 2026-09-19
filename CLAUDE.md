@@ -144,6 +144,27 @@ name (dsc_1030, dsc_1000). Aperture is still not a control the player
 sets; the pulls carry its cost in words. If that ever changes, it is a
 second axis on the scorer, not a new range.
 
+## Fifteen Acres
+
+Added 2026-09-19 at Dermot's word (*Fifteen Acres range sounds great*),
+the evening of the club's Phoenix Park deer morning in mist. The range is
+the Saturday Shutters deer outing on the walk seat: a `shutters` day (the
+rut at nine, the herd in mist, coffee at half eleven, back across the
+acres under overcast, home at one), three behaviours of its own (`alert`,
+`groaning`, `sparring`), fallow buck and doe with a jackdaw and a hooded
+crow, and a rutting buck that spawns under the rut's light alone through
+`only: ["rut"]`, the first use of `only` for a day light rather than a
+sky one. The park's fifty metres is the range's own rule, the way "stay in
+the vehicle" is the jeep's: the herd keeps it, so the long zoom is the
+lens, and the note says what 50 mm gives at that distance (the field, with
+deer in it a fortieth of the frame each). Its two plates are from 19
+September 2026 at 50 mm, and their captions name the focal length because
+the lens is the point of the frame, which is the one case captions state
+a setting. Dermot's rule the same day, for this game and the tutorial:
+example frames need not be on the portfolio site, but every one must be a
+real photograph or an edit of a real photograph. No frame of the rut yet;
+the rut on 24 October 2026 is the shooting list.
+
 ## The camera and the dial
 
 Added 2026-09-17 at Dermot's "Shutter Speed, Aperture, ISO and other
