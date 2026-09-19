@@ -264,6 +264,7 @@ for (const f of onDisk) if (!referenced.has(f)) fail("images/" + f + " is not sh
 for (const k in R.RANGES) {
   const w = R.wantedFor(k);
   for (const a of w) { if (!R.RANGES[k].cast[a]) fail("wanted list for " + k + " names " + a + ", not in its cast"); if (R.PLATES.some(p => p.animal === a)) fail("wanted list for " + k + " names " + a + ", which has a frame"); }
+  if (w.length) console.log("  author's shooting list, " + R.RANGES[k].name + ": " + w.map(x => R.ANIMALS[x].name).join(", "));
   for (const a in R.RANGES[k].cast) if (!R.PLATES.some(p => p.animal === a) && !w.includes(a)) fail("wanted list for " + k + " misses " + a);
   ok();
 }
