@@ -63,18 +63,23 @@ the pad's Skip ahead) jumps to the next part of the day.
 ## The camera
 
 Two bodies, chosen at camp and each the default where it was carried.
-The **older DSLR** is the tutorial's camera and the Kenya body: eleven
-autofocus points with one cross-type sensor in the middle, so it focuses
-on whatever you put under the centre of the frame; noise from ISO 1600, a
-cap of 3200. The **newer mirrorless** is the Zambia body, paired with the longer zoom:
-subject detection across the whole frame, so it finds the nearest
+They are named by kind, not by age, so the labels hold across makes and
+models, and they stand for a progression from basic kit to more advanced
+kit, with its trade-offs. The **DSLR** is the basic kit, the tutorial's
+camera and the Kenya body: an optical finder, eleven autofocus points with
+one cross-type sensor in the middle, so it focuses on whatever you put
+under the centre of the frame; noise from ISO 1600, a cap of 3200. Cheaper,
+simpler, and it teaches you to put the animal under the centre. The
+**mirrorless** is the step up, the Zambia body, paired with the longer
+zoom: subject detection across the whole frame, so it finds the nearest
 animal's eye wherever it is and holds it while it moves, and the AF box
-sits on the head; clean to ISO 6400 with a cap of 12800, so in A at
-night it holds the shutter where the older body has to let it drop; smaller
-pixels, so diffraction starts a stop earlier, at f/8. Tab still picks
-another animal on either.
+sits on the head; clean to ISO 6400 with a cap of 12800, so in A at night
+it holds the shutter where the DSLR has to let it drop. What it costs:
+smaller pixels, so diffraction starts a stop earlier, at f/8; a finder
+that is a screen; and more money. Tab still picks another animal on
+either.
 
-One older crop-sensor body, and its dial. **S** sets the shutter and the
+One crop-sensor body, and its dial. **S** sets the shutter and the
 camera finds the aperture and ISO: the smallest stop the light allows at
 ISO 100, else wide open and the ISO up. **A** sets the aperture for depth
 and the camera finds the shutter: it holds ISO 100 as long as the shutter
@@ -173,9 +178,9 @@ and
 The tutorial holds the lessons and the author's own frames; this is the
 range.
 
-**The camera is the author's own**, an older crop-sensor DSLR, and
+**The camera is the author's own**, a crop-sensor DSLR, and
 the ISO the light windows charge is that body's: 400 clean, 800 fine, 1600
-showing chroma noise, 3200 a last resort. A newer body is cleaner. The
+showing chroma noise, 3200 a last resort. A mirrorless body is cleaner. The
 decisions generalise; the thresholds are the ones to check against your
 own camera.
 

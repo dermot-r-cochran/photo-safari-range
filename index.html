@@ -195,7 +195,7 @@
 /* ============================== WORLD DATA ==============================
  * Everything the player can meet lives here. The engine below never
  * needs editing to add an animal, a behaviour or a range. Numbers are
- * one camera's: an older crop-sensor DSLR and a long zoom.
+ * one camera's: a crop-sensor DSLR and a long zoom.
  */
 
 // Shutter scales, slowest to fastest. `day` is the hand-held range; `sky`
@@ -563,7 +563,7 @@ const LIGHTS = {
 };
 const DEFAULT_LIGHTS = ["first", "heat", "last"];
 
-// The camera: one older crop-sensor body. Apertures the dial offers, ISO
+// The camera: one crop-sensor body. Apertures the dial offers, ISO
 // steps and the cap past which Auto ISO leaves a frame dark, and the
 // modes of the dial: S sets the shutter and the camera finds aperture and
 // ISO; A sets the aperture and the camera finds shutter and ISO, holding
@@ -573,21 +573,23 @@ const DEFAULT_LIGHTS = ["first", "heat", "last"];
 // blurred. Diffraction softens from f/11 and is plain by f/16.
 const APERTURES = [2.8, 4, 5.6, 8, 11, 16, 22];
 const MODES = { S: "Shutter priority", A: "Aperture priority", M: "Manual" };
-// The bodies. The older DSLR is the tutorial's camera and the Kenya body: eleven
-// AF points with one cross-type sensor in the middle, so it focuses on
-// what you put under the centre; ISO 1600 shows noise and 3200 is the cap.
-// The newer mirrorless is the Zambia body: subject detection across the frame, so
-// it finds the nearest animal's eye wherever it is and holds it; clean to
-// 6400 with a cap of 12800; smaller pixels, so diffraction starts a stop
-// earlier. `af` is "centre" or "eye".
+// The bodies, named by kind rather than by age so the labels hold across
+// makes and models. The DSLR is the basic kit and the tutorial's camera:
+// an optical finder, eleven AF points with one cross-type sensor in the
+// middle, so it focuses on what you put under the centre; ISO 1600 shows
+// noise and 3200 is the cap. The mirrorless is the step up: subject
+// detection across the frame finds the nearest animal's eye wherever it
+// is and holds it; clean to 6400 with a cap of 12800. Its trade: smaller
+// pixels, so diffraction starts a stop earlier, and a finder that is a
+// screen. `af` is "centre" or "eye"; the keys keep their old names.
 const BODIES = {
-  older: { name: "Older DSLR", af: "centre", isoSteps: [100, 200, 400, 800, 1600, 3200], cap: 3200, noiseFrom: 1600, diffraction: { soft: 11, plain: 16 },
-           note: "Eleven points, one cross-type in the middle. Put the animal under the centre and half-press." },
-  newer:   { name: "Newer mirrorless", af: "eye", isoSteps: [100, 200, 400, 800, 1600, 3200, 6400, 12800], cap: 12800, noiseFrom: 6400, diffraction: { soft: 8, plain: 16 },
-           note: "Subject detection across the frame: it finds the nearest animal's eye and holds it while it moves." }
+  older: { name: "DSLR", af: "centre", isoSteps: [100, 200, 400, 800, 1600, 3200], cap: 3200, noiseFrom: 1600, diffraction: { soft: 11, plain: 16 },
+           note: "The basic kit. Optical finder, eleven points with one cross-type in the middle: put the animal under the centre and half-press. Noise from ISO 1600, cap 3200." },
+  newer:   { name: "Mirrorless", af: "eye", isoSteps: [100, 200, 400, 800, 1600, 3200, 6400, 12800], cap: 12800, noiseFrom: 6400, diffraction: { soft: 8, plain: 16 },
+           note: "The step up. Subject detection across the frame finds the nearest animal's eye and holds it while it moves; clean to ISO 6400. The trade: smaller pixels, so diffraction a stop earlier, and a finder that is a screen." }
 };
 const DEFAULT_BODY = "older";
-// the older body's numbers, by name, for anything that does not ask for a body
+// the DSLR's numbers, by name, for anything that does not ask for a body
 const ISO_STEPS = BODIES.older.isoSteps;
 const ISO_CAP = BODIES.older.cap;
 const DIFFRACTION = BODIES.older.diffraction;
