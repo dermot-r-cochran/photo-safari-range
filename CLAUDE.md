@@ -226,3 +226,12 @@ point at the Pages site later with a CNAME; it is not set up.
 Engine MIT (`LICENSE`); the range content CC BY 4.0
 (`CONTENT-LICENSE.md`). Any photograph of the author's own added later is
 CC BY-NC-ND 4.0, the portfolio's terms, and excluded from the CC BY grant.
+
+## The author's shooting list
+
+`wantedFor(range)` is the cast animals with no photograph in `PLATES`. It
+is the author's own note, not a goal for the player: it was shown on the
+camp card until 2026-09-19 and read as an instruction (Dermot's note that
+day), so the page no longer shows it. `tools/check.js` prints it per
+range instead, and a plate of an unphotographed animal says only that
+the crop stands alone.

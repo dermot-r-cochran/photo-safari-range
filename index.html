@@ -227,7 +227,6 @@
     <div class="row" id="body-pick"></div>
     <div class="row" id="light-pick"></div>
     <p class="note" id="camp-note"></p>
-    <p class="note" id="wanted"></p>
     <div class="row"><button class="primary" id="go">Drive the range</button></div>
     <p class="note">The driver drives and stops when the spotter calls; at the stop the camera comes up by itself on what was called · A and D (or the left and right arrows with the camera down) ask him for closer or back, and put the camera down to move on; hold a key past a second and you are hurrying him, which spooks the shy ones · Space fires; it also raises the camera if it is down · with the camera up the arrows or the mouse move the aim · the mode dial turns through S, A and M (M) · the wheels set the shutter ([ and ]) and the aperture (, and .) · B rests the camera on the beanbag, or the tripod on foot · the camera focuses on what is under the centre of the frame, and Tab picks another animal in it · Z zooms · C puts the camera down without moving · N skips to the next part of the day · Esc packs up.</p>
   </div>
@@ -701,7 +700,7 @@ const WORDS = {
   diffSoft: "f/11: diffraction is starting to soften the pixels on this body.",
   diffPlain: "f/16 or smaller: diffraction is plain at fourteen megapixels. The depth was bought with softness.",
   aDropped: "In A the camera held ISO 100 as long as it could, hit the cap, and let the shutter drop under the floor.",
-  wanted:   "No frame of this yet. One to make.",
+  wanted:   "The author has no photograph of this one yet, so the crop stands alone.",
   cut:      "Cut by the frame edge.",
   small:    "A speck. Pull tighter or get closer.",
   filling:  "It fills the plate.",
@@ -935,7 +934,9 @@ function mulberry(seed) {
 
 // The frame a plate shows: same animal and behaviour first, then any frame
 // of the animal, else null (the crop stands alone).
-// The animals a range casts that have no frame yet: the shooting list.
+// The animals a range casts that have no frame yet: the author's own
+// shooting list. Not shown to the player (it read as a goal for them;
+// Dermot, 2026-09-19); the check prints it for him.
 function wantedFor(rangeKey) {
   return Object.keys(RANGES[rangeKey].cast).filter(k => !PLATES.some(p => p.animal === k));
 }
@@ -1010,10 +1011,6 @@ function buildCamp() {
     if (day) { const s = document.createElement("span"); s.className = "note"; s.textContent = " · " + day.map(l => l.name + " " + l.from).join(" · "); lp.appendChild(s); }
   }
   $("camp-note").textContent = R.place + ". " + R.note;
-  const wanted = wantedFor(state.range);
-  $("wanted").textContent = wanted.length
-    ? "Wanted, no frame of these yet: " + wanted.map(k => ANIMALS[k].name).join(", ") + "."
-    : "Every animal on this range has a frame.";
   $("go").textContent = R.seat === "hide" ? "Sit the hide" : R.seat === "walk" ? "Walk the range" : R.seat === "tripod" ? "Set up the tripod" : "Drive the range";
   $("range-line").textContent = R.name + " · " + LIGHTS[state.light].name;
 }
