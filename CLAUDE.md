@@ -95,6 +95,17 @@ spotter's calls are only worth anything if they are true.
 - The portfolio carries no generated images. This game may, under
   `images/`, at its own address, never inside the portfolio's pages.
 
+## The clock is the limit, not a stroke count
+
+Dermot, 2026-09-19: *Range game is time limited rather than counting
+shots. It was no penalty for non-keepers.* The tutorial scores like golf
+(every press a stroke, par one a stop); this game does not, and should
+not be made to. The day's clock is the whole constraint: a plate for the
+folder costs the minutes it took and nothing else, the sheet counts what
+was kept, and the end-of-day card gives keepers from shots as a tally
+with one piece of coaching, never as a score against par. Don't add
+strokes, par or a penalty for a miss here.
+
 ## South Luangwa
 
 Added 2026-09-17 for Dermot's 2027 Zambia trip, on his choice of small hard
