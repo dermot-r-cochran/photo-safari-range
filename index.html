@@ -54,6 +54,7 @@
   button.on { background: var(--earth); color: #fff; border-color: var(--earth); }
   button:disabled { opacity: 0.5; cursor: default; }
   .row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin: 0.5rem 0; }
+  #range-pick .group { width: 100%; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-top: 0.2rem; }
   #stage {
     position: relative; width: 100%; aspect-ratio: 16 / 9;
     background: #c9b27f; border: 1px solid var(--line); border-radius: 8px;
@@ -282,7 +283,7 @@ const BEHAVIOURS = {
   // trees and the country: nothing moves but the light
   standing: { asked: "1/30",   verb: "Standing", note: "Nothing moves but the light. The floor is the hand-held rule, one over the focal length and a half; at the wide end, about 1/30." },
   wind:     { asked: "1/125",  verb: "In wind",  note: "The trunk stands, the leaves do not. 1/125 holds the canopy." },
-  // home ground, on the 70 mm macro
+  // the beech wood, on the 70 mm macro
   still:    { asked: "1/125",  verb: "Still",    note: "Nothing moves. The floor is the hand-held rule at 70 mm on this body, so 1/125; on a support with the mirror up, anything." },
   breeze:   { asked: "1/250",  verb: "In a breeze", note: "The stem moves a finger's width and back. 1/250 holds a petal; the frame in between is soft." },
   working:  { asked: "1/500",  verb: "Working",  note: "On the flower and never still: legs, antennae, the head in the pollen. 1/500 holds the body. The wings are their own problem." },
@@ -442,7 +443,7 @@ const PLATES = [
   { file: "vulture-landing.jpg", animal: "vulture", behaviours: ["flight", "sentinel"], title: "Vulture Landing",
     alt: "A vulture with both wings still raised, settling onto the crown of a thorn bush against a pale sky",
     caption: "Both wings still up as it settles on the thorn. The frame was got on the shooting-birds setting, not the walking-around one." },
-  // home ground
+  // the beech wood
   { file: "a-single-mushroom.jpg", animal: "mushroom", behaviours: ["still"], title: "A Single Mushroom",
     alt: "One small pale mushroom seen from above, its cap finely striated from the centre to the rim, isolated against a soft blur of green moss and amber leaf litter, with a single strand of spider silk crossing the frame beside it",
     caption: "From above, the cap's striations sharp and the floor gone soft. The strand of silk stayed because it was there." },
@@ -519,17 +520,17 @@ const PLATES = [
 // species and how often each turns up; `lights` the windows the range
 // offers (all three by default).
 const RANGES = {
-  amber:   { name: "Amber Range",  place: "Maasai Mara, Kenya", seat: "drive", day: "safari", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
+  amber:   { name: "Amber Range",  country: "Kenya", place: "Maasai Mara, Kenya", seat: "drive", day: "safari", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
              note: "Open grassland. The pride, the cheetah on the mound, a mongoose on sentry at the termite mound. Stay in the vehicle.",
              cast: { zebra: 5, topi: 3, gazelle: 4, buffalo: 2, elephant: 2, giraffe: 2, lion: 2, cheetah: 2, hyena: 2, vulture: 2, mongoose: 2, acacia: 3 } },
-  zambezi: { name: "Zambezi Hide", place: "Lower Zambezi, Zambia", seat: "hide", day: "safari", body: "newer", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, zlens: { name: "the longer zoom at 500 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#d9c9a8", "#b9a684"], ground: "#8fa0a4", far: "#6f7f5a",
+  zambezi: { name: "Zambezi Hide", country: "Zambia", place: "Lower Zambezi, Zambia", seat: "hide", day: "safari", body: "newer", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, zlens: { name: "the longer zoom at 500 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#d9c9a8", "#b9a684"], ground: "#8fa0a4", far: "#6f7f5a",
              note: "A floating hide, eye level with the drinking line. Nothing to drive. Wait, and the water brings them.",
              cast: { puku: 5, hippo: 3, elephant: 2, buffalo: 2, eagle: 3 } },
-  luangwa: { name: "South Luangwa", place: "South Luangwa, Zambia", seat: "walk", day: "luangwa", body: "newer", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, zlens: { name: "the longer zoom at 500 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#e8d6a8", "#c9a86a"], ground: "#a8905c", far: "#6a6a3a",
+  luangwa: { name: "South Luangwa", country: "Zambia", place: "South Luangwa, Zambia", seat: "walk", day: "luangwa", body: "newer", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, zlens: { name: "the longer zoom at 500 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#e8d6a8", "#c9a86a"], ground: "#a8905c", far: "#6a6a3a",
              note: "Walking country, single file behind the guide. Stop when he stops. After the gate, a night drive: the small ones are the plate.",
              cast: { puku: 3, elephant: 2, hippo: 2, leopard: 2, serval: 3, hyrax: 3, genet: 3, beeeater: 3, acacia: 2 },
              lights: ["first", "heat", "last", "night"] },
-  home:    { name: "Home Ground",   place: "A beech wood and a garden, Dublin, Ireland", seat: "walk", day: "walkabout", wood: 1, sky: ["#d6dcd2", "#b8c2b0"], ground: "#5e4b34", far: "#3a4a2c",
+  home:    { name: "Beech Wood",    country: "Ireland", place: "A beech wood and a garden, Dublin, Ireland", seat: "walk", day: "walkabout", wood: 1, sky: ["#d6dcd2", "#b8c2b0"], ground: "#5e4b34", far: "#3a4a2c",
              note: "The week after, on foot, with the 70 mm macro. The pulls are magnification now: at 1:1 the depth of field is about a millimetre at f/8. Get low, and do not walk at the bees.",
              cast: { mushroom: 4, rose: 3, thistle: 2, angelica: 2, sloe: 2, bramble: 2, bee: 3, hoverfly: 2, ladybird: 2 },
              lights: ["overcast", "dappled", "shade"],
@@ -542,11 +543,11 @@ const RANGES = {
                { name: "1:1", frac: 0.20, note: "Life-size. Depth about a millimetre at f/8; f/16 buys depth with diffraction, and the effective aperture is already two stops darker.",
                  depth: { wide: "At 1:1 and wide open the depth of field is a fraction of a millimetre: an eye, and nothing else.", mid: "At 1:1 the depth of field is about a millimetre at f/8. The eye is sharp; the rest is not.", stopped: "At 1:1 and f/11, two millimetres of depth and the first softness of diffraction; the effective aperture is already f/22.", narrow: "At 1:1 and f/16, depth bought with diffraction: the whole insect in, and none of it crisp." } }
              ] },
-  acres:   { name: "Fifteen Acres",  place: "Phoenix Park, Dublin, Ireland", seat: "walk", day: "shutters", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#cfd5d6", "#aeb8b6"], ground: "#6f8a48", far: "#3c4a34",
+  acres:   { name: "Fifteen Acres",  country: "Ireland", place: "Phoenix Park, Dublin, Ireland", seat: "walk", day: "shutters", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#cfd5d6", "#aeb8b6"], ground: "#6f8a48", far: "#3c4a34",
              note: "A Saturday in October with the club, on foot across the Fifteen Acres. The park asks for fifty metres from the herd and the herd keeps it, so the long zoom is the lens: at 50 mm a buck is a fortieth of the frame. The bucks groan and spar in the first hour; after that the herd grazes and the mist lifts.",
              cast: { doe: 5, buck: 4, rutbuck: 3, jackdaw: 2, crow: 2 },
              lights: ["rut", "mist", "overcast"] },
-  sky:     { name: "Night Sky",     place: "South Luangwa, Zambia, after the fire", seat: "tripod", scale: "sky", body: "newer", lens: { name: "18 mm end of the zoom", min: 4, max: 22, floor: "1/60" }, sky: ["#070a1c", "#1a1f3a"], ground: "#0b0a10", far: "#14121c",
+  sky:     { name: "Night Sky",     country: "Zambia", place: "South Luangwa, Zambia, after the fire", seat: "tripod", scale: "sky", body: "newer", lens: { name: "18 mm end of the zoom", min: 4, max: 22, floor: "1/60" }, sky: ["#070a1c", "#1a1f3a"], ground: "#0b0a10", far: "#14121c",
              note: "A tripod on the airstrip, the camp behind you. Nothing to drive. The Earth turns; that is the movement. Wait for your eyes.",
              cast: { stars: 3, pole: 2, milky: 2, moon: 2, meteor: 3 },
              lights: ["newmoon", "moonlit"] }
@@ -610,7 +611,7 @@ const LIGHTS = {
   heat:  { name: "Heat",        tint: "rgba(255,255,230,0.10)", ev: 13 },
   last:  { name: "Last light",  tint: "rgba(200,90,60,0.22)",   ev: 10 },
   night: { name: "Night drive", tint: "rgba(10,18,40,0.55)", lamp: 1, ev: 6 },
-  // home ground: bright overcast, sun through the leaves, and the wood's floor
+  // the beech wood: bright overcast, sun through the leaves, and the wood's floor
   overcast: { name: "Bright overcast", tint: "rgba(220,226,230,0.12)", ev: 11 },
   dappled:  { name: "Dappled sun",     tint: "rgba(255,240,180,0.12)", ev: 12 },
   shade:    { name: "Woodland floor",  tint: "rgba(30,50,30,0.22)",    ev: 9 },
@@ -972,12 +973,18 @@ const state = {
 
 // ---- camp ----
 function buildCamp() {
+  // the ranges, grouped by country in the order the countries first appear
   const rp = $("range-pick"); rp.innerHTML = "";
-  for (const k in RANGES) {
-    const b = document.createElement("button");
-    b.textContent = RANGES[k].name; b.className = k === state.range ? "on" : "";
-    b.onclick = () => { state.range = k; state.body = null; buildCamp(); };
-    rp.appendChild(b);
+  const countries = [...new Set(Object.values(RANGES).map(r => r.country))];
+  for (const c of countries) {
+    const h = document.createElement("span"); h.className = "group"; h.textContent = c; rp.appendChild(h);
+    for (const k in RANGES) {
+      if (RANGES[k].country !== c) continue;
+      const b = document.createElement("button");
+      b.textContent = RANGES[k].name; b.className = k === state.range ? "on" : "";
+      b.onclick = () => { state.range = k; state.body = null; buildCamp(); };
+      rp.appendChild(b);
+    }
   }
   // the body: the range's own by default, either on offer
   if (!state.body) state.body = bodyFor(state.range);

@@ -61,7 +61,7 @@ A safari day runs on a clock, a minute and a half of the day for each
 second at the keyboard: out at first light, breakfast under a tree at
 nine, the heat until half eleven, back to camp for lunch and a siesta
 through the hottest hours, out again at half three, and the gate at
-sunset. South Luangwa adds a sundowner and the night drive. Home Ground
+sunset. South Luangwa adds a sundowner and the night drive. Beech Wood
 is a club walkabout: ten till two with a coffee stop at half twelve, and
 one frame for Saturday Shutters at the end. The Fifteen Acres is the
 club's deer morning in October: the rut at nine, the herd in mist until
@@ -132,7 +132,7 @@ what to do about the animal.
   a star; an animal that fills the working pull is the plate you wanted.
   Tighter is head and shoulders, and the note is the field's: long glass
   stacks the background, which is compression, not walking closer.
-- **Home Ground is the macro range.** A beech wood and a garden near home,
+- **Beech Wood is the macro range.** A beech wood and a garden near home,
   the week after, on foot with the 70 mm macro: mushrooms, roses, a spear
   thistle, wild angelica, a sloe and a bramble, bumblebees, a hoverfly and
   a ladybird. The pulls on the glass become magnification, 1:4, 1:2 and
