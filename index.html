@@ -810,6 +810,8 @@ const WORDS = {
   learnedOn: "The frame this was learned on",
   wrongOn:  "The frame this was got wrong on",
   folder:   "One for the folder.",
+  toFolder: "To the folder",
+  clear:    "Clear",
   spooked:  "You drove at it. It ran, and the plate is the tail end.",
   walked:   "You walked at it. It ran, and the plate is the tail end.",
   prize:    "A hard plate. The small ones are the range.",
@@ -1558,7 +1560,11 @@ function showPlate(plate, img, frame, miss) {
   }
   const row = document.createElement("div"); row.className = "row";
   const keep = document.createElement("button"); keep.className = "primary"; keep.textContent = "Keep this";
-  const drop = document.createElement("button"); drop.textContent = "Discard";
+  // a frame with something in it goes to the folder, not the bin: the day's
+  // record already holds it for the coaching, and a miss is what the
+  // lessons come from (Dermot, 2026-09-25); only an empty frame is cleared
+  const drop = document.createElement("button"); drop.textContent = plate.animal ? WORDS.toFolder : WORDS.clear;
+  drop.title = plate.animal ? "Off the sheet and into the folder; the day's card still counts it" : "Nothing was in the frame";
   keep.onclick = () => { state.sheet.push(plate); save(); div.remove(); };
   drop.onclick = () => div.remove();
   if (plate.stars === 0) keep.disabled = true;
