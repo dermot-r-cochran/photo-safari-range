@@ -250,7 +250,7 @@
   </div>
   <div class="card">
     <h2>About</h2>
-    <p class="note">A wildlife-photography arcade in one page. The rule is the field's rule: the shutter follows the animal, not the light meter. The animals on the range are drawn shapes, a map rather than a picture; the photographs after a shot are the author's own. Written by a novice for other novices; the thresholds are one camera's.</p>
+    <p class="note">A wildlife-photography arcade in one page. The rule is the field's rule: the shutter follows the animal, not the light meter. The animals on the range are drawn shapes, a map rather than a picture; the photographs after a shot are the author's own. Written by a novice for other novices; the thresholds are the author's own two cameras', the DSLR's and the mirrorless's, and a third camera would have its own.</p>
     <p class="note">The lessons behind it are in <a href="https://dermot-r-cochran.github.io/photo-safari-tutorial-game/">Photo Safari</a>, the tutorial. Source and licence on <a href="https://github.com/dermot-r-cochran/photo-safari-range">GitHub</a>.</p>
   </div>
 </aside>
@@ -667,6 +667,27 @@ function evAt(rangeKey, clock, light) {
   }
   return pts[pts.length - 1].ev;
 }
+/* The sky by the hour and the weather. A light carries its `sky`; a light
+   with a `sun` rises or sets across its leg of the day, the sun's height
+   running 0 (on the horizon) to 1 (well up) with the clock, and the sky
+   going from the window's dawn or dusk colours to the heat's blue as it
+   climbs. Without a day clock the sun sits a third of the way up. Pure,
+   so the check can hold it. */
+function hexRgb(h) { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+function mixHex(a, b, t) { const A = hexRgb(a), B = hexRgb(b); return "rgb(" + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(",") + ")"; }
+function skyAt(rangeKey, lightKey, clock) {
+  const R = RANGES[rangeKey], L = LIGHTS[lightKey] || {};
+  const base = L.sky || R.sky;
+  if (!L.sun) return { top: base[0], bottom: base[1], sun: null, height: null };
+  let h = 0.35;
+  const day = dayFor(rangeKey);
+  if (day && clock !== null && clock !== undefined) {
+    const leg = day.find(l => l.light === lightKey && hm(l.to) > hm(l.from));
+    if (leg) { const f = Math.max(0, Math.min(1, (clock - hm(leg.from)) / (hm(leg.to) - hm(leg.from)))); h = L.sun === "rising" ? f : 1 - f; }
+  }
+  const k = Math.pow(h, 0.7);
+  return { top: mixHex(base[0], LIGHTS.heat.sky[0], k * 0.85), bottom: mixHex(base[1], LIGHTS.heat.sky[1], k * 0.6), sun: L.sun, height: h };
+}
 // The leg the clock is in: the last leg whose start the clock has reached.
 function legAt(day, min) { let i = 0; for (let k = 0; k < day.length; k++) if (min >= hm(day[k].from)) i = k; return i; }
 // A leg that stops the outing for a card: a pause or the end of the day.
@@ -683,17 +704,22 @@ function clockAfter(clock, leg) { return Math.max(clock, hm(leg.to)); }
 // fifteen seconds at f/4 and ISO 3200. A subject may carry its own `ev`
 // (the moon is a sunlit rock whatever the hour).
 const LIGHTS = {
-  first: { name: "First light", tint: "rgba(240,160,80,0.18)",  ev: 11 },
-  heat:  { name: "Heat",        tint: "rgba(255,255,230,0.10)", ev: 13 },
-  last:  { name: "Last light",  tint: "rgba(200,90,60,0.22)",   ev: 10 },
-  night: { name: "Night drive", tint: "rgba(10,18,40,0.55)", lamp: 1, ev: 6 },
+  // `sky` is the window's sky, top and bottom; `sun` puts the sun on the
+  // horizon at the start of first light and the end of last light, and
+  // the sky goes to the heat's blue as it climbs (Dermot, 2026-09-25:
+  // sunrise and sunset at the right times, otherwise blue or grey by the
+  // weather)
+  first: { name: "First light", tint: "rgba(240,160,80,0.18)",  ev: 11, sky: ["#7a6f9a", "#f3b46a"], sun: "rising" },
+  heat:  { name: "Heat",        tint: "rgba(255,255,230,0.10)", ev: 13, sky: ["#7fb3e3", "#d6e6f2"] },
+  last:  { name: "Last light",  tint: "rgba(200,90,60,0.22)",   ev: 10, sky: ["#6a4f7a", "#f08a52"], sun: "setting" },
+  night: { name: "Night drive", tint: "rgba(10,18,40,0.55)", lamp: 1, ev: 6, sky: ["#070a1c", "#1a1f3a"] },
   // the beech wood: bright overcast, sun through the leaves, and the wood's floor
-  overcast: { name: "Bright overcast", tint: "rgba(220,226,230,0.12)", ev: 11 },
-  dappled:  { name: "Dappled sun",     tint: "rgba(255,240,180,0.12)", ev: 12 },
-  shade:    { name: "Woodland floor",  tint: "rgba(30,50,30,0.22)",    ev: 9 },
+  overcast: { name: "Bright overcast", tint: "rgba(220,226,230,0.12)", ev: 11, sky: ["#b9c0c6", "#dde1e2"] },
+  dappled:  { name: "Dappled sun",     tint: "rgba(255,240,180,0.12)", ev: 12, sky: ["#8fbce2", "#dbe8f0"] },
+  shade:    { name: "Woodland floor",  tint: "rgba(30,50,30,0.22)",    ev: 9,  sky: ["#8a958c", "#b7bfae"] },
   // the Fifteen Acres: the rut's first hour in October, then mist, then the day
-  rut:   { name: "The rut, at nine", tint: "rgba(230,200,150,0.14)", ev: 11 },
-  mist:  { name: "Mist",             tint: "rgba(200,206,210,0.28)", ev: 12 },
+  rut:   { name: "The rut, at nine", tint: "rgba(230,200,150,0.14)", ev: 11, sky: ["#a9bfd4", "#f2dfb8"] },
+  mist:  { name: "Mist",             tint: "rgba(200,206,210,0.28)", ev: 12, sky: ["#c6cbcf", "#e6e8ea"] },
   // the sky
   newmoon: { name: "New moon",  scale: "sky", tint: "rgba(0,0,0,0)", ev: -5 },
   moonlit: { name: "Moonlit",   scale: "sky", tint: "rgba(120,140,200,0.10)", ev: -3 }
@@ -1067,7 +1093,7 @@ function missFor(fault, animal, rnd) {
   return any[Math.floor(rnd() * any.length) % any.length];
 }
 
-const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, missFor, STILL, DAYS, CLOCK_RATE,
+const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, missFor, skyAt, STILL, DAYS, CLOCK_RATE,
                 APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
                 score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, evAt, EDGE_DROP, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
@@ -1593,9 +1619,18 @@ function drawSheet() {
 function draw(withFinder = true) {
   const R = RANGES[state.range], L = LIGHTS[state.light];
   if (R.seat === "tripod") return drawSkyScene(withFinder);
+  const S = skyAt(state.range, state.light, state.clock);
   const g = ctx.createLinearGradient(0, 0, 0, HORIZON);
-  g.addColorStop(0, R.sky[0]); g.addColorStop(1, R.sky[1]);
+  g.addColorStop(0, S.top); g.addColorStop(1, S.bottom);
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, HORIZON);
+  if (S.sun) {
+    // the sun: on the horizon at the start of first light and the end of last light, in the east or the west
+    const sx = S.sun === "rising" ? W * 0.72 : W * 0.26, sy = HORIZON - 30 - S.height * (HORIZON - 80), r = 26;
+    const glow = ctx.createRadialGradient(sx, sy, r * 0.5, sx, sy, r * 7);
+    glow.addColorStop(0, "rgba(255,225,160,0.6)"); glow.addColorStop(1, "rgba(255,200,120,0)");
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, W, HORIZON);
+    ctx.fillStyle = "#fff3cc"; ctx.beginPath(); ctx.arc(sx, sy, r, 0, 6.28); ctx.fill();
+  }
   ctx.fillStyle = R.far; ctx.fillRect(0, HORIZON - 30, W, 30);
   // distant trees, parallax: acacia crowns on the range, trunks in the wood
   ctx.fillStyle = "rgba(60,50,30,0.55)";
@@ -1622,6 +1657,14 @@ function draw(withFinder = true) {
     }
     ctx.stroke();
   }
+  // short grass in the foreground, dense and low, scrolling with the jeep (Dermot, 2026-09-25)
+  ctx.strokeStyle = R.wood ? "rgba(70,80,45,0.55)" : "rgba(95,85,45,0.5)"; ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let y = NEAR + 6; y < H + 4; y += 7) {
+    const off = ((state.worldX + y * 3.7) % 9 + 9) % 9;
+    for (let x = -12; x < W + 12; x += 9) { const xx = x - off + ((y * 13) % 5); const tall = 5 + ((x + y) % 4); ctx.moveTo(xx, y); ctx.lineTo(xx + 1.5, y - tall); }
+  }
+  ctx.stroke();
   // animals, far to near
   const list = state.animals.filter(a => !a.gone).sort((a, b) => a.depth - b.depth);
   for (const a of list) drawAnimal(a);
@@ -1842,15 +1885,40 @@ function drawAnimal(a) {
 function drawJeep() {
   const y = NEAR + 8, x = JEEP_X;
   const bob = Math.sin(state.t * 12) * Math.min(3, Math.abs(state.speed) / 80);
+  // a safari jeep in profile, facing the way it drives: bonnet low at the
+  // front, an open cab under a canvas roof on a roll cage, wheel arches,
+  // a spare on the back and a bar on the front (Dermot, 2026-09-25: the
+  // vehicle could look more like a jeep)
   ctx.save(); ctx.translate(x, y + bob);
-  ctx.fillStyle = "rgba(0,0,0,0.25)"; ctx.beginPath(); ctx.ellipse(0, 6, 95, 10, 0, 0, 6.28); ctx.fill();
-  ctx.fillStyle = "#5d6b3a"; ctx.fillRect(-75, -50, 150, 40);
-  ctx.fillRect(-55, -78, 90, 30);
-  ctx.fillStyle = "#2a241c"; ctx.fillRect(-48, -74, 30, 20); ctx.fillRect(-10, -74, 40, 20);
-  ctx.fillStyle = "#2a241c";
-  for (const wx of [-48, 48]) { ctx.beginPath(); ctx.arc(wx, -8, 16, 0, 6.28); ctx.fill(); ctx.fillStyle = "#8a8a80"; ctx.beginPath(); ctx.arc(wx, -8, 6, 0, 6.28); ctx.fill(); ctx.fillStyle = "#2a241c"; }
-  // two heads in the cab
-  ctx.fillStyle = "#c9a27a"; ctx.beginPath(); ctx.arc(-32, -84, 7, 0, 6.28); ctx.fill(); ctx.beginPath(); ctx.arc(8, -84, 7, 0, 6.28); ctx.fill();
+  const body = "#5d6b3a", dark = "#2a241c", canvas = "#8a7a56", glass = "rgba(200,220,235,0.7)";
+  ctx.fillStyle = "rgba(0,0,0,0.25)"; ctx.beginPath(); ctx.ellipse(0, 6, 100, 10, 0, 0, 6.28); ctx.fill();
+  // roll cage and canvas roof over the cab
+  ctx.strokeStyle = dark; ctx.lineWidth = 3; ctx.lineCap = "round";
+  for (const px of [-72, -30, 14]) { ctx.beginPath(); ctx.moveTo(px, -48); ctx.lineTo(px, -92); ctx.stroke(); }
+  ctx.fillStyle = canvas; ctx.beginPath(); ctx.moveTo(-82, -92); ctx.lineTo(26, -92); ctx.lineTo(30, -84); ctx.lineTo(-86, -84); ctx.closePath(); ctx.fill();
+  // windscreen, raked back
+  ctx.fillStyle = glass; ctx.beginPath(); ctx.moveTo(16, -48); ctx.lineTo(36, -48); ctx.lineTo(30, -80); ctx.lineTo(14, -80); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = dark; ctx.lineWidth = 2; ctx.stroke();
+  // tub: the cab's side, with the door line, then the bonnet lower and forward
+  ctx.fillStyle = body;
+  ctx.beginPath(); ctx.moveTo(-84, -14); ctx.lineTo(-84, -50); ctx.lineTo(36, -50); ctx.lineTo(40, -42); ctx.lineTo(88, -42); ctx.lineTo(90, -14); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = "rgba(0,0,0,0.35)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(-28, -50); ctx.lineTo(-28, -18); ctx.stroke();
+  // wheel arches cut into the tub, then the wheels
+  ctx.fillStyle = "#3e4a28";
+  for (const wx of [-52, 54]) { ctx.beginPath(); ctx.arc(wx, -12, 22, 3.14, 6.28); ctx.fill(); }
+  for (const wx of [-52, 54]) {
+    ctx.fillStyle = dark; ctx.beginPath(); ctx.arc(wx, -8, 18, 0, 6.28); ctx.fill();
+    ctx.fillStyle = "#8a8a80"; ctx.beginPath(); ctx.arc(wx, -8, 7, 0, 6.28); ctx.fill();
+    ctx.fillStyle = dark; ctx.beginPath(); ctx.arc(wx, -8, 2.5, 0, 6.28); ctx.fill();
+  }
+  // the spare on the back, the bar and lights on the front
+  ctx.fillStyle = dark; ctx.beginPath(); ctx.arc(-88, -34, 13, 0, 6.28); ctx.fill();
+  ctx.fillStyle = "#8a8a80"; ctx.beginPath(); ctx.arc(-88, -34, 5, 0, 6.28); ctx.fill();
+  ctx.strokeStyle = "#8a8a80"; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(92, -40); ctx.lineTo(96, -40); ctx.lineTo(96, -16); ctx.lineTo(92, -16); ctx.stroke();
+  ctx.fillStyle = "#f5e6b0"; ctx.beginPath(); ctx.arc(86, -34, 4, 0, 6.28); ctx.fill();
+  // two heads in the cab: the driver at the wheel, the spotter behind
+  ctx.fillStyle = "#c9a27a"; ctx.beginPath(); ctx.arc(-4, -60, 7, 0, 6.28); ctx.fill(); ctx.beginPath(); ctx.arc(-50, -60, 7, 0, 6.28); ctx.fill();
+  ctx.fillStyle = body; ctx.fillRect(-12, -54, 16, 6); ctx.fillRect(-58, -54, 16, 6);
   ctx.restore();
 }
 
