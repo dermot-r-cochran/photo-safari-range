@@ -65,7 +65,12 @@ that, and they are the `four-islands-quest` rules this repository inherits:
   except for a healed dust spot; the caption may state settings, since
   the settings are the point, and the alt never does. The check holds
   every miss to those fields, to a fault the coaching knows, and every
-  file under `images/` to a plate or a miss.
+  file under `images/` to a plate or a miss. The plate's second button
+  reads *To the folder* when the frame had an animal in it and *Clear*
+  when it was empty (Dermot, the same day: a non-keeper is a negative
+  example to learn from, so *Discard* said the wrong thing). It only
+  removes the card; the day's record keeps every shot for the coaching
+  either way.
 
 ## The one rule the game teaches
 
