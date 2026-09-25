@@ -528,16 +528,19 @@ const PLATES = [
    frame it was learned on (Dermot, 2026-09-25: "1 - Yes" to a miss plate
    by the coaching key). `fault` is a key of COACH.tips; `animal` is
    optional and wins when it matches the plate's animal; `scene` marks a
-   frame that shows no kind of animal ("blurred" or "empty"), which may
-   stand in for any subject, where a frame without it stands in for its
-   own animal only. Real frames from
+   frame in which no animal is recognisable ("blurred" or "empty"), which
+   may stand in for any subject, where a frame without it stands in for
+   its own kind only (Dermot, 2026-09-25: if the animal is still
+   recognisable it may only be used as a miss for its own kind; so the
+   gazelle at a sixtieth, smeared but plainly a gazelle, carries no
+   mark). Real frames from
    the archive at site size, as shot except for a healed dust spot;
    captions may state settings, because the settings are the point. */
 const MISSES = [
   { file: "the-line-before-the-sun.jpg", scene: "empty", fault: "dark", animal: "zebra", title: "The Line Before the Sun",
     alt: "A frame that is almost black, with a faint pale stripe across its lower third where a line of zebra stood on a dark plain under a dark sky",
     caption: "Amboseli, ten minutes before the sun, on the dial from the afternoon before: 1/4000 s at f/22 and the ISO at its cap. Black, with a paler stripe where the zebra were. Four minutes later the same dial made Zebra in the Morning Dust, with the sun in the frame." },
-  { file: "gazelle-at-a-sixtieth.jpg", scene: "blurred", fault: "slow", animal: "gazelle", title: "Gazelle at a Sixtieth",
+  { file: "gazelle-at-a-sixtieth.jpg", fault: "slow", animal: "gazelle", title: "Gazelle at a Sixtieth",
     alt: "A Thomson's gazelle walking through long grass, the whole animal smeared with movement, grass stems blurred across the foreground",
     caption: "Nairobi at first light, 1/60 s on the 400 mm from a vehicle with the engine running. The spotter would have asked 1/250 for a walk; the frame is soft where it moved, and everywhere else." },
   { file: "lioness-at-a-twenty-five-hundredth.jpg", fault: "fast", animal: "lion", title: "Lioness at a Twenty-five-hundredth",
@@ -1088,13 +1091,14 @@ function plateFor(animal, behaviour, rnd) {
 /* The miss for a folder plate: a frame of the same fault, the plate's own
    animal first where the author has one; null when there is no frame of
    that fault, and the plate shows the crop alone as before. A frame of
-   another subject stands in only when it shows no kind of animal: a
-   miss marked `scene` ("blurred" or "empty") is a smear, a black frame,
-   haze or specks, and the lesson is the same under any heading; a sharp
-   frame of a recognisable animal stands in for that animal alone
-   (Dermot, 2026-09-25, after flamingos were shown for a flat-topped
-   acacia: a miss frame may show a blurred or empty scene, never a
-   different kind of animal). */
+   another subject stands in only when no animal in it is recognisable:
+   a miss marked `scene` ("blurred" or "empty") is a black frame, haze
+   or specks, and the lesson is the same under any heading; a frame in
+   which the animal can still be named stands in for its own kind alone,
+   however soft it is (Dermot, 2026-09-25, after flamingos were shown
+   for a flat-topped acacia: a miss frame may show a blurred or empty
+   scene, never a different kind of animal, and if the animal is still
+   recognisable it may only be used as a miss for its own kind). */
 function missFor(fault, animal, rnd) {
   const same = MISSES.filter(m => m.fault === fault);
   const own = animal ? same.filter(m => m.animal === animal) : [];

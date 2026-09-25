@@ -156,9 +156,9 @@ what to do about the animal.
   lioness at a twenty-five-hundredth and ISO 3200, a flamingo the frame
   edge took, elephants at f/40. Real frames, as shot, with the settings
   in the caption because the settings are the point. Where he has no
-  such frame of your animal, a blurred or empty scene of his may stand
-  in, since a smear or a black frame teaches the same under any heading;
-  a sharp frame of a different kind of animal never does.
+  such frame of your animal, an empty or hazy scene of his may stand
+  in, since a black frame teaches the same under any heading; a frame in
+  which a different kind of animal can still be made out never does.
 - **Beech Wood is the macro range.** A beech wood and a garden near home,
   the week after, on foot with the 70 mm macro: mushrooms, roses, a spear
   thistle, wild angelica, a sloe and a bramble, bumblebees, a hoverfly and
