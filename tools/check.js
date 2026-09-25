@@ -289,7 +289,23 @@ for (const p of R.PLATES) {
   if (/[0-9]+\/[0-9]+|f\/[0-9]/.test(p.alt)) fail("plate " + p.title + " alt states settings");
   ok();
 }
-for (const f of onDisk) if (!referenced.has(f)) fail("images/" + f + " is not shown on any plate");
+// misses: every frame has a file, a fault the coaching knows, an animal if it names one, and words
+for (const m of R.MISSES) {
+  if (!m.file || !m.title || !m.alt || !m.caption) fail("miss " + (m.title || m.file) + " is missing file, title, alt or caption");
+  if (!R.COACH.tips[m.fault] || m.fault === "other") fail("miss " + m.title + " names fault " + m.fault + ", which the coaching does not");
+  if (m.animal && !R.ANIMALS[m.animal]) fail("miss " + m.title + " is of " + m.animal + ", not an animal");
+  if (!onDisk.has(m.file)) fail("miss " + m.title + " has no file images/" + m.file);
+  if (referenced.has(m.file)) fail("miss file " + m.file + " is listed twice");
+  referenced.add(m.file);
+  if (/[0-9]+\/[0-9]+|f\/[0-9]/.test(m.alt)) fail("miss " + m.title + " alt states settings");
+  ok();
+}
+// missFor: the plate's own animal first, any frame of the fault after, null for a fault with none
+if (!R.missFor("dark", "zebra", R.mulberry(3)) || R.missFor("dark", "zebra", R.mulberry(3)).animal !== "zebra") fail("missFor skipped the zebra's own dark frame");
+if (!R.missFor("cut", "lion", R.mulberry(3))) fail("missFor gave nothing for a cut lion, though a cut frame exists");
+if (R.missFor("other", null, R.mulberry(3)) !== null) fail("missFor gave a frame for a fault with none");
+ok();
+for (const f of onDisk) if (!referenced.has(f)) fail("images/" + f + " is not shown on any plate or miss");
 // the wanted list: exactly the cast animals with no frame, and never one with a frame
 for (const k in R.RANGES) {
   const w = R.wantedFor(k);

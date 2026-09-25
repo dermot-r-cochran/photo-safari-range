@@ -148,6 +148,13 @@ what to do about the animal.
   a star; an animal that fills the working pull is the plate you wanted.
   Tighter is head and shoulders, and the note is the field's: long glass
   stacks the background, which is compression, not walking closer.
+- **The frame this was got wrong on.** A keeper shows the author's own
+  frame of that animal and behaviour, the crop inset. A plate for the
+  folder shows, where he has one, the frame he got wrong the same way: a
+  line of zebra black on yesterday's dial, a gazelle at a sixtieth, a
+  lioness at a twenty-five-hundredth and ISO 3200, a flamingo the frame
+  edge took, elephants at f/40. Real frames, as shot, with the settings
+  in the caption because the settings are the point.
 - **Beech Wood is the macro range.** A beech wood and a garden near home,
   the week after, on foot with the 70 mm macro: mushrooms, roses, a spear
   thistle, wild angelica, a sloe and a bramble, bumblebees, a hoverfly and
