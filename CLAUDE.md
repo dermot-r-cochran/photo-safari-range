@@ -211,6 +211,29 @@ the legs after it come at their own times. A light window is not held:
 it changes over the finder as before. The check holds `stopsFor` to the
 legs' own words and `clockAfter` to never turning the clock back.
 
+## The sky follows the hour and the weather; short grass; a jeep
+
+Dermot, 2026-09-25, three notes in a row: *show sunrise and sunsets in
+the background graphics at appropriate times of day*, *otherwise the
+background sky could be blue or gray depending on the weather*, *the
+foreground could include short grass*, and *the vehicle icon could look
+more like a jeep*. Each light in `LIGHTS` carries a `sky` (top and
+bottom); `first` and `last` carry `sun: "rising"` or `"setting"`, and
+`skyAt(range, light, clock)` in the pure section gives the sky's two
+colours and the sun's height, 0 on the horizon at the start of first
+light and the end of last light, 1 well up, the colours going to the
+heat's blue as it climbs; without a day clock the sun sits a third of
+the way up. Overcast and mist are grey, the heat and dappled sun blue,
+night dark; the night sky range keeps its own scene. `draw` paints the
+sun with a glow before the far band, so it sets behind it; a band of
+short grass, dense and low, scrolls at the jeep's speed across the
+foreground; and the jeep is a safari vehicle in profile, bonnet low at
+the front, an open cab under a canvas roof on a roll cage, wheel arches,
+a spare on the back and a bar on the front. The range's own `sky` is the
+fallback for a light without one. The About card's *the thresholds are
+one camera's* became the author's two cameras' the same day (his note:
+*not just based on one camera*), since the two bodies score differently.
+
 ## An animal scrolls with the ground it stands on
 
 Dermot, 2026-09-25: *some animals appear to walk backwards*. The grass
