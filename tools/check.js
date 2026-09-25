@@ -294,26 +294,24 @@ for (const m of R.MISSES) {
   if (!m.file || !m.title || !m.alt || !m.caption) fail("miss " + (m.title || m.file) + " is missing file, title, alt or caption");
   if (!R.COACH.tips[m.fault] || m.fault === "other") fail("miss " + m.title + " names fault " + m.fault + ", which the coaching does not");
   if (m.animal && !R.ANIMALS[m.animal]) fail("miss " + m.title + " is of " + m.animal + ", not an animal");
+  if (m.scene && !["blurred", "empty"].includes(m.scene)) fail("miss " + m.title + " has scene " + m.scene + ", which is neither blurred nor empty");
   if (!onDisk.has(m.file)) fail("miss " + m.title + " has no file images/" + m.file);
   if (referenced.has(m.file)) fail("miss file " + m.file + " is listed twice");
   referenced.add(m.file);
   if (/[0-9]+\/[0-9]+|f\/[0-9]/.test(m.alt)) fail("miss " + m.title + " alt states settings");
   ok();
 }
-// missFor: the plate's own animal first, any frame of the fault after for a creature, null for a fault with none
+// missFor: the plate's own animal first; after that only a frame that shows no kind of animal
+// (marked scene), so a sharp flamingo is never shown for a cut acacia (2026-09-25); null otherwise
 if (!R.missFor("dark", "zebra", R.mulberry(3)) || R.missFor("dark", "zebra", R.mulberry(3)).animal !== "zebra") fail("missFor skipped the zebra's own dark frame");
-if (!R.missFor("cut", "lion", R.mulberry(3))) fail("missFor gave nothing for a cut lion, though a cut frame exists");
-if (!R.missFor("miss", null, R.mulberry(3))) fail("missFor gave nothing for an empty frame, though a miss frame exists");
+if (!R.missFor("miss", null, R.mulberry(3))) fail("missFor gave nothing for an empty frame, though a hazy miss frame exists");
 if (R.missFor("other", null, R.mulberry(3)) !== null) fail("missFor gave a frame for a fault with none");
-// a plant or the sky never borrows another subject's miss: flamingos were shown for a cut acacia (2026-09-25)
 for (const k in R.ANIMALS) {
-  const A = R.ANIMALS[k];
-  if (R.isCreature(k) === !!(A.sky || ["tree", "mushroom", "flower", "berry"].includes(A.shape))) fail("isCreature reads " + A.name + " wrongly");
   for (const m of R.MISSES) {
     const got = R.missFor(m.fault, k, R.mulberry(3));
-    if (m.animal === k && (!got || got.animal !== k)) fail("missFor skipped " + A.name + "'s own " + m.fault + " frame");
-    if (!R.isCreature(k) && got && got.animal !== k) fail("missFor lent " + got.title + " to " + A.name + ", which is not a creature");
-    if (R.isCreature(k) && !got) fail("missFor gave nothing for a " + m.fault + " " + A.name + ", though a frame exists");
+    if (m.animal === k && (!got || got.animal !== k)) fail("missFor skipped " + R.ANIMALS[k].name + "'s own " + m.fault + " frame");
+    if (got && got.animal !== k && !got.scene) fail("missFor showed " + got.title + ", a different animal, for " + R.ANIMALS[k].name);
+    if (!got && R.MISSES.some(x => x.fault === m.fault && x.scene)) fail("missFor gave nothing for a " + m.fault + " " + R.ANIMALS[k].name + ", though a scene frame exists");
   }
 }
 ok();

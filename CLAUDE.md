@@ -61,15 +61,18 @@ that, and they are the `four-islands-quest` rules this repository inherits:
   own animal first, else any frame of that fault, and `showPlate` shows
   it under *The frame this was got wrong on* with the crop inset, exactly
   as a keeper shows its frame; a fault with no frame shows the crop
-  alone as before. **Another subject's miss stands in only for a
-  creature** (Dermot, 2026-09-25, on a bug report: the game showed
-  flamingos for a flat-topped acacia). The misses are animals got wrong,
-  and a bird cut by the frame edge under a heading that names a tree
-  read as the wrong picture; so `isCreature` (the shapes the engine draws
-  as animals, birds and insects, in `CREATURE_SHAPES`) gates the
-  fallback, and a plant or a sky subject shows the crop alone unless the
-  author has a miss of that subject itself. An empty frame still borrows
-  any frame of its fault. The check holds every subject to that rule. Real frames from the archive at site size, as shot
+  alone as before. **A miss of another subject may show a blurred or empty
+  scene, never a different kind of animal** (Dermot, 2026-09-25, in
+  those words, after the game showed flamingos for a flat-topped
+  acacia). The test is the frame, not the subject: a miss marked
+  `scene` ("blurred" or "empty") shows no kind of animal a viewer would
+  name (a black frame with a pale stripe, a smear, specks under a tree,
+  haze) and the lesson is the same under any heading, so it stands in
+  for any subject; a frame without the mark shows a recognisable animal
+  and stands in for that animal alone, or, where the animal is in no
+  cast (the flamingos, the wildebeest), for nothing. An empty frame
+  borrows a scene frame like any other. The check holds `scene` to its
+  two values and walks every subject against every miss for the rule. Real frames from the archive at site size, as shot
   except for a healed dust spot; the caption may state settings, since
   the settings are the point, and the alt never does. The check holds
   every miss to those fields, to a fault the coaching knows, and every

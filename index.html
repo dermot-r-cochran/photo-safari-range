@@ -527,14 +527,17 @@ const PLATES = [
    per coaching key, shown on a folder plate the way a keeper shows the
    frame it was learned on (Dermot, 2026-09-25: "1 - Yes" to a miss plate
    by the coaching key). `fault` is a key of COACH.tips; `animal` is
-   optional and wins when it matches the plate's animal. Real frames from
+   optional and wins when it matches the plate's animal; `scene` marks a
+   frame that shows no kind of animal ("blurred" or "empty"), which may
+   stand in for any subject, where a frame without it stands in for its
+   own animal only. Real frames from
    the archive at site size, as shot except for a healed dust spot;
    captions may state settings, because the settings are the point. */
 const MISSES = [
-  { file: "the-line-before-the-sun.jpg", fault: "dark", animal: "zebra", title: "The Line Before the Sun",
+  { file: "the-line-before-the-sun.jpg", scene: "empty", fault: "dark", animal: "zebra", title: "The Line Before the Sun",
     alt: "A frame that is almost black, with a faint pale stripe across its lower third where a line of zebra stood on a dark plain under a dark sky",
     caption: "Amboseli, ten minutes before the sun, on the dial from the afternoon before: 1/4000 s at f/22 and the ISO at its cap. Black, with a paler stripe where the zebra were. Four minutes later the same dial made Zebra in the Morning Dust, with the sun in the frame." },
-  { file: "gazelle-at-a-sixtieth.jpg", fault: "slow", animal: "gazelle", title: "Gazelle at a Sixtieth",
+  { file: "gazelle-at-a-sixtieth.jpg", scene: "blurred", fault: "slow", animal: "gazelle", title: "Gazelle at a Sixtieth",
     alt: "A Thomson's gazelle walking through long grass, the whole animal smeared with movement, grass stems blurred across the foreground",
     caption: "Nairobi at first light, 1/60 s on the 400 mm from a vehicle with the engine running. The spotter would have asked 1/250 for a walk; the frame is soft where it moved, and everywhere else." },
   { file: "lioness-at-a-twenty-five-hundredth.jpg", fault: "fast", animal: "lion", title: "Lioness at a Twenty-five-hundredth",
@@ -543,7 +546,7 @@ const MISSES = [
   { file: "wildebeest-at-dusk.jpg", fault: "noise", title: "Wildebeest at Dusk",
     alt: "Two wildebeest walking across a dark plain at dusk beneath a mountain, the sky orange behind the ridge, the whole frame dim and grainy",
     caption: "Amboseli at dusk: ISO 2800 at 1/60 s and f/29, the aperture left from the afternoon. The grain is in the shadows and the colour is in the grain, and a sixtieth did not hold the walk either." },
-  { file: "elephants-at-eighteen.jpg", fault: "small", animal: "elephant", title: "Elephants at Eighteen Millimetres",
+  { file: "elephants-at-eighteen.jpg", scene: "empty", fault: "small", animal: "elephant", title: "Elephants at Eighteen Millimetres",
     alt: "A wide view of open grassland under a blue sky with two flat-topped trees, and a few elephants as specks beneath the further one",
     caption: "The Mara at the wide end, 18 mm, with the herd under the far tree. The place is in the frame and the elephants are a texture; the zoom ring or the driver would have fixed it, and the shutter could not." },
   { file: "flamingo-at-the-edge.jpg", fault: "cut", title: "Flamingo at the Edge",
@@ -552,7 +555,7 @@ const MISSES = [
   { file: "elephants-at-f40.jpg", fault: "diffraction", animal: "elephant", title: "Elephants at f/40",
     alt: "A family of elephants with calves feeding in green marsh grass with egrets around them, in full sun",
     caption: "Amboseli in the middle of the day at f/40 and 1/60 s, the dial nobody had looked at since the day before. The depth was there already; at f/40 the pixels paid for it, and the whole frame is soft at 100%." },
-  { file: "ostrich-in-the-haze.jpg", fault: "miss", title: "Ostrich in the Haze",
+  { file: "ostrich-in-the-haze.jpg", scene: "blurred", fault: "miss", title: "Ostrich in the Haze",
     alt: "A male ostrich as a soft dark shape at the bottom right of a frame that is almost all pale grey haze, a blurred band of long grass along the lower edge",
     caption: "Nairobi in the first haze: the lens was still hunting when the shutter went, nothing under the centre of the frame was an animal, and the meter took the sky to white. The third press found him." }
 ];
@@ -1085,22 +1088,22 @@ function plateFor(animal, behaviour, rnd) {
 /* The miss for a folder plate: a frame of the same fault, the plate's own
    animal first where the author has one; null when there is no frame of
    that fault, and the plate shows the crop alone as before. A frame of
-   another subject stands in only for a creature: the misses are animals
-   got wrong, and a bird cut by the frame edge under a heading that names
-   a tree read as the wrong picture (Dermot, 2026-09-25: flamingos shown
-   for a flat-topped acacia). A plant or the sky shows the crop alone
-   unless the author has a miss of that subject itself. */
-const CREATURE_SHAPES = new Set(["horse", "antelope", "bovid", "elephant", "giraffe", "cat", "upright", "blob", "bird", "insect", "ladybird"]);
-function isCreature(animal) { return !!animal && !!ANIMALS[animal] && CREATURE_SHAPES.has(ANIMALS[animal].shape); }
+   another subject stands in only when it shows no kind of animal: a
+   miss marked `scene` ("blurred" or "empty") is a smear, a black frame,
+   haze or specks, and the lesson is the same under any heading; a sharp
+   frame of a recognisable animal stands in for that animal alone
+   (Dermot, 2026-09-25, after flamingos were shown for a flat-topped
+   acacia: a miss frame may show a blurred or empty scene, never a
+   different kind of animal). */
 function missFor(fault, animal, rnd) {
   const same = MISSES.filter(m => m.fault === fault);
   const own = animal ? same.filter(m => m.animal === animal) : [];
-  const any = own.length ? own : (!animal || isCreature(animal)) ? same : [];
+  const any = own.length ? own : same.filter(m => m.scene);
   if (!any.length) return null;
   return any[Math.floor(rnd() * any.length) % any.length];
 }
 
-const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, missFor, isCreature, skyAt, STILL, DAYS, CLOCK_RATE,
+const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, missFor, skyAt, STILL, DAYS, CLOCK_RATE,
                 APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
                 score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, evAt, EDGE_DROP, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
