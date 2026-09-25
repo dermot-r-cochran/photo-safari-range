@@ -44,12 +44,13 @@ The loop, in four beats:
 3. **Match** the shutter to what the spotter asked ([ and ]). The camera
    focuses on whatever is under the centre of the frame; Tab picks another
    animal when several are in it.
-4. **Shoot** (Space). Keep the plate or discard it. Then ask the driver on
-   (A or D): that puts the camera down and releases him. C puts it down
-   without moving, if you want him to drive on at his own pace.
+4. **Shoot** (Space). Keep the plate or send it to the folder. Then ask
+   the driver on (the left and right arrows, with the camera down): that
+   puts the camera down and releases him. C puts it down without moving,
+   if you want him to drive on at his own pace.
 
 The controls under the picture are laid out as they sit on a camera: the
-three mode buttons (S, A and M, one lit; the M key walks them), the top
+three mode buttons (S, A and M, one lit; the same keys pick them), the top
 LCD and the shutter release on the top plate; the two
 command wheels, the zoom ring and the focus point on the back; and under
 the body, off it, the things that are not the camera: the driver, the
