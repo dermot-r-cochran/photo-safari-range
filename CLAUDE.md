@@ -211,6 +211,16 @@ the legs after it come at their own times. A light window is not held:
 it changes over the finder as before. The check holds `stopsFor` to the
 legs' own words and `clockAfter` to never turning the clock back.
 
+## An animal scrolls with the ground it stands on
+
+Dermot, 2026-09-25: *some animals appear to walk backwards*. The grass
+rows scroll by depth when the jeep moves (`0.3 + 0.7 × depth`), but every
+animal scrolled at 1, so a distant animal slid across its own ground and,
+with the jeep reversing, walked backwards to the eye. `parallaxOf(a)` gives
+an animal the ground's factor at its depth (birds and the sky at 1), and
+`boxOf`, the spook check, the respawn and the new-cast placement all use
+it. An animal's own walk is still `SPEED × (0.4 + 0.6 × depth) × dir`.
+
 ## The mover's buttons follow the seat
 
 Dermot, 2026-09-19: *Driver buttons would be just Walk or Move buttons
@@ -229,8 +239,10 @@ gets it, and a driven one in Ireland would not.
 Dermot, 2026-09-19, three directions in one line. **The mode dial is
 three exclusive buttons** (*Mode dial on range game as three exclusive
 buttons*): the rotating dial and its face are gone; `#modes` holds S, A
-and M, `setMode` picks one, `drawPad` lights it, and the M key still
-walks them through `cycleMode`. **Picking a range sets out** (*Once the
+and M, `setMode` picks one, `drawPad` lights it, and the S, A and M keys
+pick them (Dermot, 2026-09-25: *A should mean aperture mode*; until then
+A and D drove and M walked the dial, and driving is the arrows alone now,
+with the camera down). **Picking a range sets out** (*Once the
 hide or range is selected the sit/drive/walk should be automatic*): the
 camp card is the body row first (the range's own body, the DSLR, the
 mirrorless: `state.bodyChoice`, null for the range's own), then the two

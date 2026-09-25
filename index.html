@@ -189,7 +189,7 @@
           <button data-act="setmode" data-mode="A" title="A: you set the aperture, the camera finds the shutter and the ISO">A</button>
           <button data-act="setmode" data-mode="M" title="M: you set the shutter and the aperture, the camera finds the ISO">M</button>
         </div>
-        <span class="lbl">Mode<kbd>M</kbd></span>
+        <span class="lbl">Mode<kbd>S</kbd><kbd>A</kbd><kbd>M</kbd></span>
       </div>
       <div class="lcd" id="lcd" aria-live="polite"></div>
       <div class="release-wrap">
@@ -230,7 +230,7 @@
     <div class="row" id="light-pick"></div>
     <div class="row" id="range-pick"></div>
     <p class="note" id="camp-note"></p>
-    <p class="note">The driver drives and stops when the spotter calls; at the stop the camera comes up by itself on what was called · A and D (or the left and right arrows with the camera down) ask him for closer or back, and put the camera down to move on; hold a key past a second and you are hurrying him, which spooks the shy ones · Space fires; it also raises the camera if it is down · with the camera up the arrows or the mouse move the aim · the mode dial turns through S, A and M (M) · the wheels set the shutter ([ and ]) and the aperture (, and .) · B rests the camera on the beanbag, or the tripod on foot · the camera focuses on what is under the centre of the frame, and Tab picks another subject in it (an animal, a tree, a flower, a star) · Z zooms · C puts the camera down without moving · N skips to the next part of the day · Esc packs up.</p>
+    <p class="note">The driver drives and stops when the spotter calls; at the stop the camera comes up by itself on what was called · the left and right arrows with the camera down ask him for closer or back, and put the camera down to move on; hold one past a second and you are hurrying him, which spooks the shy ones · Space fires; it also raises the camera if it is down · with the camera up the arrows or the mouse move the aim · the mode dial is S, A and M, and those are its keys · the wheels set the shutter ([ and ]) and the aperture (, and .) · B rests the camera on the beanbag, or the tripod on foot · the camera focuses on what is under the centre of the frame, and Tab picks another subject in it (an animal, a tree, a flower, a star) · Z zooms · C puts the camera down without moving · N skips to the next part of the day · Esc packs up.</p>
   </div>
   <div id="plates"></div>
 </main>
@@ -1242,7 +1242,7 @@ function enterLeg(i) {
     state.light = leg.light;
     // a new light window brings a new cast (the night's animals, for one)
     state.animals = spawnPlan(state.range, RANGES[state.range].seat === "tripod" ? 6 : 14, state.rnd, state.light).map(makeAnimal);
-    for (const a of state.animals) a.x += state.worldX;
+    for (const a of state.animals) a.x += state.worldX * parallaxOf(a);
     say(RANGES[state.range].seat === "walk" ? "Guide" : "Spotter", leg.name + "." + (LIGHTS[state.light].name !== leg.name ? " " + LIGHTS[state.light].name + "." : ""));
     if (state.camera) refreshFocus(); else refreshRange();
   }
@@ -1348,7 +1348,7 @@ function step(dt) {
       if (state.rnd() < 0.3) a.dir = -a.dir;
     }
     // a fast jeep sends the shy ones running
-    const sx = a.x - state.worldX + JEEP_X;
+    const sx = a.x - state.worldX * parallaxOf(a) + JEEP_X;
     if (A.spook && !a.spooked && Math.abs(state.speed) > spookSpeed && Math.abs(sx - JEEP_X) < spookRange) {
       a.spooked = 6 * A.spook; a.behaviour = A.fly ? "flight" : "running"; a.dir = sx > JEEP_X ? 1 : -1;
     }
@@ -1365,7 +1365,7 @@ function step(dt) {
       continue;
     }
     // the range has no edge: an animal far behind respawns far ahead
-    if (sx < -900) { const p = spawnPlan(state.range, 1, state.rnd, state.light)[0]; a.key = p.key; a.behaviour = p.behaviour; a.depth = p.depth; a.x = state.worldX + W + 600 + state.rnd() * 800; a.spooked = 0; a.called = false; }
+    if (sx < -900) { const p = spawnPlan(state.range, 1, state.rnd, state.light)[0]; a.key = p.key; a.behaviour = p.behaviour; a.depth = p.depth; a.x = state.worldX * parallaxOf(a) + W + 600 + state.rnd() * 800; a.spooked = 0; a.called = false; }
   }
   // the spotter calls each animal as it comes into view, one call at a time
   if (state.t > (state.nextCall || 0)) {
@@ -1400,7 +1400,7 @@ function boxOf(a) {
   }
   const tall = { bird: 0.5, upright: 1.6, giraffe: 1.3, blob: 1.1, tree: 0.95, mushroom: 0.75, flower: 0.9, berry: 0.95, insect: 0.9, ladybird: 0.45 };
   const w = A.size * scale, h = A.size * (tall[A.shape] || 0.6) * scale;
-  const x = a.x - state.worldX + JEEP_X - w / 2;
+  const x = a.x - state.worldX * parallaxOf(a) + JEEP_X - w / 2;
   let y;
   if (A.fly) y = HORIZON - 140 * scale - 40 * Math.sin(a.phase * 0.5);
   else y = HORIZON + (NEAR - HORIZON) * a.depth - h;
@@ -1724,6 +1724,17 @@ function drawSky(a, A, b) {
   ctx.restore();
 }
 
+/* How far an animal's ground scrolls when the jeep moves: the grass rows
+   scroll by depth (0.3 near the horizon, 1 at the jeep), and until
+   2026-09-25 the animals scrolled at 1 whatever their depth, so a distant
+   animal slid across its own ground as the jeep moved and looked, when the
+   jeep reversed, as if it were walking backwards (Dermot's report). An
+   animal now scrolls with the ground it stands on; birds and the sky at 1. */
+function parallaxOf(a) {
+  const A = ANIMALS[a.key];
+  return A.sky || A.fly ? 1 : 0.3 + 0.7 * a.depth;
+}
+
 function drawAnimal(a) {
   const A = ANIMALS[a.key], b = boxOf(a);
   if (A.sky) return drawSky(a, A, b);
@@ -1895,7 +1906,7 @@ function drawHud() {
     if (apLive) e.onclick = () => { state.aperture = N; drawHud(); };
   }
   add("ISO " + exp.iso + (exp.under >= 0.5 ? " · dark" : exp.over >= 0.5 ? " · blown" : ""));
-  if (state.camera) add("Space: shoot · A or D: " + (RANGES[state.range].seat === "walk" ? "walk on" : "drive on"), "dim");
+  if (state.camera) add("Space: shoot · ← →: " + (RANGES[state.range].seat === "walk" ? "walk on" : "drive on"), "dim");
 }
 
 // The support the seat offers: a beanbag on the sill of the jeep or the
@@ -1932,11 +1943,6 @@ function setMode(m) {
   drawHud();
 }
 // M on the keyboard walks the three modes; the buttons pick one outright
-function cycleMode() {
-  const ms = Object.keys(MODES);
-  setMode(ms[(ms.indexOf(state.mode) + 1) % ms.length]);
-}
-
 function stepShutter(dir) {
   const scale = SCALES[scaleFor(state.range)];
   const i = shutterIndex(state.shutter, scaleFor(state.range));
@@ -1955,19 +1961,19 @@ function toggleCamera() {
 // ---- input ----
 stage.addEventListener("keydown", (e) => {
   const k = e.key.toLowerCase();
-  if (["a", "d", " ", "tab", "[", "]", ",", ".", "z", "c", "m", "b", "n", "escape", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) e.preventDefault();
+  if (["s", "a", "m", " ", "tab", "[", "]", ",", ".", "z", "c", "b", "n", "escape", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) e.preventDefault();
   if (!state.playing) { if (k === " " || k === "enter") begin(); return; }
   if (state.paused && k !== "n" && k !== "escape") return;
-  // A and D drive (the left hand's keys, from the WASD habit); with the
-  // camera down the left and right arrows drive too, and with it up they
-  // move the aim
-  let kk = k;
-  if (!state.camera && (k === "arrowleft" || k === "arrowright")) kk = k === "arrowleft" ? "a" : "d";
-  if (kk === "a" || kk === "d") {
+  // with the camera down the left and right arrows drive; with it up they
+  // move the aim. S, A and M are the mode dial, as printed on it (Dermot,
+  // 2026-09-25: A should mean aperture priority, not drive on)
+  if (!state.camera && (k === "arrowleft" || k === "arrowright")) {
+    const kk = k === "arrowleft" ? "a" : "d";
     state.keys[kk] = true;
     driveOn(kk);
-    if (kk !== k) return;
+    return;
   }
+  if (k === "s" || k === "a" || k === "m") setMode(k.toUpperCase());
   if (k === " ") { if (state.camera) fire(); else toggleCamera(); }
   if (k === "c") putDown();
   if (k === "tab") cycleFocus();
@@ -1976,7 +1982,6 @@ stage.addEventListener("keydown", (e) => {
   if (k === "z") { state.pull = (state.pull + 1) % pullsFor(state.range).length; if (state.camera) refreshFocus(); else drawHud(); }
   if (k === "b") toggleSupport();
   if (k === "n") skipLeg();
-  if (k === "m") cycleMode();
   if (k === ",") stepAperture(-1);
   if (k === ".") stepAperture(1);
   if (state.paused) return;
@@ -1989,8 +1994,8 @@ stage.addEventListener("keydown", (e) => {
 });
 stage.addEventListener("keyup", (e) => {
   const k = e.key.toLowerCase();
-  if (k === "a" || k === "arrowleft") state.keys.a = false;
-  if (k === "d" || k === "arrowright") state.keys.d = false;
+  if (k === "arrowleft") state.keys.a = false;
+  if (k === "arrowright") state.keys.d = false;
 });
 function aimAt(e) {
   const r = canvas.getBoundingClientRect();
@@ -2080,7 +2085,7 @@ function drawPad() {
     lf.hidden = rt.hidden = !(seat === "drive" || onFoot);
     lf.textContent = onFoot ? "◀ Walk" : "◀ Driver"; rt.textContent = onFoot ? "Walk ▶" : "Driver ▶";
     const how = onFoot ? "Walk closer or back" : "Ask the driver for closer or back";
-    lf.title = how + " (A, or the left arrow with the camera down)"; rt.title = how + " (D, or the right arrow with the camera down)";
+    lf.title = how + " (the left arrow, with the camera down)"; rt.title = how + " (the right arrow, with the camera down)";
   }
   const sk = q('#body button[data-act="skip"]');
   if (sk) sk.hidden = !dayFor(state.range);
