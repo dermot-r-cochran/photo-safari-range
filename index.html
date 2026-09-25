@@ -2027,6 +2027,13 @@ function drawPad() {
   }
   const sk = q('#body button[data-act="skip"]');
   if (sk) sk.hidden = !dayFor(state.range);
+  // the focus point: on the sky scale the things in the frame are not animals
+  const nx = q('#body button[data-act="next"]');
+  if (nx) {
+    const sky = scaleFor(state.range) === "sky";
+    nx.textContent = sky ? "Next…" : "Next animal";
+    nx.title = "Move the focus to another " + (sky ? "subject" : "animal") + " in the frame";
+  }
   const dn = $("btn-down");
   if (dn) dn.hidden = !(state.playing && state.camera);
   const lcd = $("lcd");
