@@ -520,6 +520,40 @@ const PLATES = [
 // guide: slow, and the shy ones run from a moving person). `cast` lists the
 // species and how often each turns up; `lights` the windows the range
 // offers (all three by default).
+/* The frame this was got wrong on: the author's own misses, one or more
+   per coaching key, shown on a folder plate the way a keeper shows the
+   frame it was learned on (Dermot, 2026-09-25: "1 - Yes" to a miss plate
+   by the coaching key). `fault` is a key of COACH.tips; `animal` is
+   optional and wins when it matches the plate's animal. Real frames from
+   the archive at site size, as shot except for a healed dust spot;
+   captions may state settings, because the settings are the point. */
+const MISSES = [
+  { file: "the-line-before-the-sun.jpg", fault: "dark", animal: "zebra", title: "The Line Before the Sun",
+    alt: "A frame that is almost black, with a faint pale stripe across its lower third where a line of zebra stood on a dark plain under a dark sky",
+    caption: "Amboseli, ten minutes before the sun, on the dial from the afternoon before: 1/4000 s at f/22 and the ISO at its cap. Black, with a paler stripe where the zebra were. Four minutes later the same dial made Zebra in the Morning Dust, with the sun in the frame." },
+  { file: "gazelle-at-a-sixtieth.jpg", fault: "slow", animal: "gazelle", title: "Gazelle at a Sixtieth",
+    alt: "A Thomson's gazelle walking through long grass, the whole animal smeared with movement, grass stems blurred across the foreground",
+    caption: "Nairobi at first light, 1/60 s on the 400 mm from a vehicle with the engine running. The spotter would have asked 1/250 for a walk; the frame is soft where it moved, and everywhere else." },
+  { file: "lioness-at-a-twenty-five-hundredth.jpg", fault: "fast", animal: "lion", title: "Lioness at a Twenty-five-hundredth",
+    alt: "A lioness lying on a track in morning light with her head up, looking to the right, green grass behind her",
+    caption: "The Mara at seven in the morning, on the shooting-birds setting: 1/2500 s for an animal that was lying down, and ISO 3200 to pay for it. Sharp, and grainy for nothing; a 125th would have done." },
+  { file: "wildebeest-at-dusk.jpg", fault: "noise", title: "Wildebeest at Dusk",
+    alt: "Two wildebeest walking across a dark plain at dusk beneath a mountain, the sky orange behind the ridge, the whole frame dim and grainy",
+    caption: "Amboseli at dusk: ISO 2800 at 1/60 s and f/29, the aperture left from the afternoon. The grain is in the shadows and the colour is in the grain, and a sixtieth did not hold the walk either." },
+  { file: "elephants-at-eighteen.jpg", fault: "small", animal: "elephant", title: "Elephants at Eighteen Millimetres",
+    alt: "A wide view of open grassland under a blue sky with two flat-topped trees, and a few elephants as specks beneath the further one",
+    caption: "The Mara at the wide end, 18 mm, with the herd under the far tree. The place is in the frame and the elephants are a texture; the zoom ring or the driver would have fixed it, and the shutter could not." },
+  { file: "flamingo-at-the-edge.jpg", fault: "cut", title: "Flamingo at the Edge",
+    alt: "Three greater flamingos feeding head-down in still grey water with their reflections beneath them, and a fourth cut off by the left edge of the frame",
+    caption: "Amboseli under flat cloud: three birds and their reflections, and a fourth the frame edge took. A little water on the left would have cost nothing." },
+  { file: "elephants-at-f40.jpg", fault: "diffraction", animal: "elephant", title: "Elephants at f/40",
+    alt: "A family of elephants with calves feeding in green marsh grass with egrets around them, in full sun",
+    caption: "Amboseli in the middle of the day at f/40 and 1/60 s, the dial nobody had looked at since the day before. The depth was there already; at f/40 the pixels paid for it, and the whole frame is soft at 100%." },
+  { file: "ostrich-in-the-haze.jpg", fault: "miss", title: "Ostrich in the Haze",
+    alt: "A male ostrich as a soft dark shape at the bottom right of a frame that is almost all pale grey haze, a blurred band of long grass along the lower edge",
+    caption: "Nairobi in the first haze: the lens was still hunting when the shutter went, nothing under the centre of the frame was an animal, and the meter took the sky to white. The third press found him." }
+];
+
 const RANGES = {
   amber:   { name: "Amber Range",  country: "Kenya", place: "Maasai Mara, Kenya", seat: "drive", day: "safari", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
              note: "Open grassland. The pride, the cheetah on the mound, a mongoose on sentry at the termite mound. Stay in the vehicle.",
@@ -773,6 +807,8 @@ const WORDS = {
   filling:  "It fills the plate.",
   noise:    "ISO 1600 or more: chroma noise in the shadows, fine at web size, a competition master wants less.",
   keeper:   "Keeper.",
+  learnedOn: "The frame this was learned on",
+  wrongOn:  "The frame this was got wrong on",
   folder:   "One for the folder.",
   spooked:  "You drove at it. It ran, and the plate is the tail end.",
   walked:   "You walked at it. It ran, and the plate is the tail end.",
@@ -1015,7 +1051,18 @@ function plateFor(animal, behaviour, rnd) {
   return any[Math.floor(rnd() * any.length) % any.length];
 }
 
-const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, PLATES, STILL, DAYS, CLOCK_RATE,
+/* The miss for a folder plate: a frame of the same fault, the plate's own
+   animal first where the author has one; null when there is no frame of
+   that fault, and the plate shows the crop alone as before. */
+function missFor(fault, animal, rnd) {
+  const same = MISSES.filter(m => m.fault === fault);
+  const own = animal ? same.filter(m => m.animal === animal) : [];
+  const any = own.length ? own : same;
+  if (!any.length) return null;
+  return any[Math.floor(rnd() * any.length) % any.length];
+}
+
+const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, missFor, STILL, DAYS, CLOCK_RATE,
                 APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
                 score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, evAt, EDGE_DROP, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
@@ -1466,6 +1513,8 @@ function fire() {
   const body = BODIES[state.body];
   const fault = why || (exp.under >= 0.5 ? "dark" : dd <= -1 ? "slow" : framing.cut ? "cut" : framing.fill < 0.10 ? "small" : (dd >= 1 && exp.iso > 400) ? "fast" : exp.aperture >= body.diffraction.plain ? "diffraction" : exp.iso >= body.noiseFrom ? "noise" : null);
   (state.day = state.day || []).push({ stars: v.stars, keeper: v.keeper, animal: a ? a.key : null, behaviour: a ? behaviour : null, fault: v.keeper && v.stars === 3 ? null : fault });
+  // a folder plate shows the frame the author got wrong the same way, if there is one
+  const miss = !v.keeper && fault ? missFor(fault, a ? a.key : null, state.rnd) : null;
   const plate = { when: Date.now(), range: state.range, light: state.light, shutter: exp.shutter, aperture: exp.aperture, mode: exp.mode,
                   animal: a ? a.key : null, behaviour: a ? behaviour : null, stars: v.stars, keeper: v.keeper, lines: v.lines, iso: v.iso,
                   prize: !!v.prize, frame: frame ? frame.title : null, asked: v.asked, support: state.support, body: BODIES[state.body].name };
@@ -1475,11 +1524,11 @@ function fire() {
   img.width = 480; img.height = 270;
   img.getContext("2d").drawImage(canvas, p.x, p.y, p.w, p.h, 0, 0, 480, 270);
   draw();
-  showPlate(plate, img, frame);
+  showPlate(plate, img, frame, miss);
   say("Spotter", v.stars ? v.lines[0] : WORDS.miss);
 }
 
-function showPlate(plate, img, frame) {
+function showPlate(plate, img, frame, miss) {
   const div = document.createElement("div");
   div.className = "plate " + (plate.stars === 0 ? "folder" : plate.keeper ? "keeper" : "folder");
   const A = plate.animal ? ANIMALS[plate.animal] : null, B = plate.behaviour ? BEHAVIOURS[plate.behaviour] : null;
@@ -1487,15 +1536,17 @@ function showPlate(plate, img, frame) {
   div.innerHTML = "<h3>" + head + " <span class='stars'>" + "★".repeat(plate.stars) + "☆".repeat(3 - plate.stars) + "</span></h3>" +
     "<p class='note'>" + (plate.body ? plate.body + " · " : "") + (plate.mode ? plate.mode + " · " : "") + shutterLabel(plate.shutter) + (plate.aperture ? " · f/" + plate.aperture : "") + (B ? " · asked " + (plate.asked || B.asked) : "") + (plate.support ? " · " + plate.support : "") + " · ISO " + (plate.iso || "—") + " · " + LIGHTS[plate.light].name + " · " + RANGES[plate.range].name + "</p>" +
     "<p>" + (plate.keeper ? WORDS.keeper : "<span class='why'>" + WORDS.folder + "</span>") + " " + plate.lines.join(" ") + "</p>";
-  if (frame) {
-    // the frame this was learned on: the photograph, with the crop as an inset
+  // a keeper shows the frame it was learned on; a folder plate shows the
+  // frame the author got wrong the same way, when there is one
+  const shown = !plate.keeper && miss ? miss : frame;
+  if (shown) {
     const fig = document.createElement("figure"); fig.className = "learned";
     const pic = document.createElement("img");
-    pic.src = "images/" + frame.file; pic.alt = frame.alt; pic.loading = "lazy";
+    pic.src = "images/" + shown.file; pic.alt = shown.alt; pic.loading = "lazy";
     pic.onerror = () => { fig.replaceWith(img); };
     img.className = "inset"; img.title = "Your plate";
     const cap = document.createElement("figcaption");
-    cap.innerHTML = "<b>The frame this was learned on — " + frame.title + ".</b> " + frame.caption;
+    cap.innerHTML = "<b>" + (shown === miss ? WORDS.wrongOn : WORDS.learnedOn) + " — " + shown.title + ".</b> " + shown.caption;
     fig.append(pic, img, cap);
     div.insertBefore(fig, div.children[1]);
   } else {

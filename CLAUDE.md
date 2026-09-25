@@ -52,6 +52,20 @@ that, and they are the `four-islands-quest` rules this repository inherits:
   invented. The check holds every plate to a file, an animal, behaviours
   that animal has, and words, and every file under `images/` to a plate.
   Only the author's own photographs, ever.
+- **A folder plate may show the frame the author got wrong the same
+  way** (Dermot, 2026-09-25, "1 - Yes" to a miss plate by the coaching
+  key). `MISSES` lists his own misses, each with a `fault` that is a key
+  of `COACH.tips` (dark, slow, fast, noise, small, cut, diffraction,
+  miss), an optional `animal`, and file, title, alt and caption. After a
+  shot that is not a keeper, `missFor(fault, animal)` picks the plate's
+  own animal first, else any frame of that fault, and `showPlate` shows
+  it under *The frame this was got wrong on* with the crop inset, exactly
+  as a keeper shows its frame; a fault with no frame shows the crop
+  alone as before. Real frames from the archive at site size, as shot
+  except for a healed dust spot; the caption may state settings, since
+  the settings are the point, and the alt never does. The check holds
+  every miss to those fields, to a fault the coaching knows, and every
+  file under `images/` to a plate or a miss.
 
 ## The one rule the game teaches
 
