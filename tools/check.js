@@ -300,10 +300,22 @@ for (const m of R.MISSES) {
   if (/[0-9]+\/[0-9]+|f\/[0-9]/.test(m.alt)) fail("miss " + m.title + " alt states settings");
   ok();
 }
-// missFor: the plate's own animal first, any frame of the fault after, null for a fault with none
+// missFor: the plate's own animal first, any frame of the fault after for a creature, null for a fault with none
 if (!R.missFor("dark", "zebra", R.mulberry(3)) || R.missFor("dark", "zebra", R.mulberry(3)).animal !== "zebra") fail("missFor skipped the zebra's own dark frame");
 if (!R.missFor("cut", "lion", R.mulberry(3))) fail("missFor gave nothing for a cut lion, though a cut frame exists");
+if (!R.missFor("miss", null, R.mulberry(3))) fail("missFor gave nothing for an empty frame, though a miss frame exists");
 if (R.missFor("other", null, R.mulberry(3)) !== null) fail("missFor gave a frame for a fault with none");
+// a plant or the sky never borrows another subject's miss: flamingos were shown for a cut acacia (2026-09-25)
+for (const k in R.ANIMALS) {
+  const A = R.ANIMALS[k];
+  if (R.isCreature(k) === !!(A.sky || ["tree", "mushroom", "flower", "berry"].includes(A.shape))) fail("isCreature reads " + A.name + " wrongly");
+  for (const m of R.MISSES) {
+    const got = R.missFor(m.fault, k, R.mulberry(3));
+    if (m.animal === k && (!got || got.animal !== k)) fail("missFor skipped " + A.name + "'s own " + m.fault + " frame");
+    if (!R.isCreature(k) && got && got.animal !== k) fail("missFor lent " + got.title + " to " + A.name + ", which is not a creature");
+    if (R.isCreature(k) && !got) fail("missFor gave nothing for a " + m.fault + " " + A.name + ", though a frame exists");
+  }
+}
 ok();
 for (const f of onDisk) if (!referenced.has(f)) fail("images/" + f + " is not shown on any plate or miss");
 // the wanted list: exactly the cast animals with no frame, and never one with a frame

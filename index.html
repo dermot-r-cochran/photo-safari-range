@@ -1084,16 +1084,23 @@ function plateFor(animal, behaviour, rnd) {
 
 /* The miss for a folder plate: a frame of the same fault, the plate's own
    animal first where the author has one; null when there is no frame of
-   that fault, and the plate shows the crop alone as before. */
+   that fault, and the plate shows the crop alone as before. A frame of
+   another subject stands in only for a creature: the misses are animals
+   got wrong, and a bird cut by the frame edge under a heading that names
+   a tree read as the wrong picture (Dermot, 2026-09-25: flamingos shown
+   for a flat-topped acacia). A plant or the sky shows the crop alone
+   unless the author has a miss of that subject itself. */
+const CREATURE_SHAPES = new Set(["horse", "antelope", "bovid", "elephant", "giraffe", "cat", "upright", "blob", "bird", "insect", "ladybird"]);
+function isCreature(animal) { return !!animal && !!ANIMALS[animal] && CREATURE_SHAPES.has(ANIMALS[animal].shape); }
 function missFor(fault, animal, rnd) {
   const same = MISSES.filter(m => m.fault === fault);
   const own = animal ? same.filter(m => m.animal === animal) : [];
-  const any = own.length ? own : same;
+  const any = own.length ? own : (!animal || isCreature(animal)) ? same : [];
   if (!any.length) return null;
   return any[Math.floor(rnd() * any.length) % any.length];
 }
 
-const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, missFor, skyAt, STILL, DAYS, CLOCK_RATE,
+const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, missFor, isCreature, skyAt, STILL, DAYS, CLOCK_RATE,
                 APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
                 score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, evAt, EDGE_DROP, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;

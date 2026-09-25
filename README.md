@@ -155,7 +155,9 @@ what to do about the animal.
   line of zebra black on yesterday's dial, a gazelle at a sixtieth, a
   lioness at a twenty-five-hundredth and ISO 3200, a flamingo the frame
   edge took, elephants at f/40. Real frames, as shot, with the settings
-  in the caption because the settings are the point.
+  in the caption because the settings are the point. A frame of another
+  animal stands in where he has none of yours; a tree, a flower or the
+  sky shows your crop alone rather than somebody else's bird.
 - **Beech Wood is the macro range.** A beech wood and a garden near home,
   the week after, on foot with the 70 mm macro: mushrooms, roses, a spear
   thistle, wild angelica, a sloe and a bramble, bumblebees, a hoverfly and

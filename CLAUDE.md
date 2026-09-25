@@ -61,7 +61,15 @@ that, and they are the `four-islands-quest` rules this repository inherits:
   own animal first, else any frame of that fault, and `showPlate` shows
   it under *The frame this was got wrong on* with the crop inset, exactly
   as a keeper shows its frame; a fault with no frame shows the crop
-  alone as before. Real frames from the archive at site size, as shot
+  alone as before. **Another subject's miss stands in only for a
+  creature** (Dermot, 2026-09-25, on a bug report: the game showed
+  flamingos for a flat-topped acacia). The misses are animals got wrong,
+  and a bird cut by the frame edge under a heading that names a tree
+  read as the wrong picture; so `isCreature` (the shapes the engine draws
+  as animals, birds and insects, in `CREATURE_SHAPES`) gates the
+  fallback, and a plant or a sky subject shows the crop alone unless the
+  author has a miss of that subject itself. An empty frame still borrows
+  any frame of its fault. The check holds every subject to that rule. Real frames from the archive at site size, as shot
   except for a healed dust spot; the caption may state settings, since
   the settings are the point, and the alt never does. The check holds
   every miss to those fields, to a fault the coaching knows, and every
