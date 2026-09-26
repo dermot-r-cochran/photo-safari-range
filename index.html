@@ -335,7 +335,7 @@ const ANIMALS = {
   hoverfly: { name: "Hoverfly",          latin: "Syrphidae",            size: 26,  shape: "insect",   colour: "#c89a2a", states: { working: 2, flight: 3 }, spook: 2, prize: 1 },
   ladybird: { name: "Ladybird",          latin: "Coccinella",           size: 28,  shape: "ladybird", colour: "#c8321e", states: { still: 2, crawling: 2 }, spook: 1, prize: 1 },
   // The Fifteen Acres, Phoenix Park. Fallow deer, in the park since the
-  // 1660s and wild there since; the herd keeps the park's fifty metres.
+  // 1660s and wild there since; the park's fifty metres are the visitor's to keep, not the herd's (fed, it walks up).
   // `only` puts the rutting buck under the rut's light alone.
   buck:     { name: "Fallow Buck",       latin: "Dama dama",            size: 110, shape: "antelope", colour: "#6e5a3c", states: { grazing: 4, alert: 2, walking: 3, running: 1 }, spook: 1 },
   doe:      { name: "Fallow Doe",        latin: "Dama dama",            size: 95,  shape: "antelope", colour: "#a07a4c", states: { grazing: 5, alert: 2, walking: 2, running: 1 }, spook: 2 },
@@ -512,7 +512,7 @@ const PLATES = [
   // deer in it, which is what that lens gives at the park's distance.
   { file: "bucks-along-the-field.jpg", animal: "buck", behaviours: ["grazing", "alert"], title: "Bucks Along the Field",
     alt: "Eight fallow deer spaced along a green field under a line of trees softened by mist, a dark buck in the middle, the others pale and spotted",
-    caption: "The Fifteen Acres in September mist, at 50 mm. The herd keeps the park's fifty metres, so the short lens gives the field and the weather with deer in it, a fortieth of the frame each. The long zoom is for the deer." },
+    caption: "The Fifteen Acres in September mist, at 50 mm. The park's fifty metres are the photographer's to keep, so the short lens gives the field and the weather with deer in it, a fortieth of the frame each. The long zoom is for the deer." },
   { file: "the-herd-in-mist.jpg", animal: "doe", behaviours: ["grazing"], title: "The Herd in Mist",
     alt: "A fallow deer herd bunched in a line on green grass, antlers among the does, a soft tree line and a grey sky behind",
     caption: "The same morning, the herd bunched. Does and bucks together in September; by October the bucks have their own business, and no frame of that yet." }
@@ -588,7 +588,7 @@ const RANGES = {
                  depth: { wide: "At 1:1 and wide open the depth of field is a fraction of a millimetre: an eye, and nothing else.", mid: "At 1:1 the depth of field is about a millimetre at f/8. The eye is sharp; the rest is not.", stopped: "At 1:1 and f/11, two millimetres of depth and the first softness of diffraction; the effective aperture is already f/22.", narrow: "At 1:1 and f/16, depth bought with diffraction: the whole insect in, and none of it crisp." } }
              ] },
   acres:   { name: "Fifteen Acres",  country: "Ireland", place: "Phoenix Park, Dublin, Ireland", seat: "walk", day: "shutters", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#cfd5d6", "#aeb8b6"], ground: "#6f8a48", far: "#3c4a34",
-             note: "A Saturday in October with the club, on foot across the Fifteen Acres. The park asks for fifty metres from the herd and the herd keeps it, so the long zoom is the lens: at 50 mm a buck is a fortieth of the frame. The bucks groan and spar in the first hour; after that the herd grazes and the mist lifts.",
+             note: "A Saturday in October with the club, on foot across the Fifteen Acres. The park asks for fifty metres from the herd, and it is yours to keep, not theirs: the deer are fed here and a buck will walk up to a group. So the long zoom is the lens: at 50 mm a buck is a fortieth of the frame. The bucks groan and spar in the first hour; after that the herd grazes and the mist lifts.",
              cast: { doe: 5, buck: 4, rutbuck: 3, jackdaw: 2, crow: 2 },
              lights: ["rut", "mist", "overcast"] },
   sky:     { name: "Night Sky",     country: "Zambia", place: "South Luangwa, Zambia, after the fire", seat: "tripod", scale: "sky", body: "newer", lens: { name: "18 mm end of the zoom", min: 4, max: 22, floor: "1/60" }, sky: ["#070a1c", "#1a1f3a"], ground: "#0b0a10", far: "#14121c",
