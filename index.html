@@ -316,7 +316,7 @@ const ANIMALS = {
   lion:     { name: "African Lion",     latin: "Panthera leo",         size: 130, shape: "cat",      colour: "#8a6a3a", states: { resting: 6, walking: 2, stalking: 1 }, spook: 0 },
   cheetah:  { name: "Cheetah",          latin: "Acinonyx jubatus",     size: 100, shape: "cat",      colour: "#a8823f", states: { sentinel: 3, walking: 2, stalking: 2, running: 1 }, spook: 1 },
   mongoose: { name: "Banded Mongoose",  latin: "Mungos mungo",         size: 30,  shape: "upright",  colour: "#6e5e46", states: { sentinel: 5, walking: 2 }, spook: 2 },
-  hippo:    { name: "Hippopotamus",     latin: "Hippopotamus amphibius", size: 180, shape: "bovid",  colour: "#5a4a4c", states: { drinking: 4, resting: 4, walking: 1 }, spook: 0 },
+  hippo:    { name: "Hippopotamus",     latin: "Hippopotamus amphibius", size: 180, shape: "bovid",  colour: "#5a4a4c", states: { drinking: 4, resting: 4, walking: 1 }, spook: 0, water: 1 },
   puku:     { name: "Puku",             latin: "Kobus vardonii",       size: 95,  shape: "antelope", colour: "#a0703a", states: { drinking: 5, grazing: 3, walking: 2, running: 1 }, spook: 1 },
   eagle:    { name: "African Fish Eagle", latin: "Haliaeetus vocifer", size: 70,  shape: "bird",     colour: "#2a2420", states: { flight: 5, sentinel: 3 }, fly: 1, spook: 0 },
   gazelle:  { name: "Thomson's Gazelle", latin: "Eudorcas thomsonii",  size: 70,  shape: "antelope", colour: "#b07a3c", states: { grazing: 4, sentinel: 2, walking: 3, running: 2 }, spook: 2 },
@@ -563,6 +563,10 @@ const MISSES = [
     caption: "Nairobi in the first haze: the lens was still hunting when the shutter went, nothing under the centre of the frame was an animal, and the meter took the sky to white. The third press found him." }
 ];
 
+// On a hide the ground is a river: the far bank runs from the horizon to
+// BANK (a depth of the ground), the water from BANK to the hide. Ground
+// animals stand at the bank's edge; an animal marked `water` lies in it.
+const BANK = 0.42;
 const RANGES = {
   amber:   { name: "Amber Range",  country: "Kenya", place: "Maasai Mara, Kenya", seat: "drive", day: "safari", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
              note: "Open grassland. The pride, the cheetah on the mound, a mongoose on sentry at the termite mound. Stay in the vehicle.",
@@ -1055,7 +1059,9 @@ function spawnPlan(rangeKey, n, rnd, light) {
     const gap = 260 + A.size + rnd() * 400;
     x += gap;
     // sky subjects sit at a height of the frame; ground animals at a depth
-    const depth = A.sky ? 0.08 + rnd() * 0.4 : A.fly ? 1 : 0.35 + rnd() * 0.65;
+    // on a hide the drinking line is the bank's edge, and a water animal is in the river
+    const depth = A.sky ? 0.08 + rnd() * 0.4 : A.fly ? 1 :
+      R.seat === "hide" ? (A.water ? BANK + 0.12 + rnd() * 0.4 : BANK - 0.1 + rnd() * 0.1) : 0.35 + rnd() * 0.65;
     const behaviour = pick(A.states, rnd);
     out.push({ key, x, depth, behaviour, dir: rnd() < 0.5 ? -1 : 1 });
   }
@@ -1107,7 +1113,7 @@ function missFor(fault, animal, rnd) {
   return any[Math.floor(rnd() * any.length) % any.length];
 }
 
-const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, missFor, skyAt, STILL, DAYS, CLOCK_RATE,
+const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, BANK, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, missFor, skyAt, STILL, DAYS, CLOCK_RATE,
                 APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
                 score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, evAt, EDGE_DROP, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
@@ -1122,7 +1128,7 @@ const HORIZON = H * 0.52, NEAR = H * 0.86;
 const JEEP_X = W * 0.28, JEEP_LEN = 150;
 
 const state = {
-  range: "amber", light: "first", playing: false,
+  range: "zambezi", light: "first", playing: false, // the hide is where the page opens (Dermot, 2026-09-27)
   worldX: 0, speed: 0, animals: [], t: 0, rnd: null,
   camera: false, shutter: "1/250", aperture: 8, mode: "S", pull: 1, support: null, body: null, aim: { x: W / 2, y: H * 0.7 },
   focus: null, radio: null, radioUntil: 0,
@@ -1433,6 +1439,10 @@ function step(dt) {
 }
 
 // Screen box for an animal.
+// A water animal on a hide, past the bank: it lies in the river, sunk to SINK of its height.
+const SINK = 0.55;
+function inWater(a) { return RANGES[state.range].seat === "hide" && !!ANIMALS[a.key].water && a.depth > BANK; }
+
 function boxOf(a) {
   const A = ANIMALS[a.key];
   const scale = 0.45 + 0.55 * a.depth;
@@ -1447,6 +1457,8 @@ function boxOf(a) {
   let y;
   if (A.fly) y = HORIZON - 140 * scale - 40 * Math.sin(a.phase * 0.5);
   else y = HORIZON + (NEAR - HORIZON) * a.depth - h;
+  // in the water only the back and the head show: the box is the part above the surface
+  if (inWater(a)) return { x, y: y + h * SINK, w, h: h * (1 - SINK), scale };
   return { x, y, w, h, scale };
 }
 
@@ -1660,9 +1672,10 @@ function draw(withFinder = true) {
     }
   }
   ctx.fillStyle = R.ground; ctx.fillRect(0, HORIZON, W, H - HORIZON);
-  // grass rows, parallax by depth
+  const river = R.seat === "hide";
+  // grass rows, parallax by depth; on a hide only the far bank has grass
   ctx.strokeStyle = "rgba(80,70,40,0.25)";
-  for (let d = 0.1; d < 1; d += 0.15) {
+  for (let d = 0.1; d < (river ? BANK : 1); d += 0.15) {
     const y = HORIZON + (NEAR - HORIZON) * d;
     ctx.beginPath();
     for (let x = -40; x < W + 40; x += 18) {
@@ -1671,14 +1684,17 @@ function draw(withFinder = true) {
     }
     ctx.stroke();
   }
-  // short grass in the foreground, dense and low, scrolling with the jeep (Dermot, 2026-09-25)
-  ctx.strokeStyle = R.wood ? "rgba(70,80,45,0.55)" : "rgba(95,85,45,0.5)"; ctx.lineWidth = 1.2;
-  ctx.beginPath();
-  for (let y = NEAR + 6; y < H + 4; y += 7) {
-    const off = ((state.worldX + y * 3.7) % 9 + 9) % 9;
-    for (let x = -12; x < W + 12; x += 9) { const xx = x - off + ((y * 13) % 5); const tall = 5 + ((x + y) % 4); ctx.moveTo(xx, y); ctx.lineTo(xx + 1.5, y - tall); }
+  if (river) drawRiver(S);
+  else {
+    // short grass in the foreground, dense and low, scrolling with the jeep (Dermot, 2026-09-25)
+    ctx.strokeStyle = R.wood ? "rgba(70,80,45,0.55)" : "rgba(95,85,45,0.5)"; ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    for (let y = NEAR + 6; y < H + 4; y += 7) {
+      const off = ((state.worldX + y * 3.7) % 9 + 9) % 9;
+      for (let x = -12; x < W + 12; x += 9) { const xx = x - off + ((y * 13) % 5); const tall = 5 + ((x + y) % 4); ctx.moveTo(xx, y); ctx.lineTo(xx + 1.5, y - tall); }
+    }
+    ctx.stroke();
   }
-  ctx.stroke();
   // animals, far to near
   const list = state.animals.filter(a => !a.gone).sort((a, b) => a.depth - b.depth);
   for (const a of list) drawAnimal(a);
@@ -1805,9 +1821,17 @@ function drawAnimal(a) {
   const s = b.scale, sz = A.size * s;
   const step = Math.sin(a.phase) * 0.35;
   const moving = SPEED[a.behaviour] > 0;
+  const wet = inWater(a);
+  if (wet) {
+    // in the river: a ripple ring at the surface, then the body drawn sunk and clipped at the water
+    ctx.strokeStyle = "rgba(235,240,240,0.35)"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.ellipse(0, 1, sz * 0.5, sz * 0.07, 0, 0, 6.28); ctx.stroke();
+    ctx.beginPath(); ctx.rect(-sz * 1.5, -sz * 3, sz * 3, sz * 3); ctx.clip();
+    ctx.translate(0, b.h * SINK / (1 - SINK));
+  }
   // shadow
   ctx.fillStyle = "rgba(0,0,0,0.22)";
-  if (!A.fly) { ctx.beginPath(); ctx.ellipse(0, 0, sz * 0.45, sz * 0.08, 0, 0, 6.28); ctx.fill(); }
+  if (!A.fly && !wet) { ctx.beginPath(); ctx.ellipse(0, 0, sz * 0.45, sz * 0.08, 0, 0, 6.28); ctx.fill(); }
   ctx.fillStyle = A.colour;
   if (A.shape === "bird") {
     const flap = a.behaviour === "flight" ? Math.sin(a.phase) * 0.9 : 0.2;
@@ -1936,13 +1960,38 @@ function drawJeep() {
   ctx.restore();
 }
 
+// The river on a hide range (Dermot, 2026-09-27, the second shape): the far
+// bank ends at BANK, the water runs from there to the hide, the drinking
+// animals stand at the bank's edge and the eagle is over the water. The sky
+// lies on the water, the sun as a streak under itself.
+function drawRiver(S) {
+  const top = HORIZON + (NEAR - HORIZON) * BANK;
+  const g = ctx.createLinearGradient(0, top, 0, H);
+  g.addColorStop(0, S.bottom); g.addColorStop(0.5, RANGES[state.range].ground); g.addColorStop(1, S.top);
+  ctx.fillStyle = g; ctx.fillRect(0, top, W, H - top);
+  if (S.sun) {
+    const sx = S.sun === "rising" ? W * 0.72 : W * 0.26;
+    const r = ctx.createLinearGradient(0, top, 0, H);
+    r.addColorStop(0, "rgba(255,225,160," + (0.45 * (1 - S.height)).toFixed(2) + ")"); r.addColorStop(1, "rgba(255,225,160,0)");
+    ctx.fillStyle = r; ctx.fillRect(sx - 40, top, 80, H - top);
+  }
+  // the bank's edge, a lip of mud over the water
+  ctx.fillStyle = "rgba(90,70,45,0.55)"; ctx.fillRect(0, top - 3, W, 5);
+  // ripples, drifting
+  ctx.strokeStyle = "rgba(235,240,240,0.18)"; ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let y = top + 14; y < H; y += 17) {
+    const drift = (state.t * 12 + y * 7) % 90, len = 30 + (y % 40);
+    for (let x = -90; x < W + 90; x += 90) { ctx.moveTo(x + drift, y); ctx.lineTo(x + drift + len, y); }
+  }
+  ctx.stroke();
+}
+
 function drawHide() {
   ctx.fillStyle = "rgba(60,50,30,0.9)";
   ctx.fillRect(0, NEAR + 20, W, H - NEAR - 20);
   ctx.fillRect(0, 0, 60, H); ctx.fillRect(W - 60, 0, 60, H);
   ctx.fillStyle = "rgba(60,50,30,0.6)"; ctx.fillRect(0, 0, W, 40);
-  // water line
-  ctx.fillStyle = "rgba(120,150,170,0.35)"; ctx.fillRect(60, NEAR - 10, W - 120, 30);
 }
 
 function drawFinder() {

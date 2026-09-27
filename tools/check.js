@@ -95,6 +95,13 @@ for (const k in R.RANGES) {
   // a day plan never spawns a night-only animal; a night plan can
   const dayPlan = R.spawnPlan(k, 40, R.mulberry(11), lights[0]);
   if (!R.LIGHTS[lights[0]].lamp && dayPlan.some(p => R.ANIMALS[p.key].night)) fail("range " + k + " spawns a night animal by day");
+  // on a hide the ground is a river: ground animals stand at the bank's edge, water animals lie past it
+  if (r.seat === "hide") for (const p of dayPlan) {
+    const A = R.ANIMALS[p.key];
+    if (A.fly || A.sky) continue;
+    if (A.water ? p.depth <= R.BANK : p.depth > R.BANK) fail("range " + k + " puts " + p.key + " at depth " + p.depth.toFixed(2) + (A.water ? ", on the bank" : ", in the water"));
+  }
+  if (r.seat !== "hide" && dayPlan.some(p => R.ANIMALS[p.key].water && p.depth > 1)) fail("range " + k + " depth out of range");
   ok();
 }
 // a keeper on a prize animal says so
