@@ -395,3 +395,29 @@ picking gets. The camp card's order is unchanged (Kenya still heads the
 list, since it is the first country in `RANGES`), and nothing else
 reads the starting range. Nothing is saved across visits; the page opens
 on the hide every time.
+
+## The hide looks onto a river
+
+Dermot, 2026-09-27, asking how a fish eagle and grazing animals could
+share a scene, and choosing the second of three shapes: draw the hide
+scene as a river. The cast was right for the Lower Zambezi all along
+(the fish eagle is the river's own bird, and puku, elephant and buffalo
+come down the bank to drink), but `drawHide` painted the water as one
+translucent strip at the near edge and the rest as land, so the eye read
+grassland with a bird of prey over it. Now, on any range with
+`seat: "hide"`, the ground is a river: the far bank runs from the horizon
+to `BANK` (0.42, a depth of the ground, in the pure section), the water
+from there to the hide, painted by `drawRiver` with the sky lying on it,
+the sun as a streak under itself, a lip of mud at the bank's edge and
+drifting ripples; the grass rows stop at the bank and the foreground
+grass band is not drawn. `spawnPlan` puts a hide's ground animals at
+the bank's edge (depth just inside `BANK`) and an animal marked
+`water: 1` (the hippo, the only one) past it, in the river, where
+`boxOf` returns only the part above the surface (`SINK`, 0.55 of its
+height) and `drawAnimal` draws the body sunk and clipped at the
+waterline with a ripple ring for a shadow, so the finder, the eye box
+and the framing all see what shows. Birds are untouched and the eagle
+crosses over the water as before. The check holds a hide's plan to
+that: no ground animal in the water, no water animal on the bank.
+The world data is the only place this is switched on: a new hide range
+gets the river by its seat, and a new water animal by the flag.
