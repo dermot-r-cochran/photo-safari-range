@@ -383,3 +383,15 @@ Every range names a place or a feature, never a country (Dermot,
 country, in the order the countries first appear in `RANGES`. The macro
 range was Home Ground until that day and is Beech Wood now; the
 tutorial's route of the same old name covers three places and keeps it.
+
+## The page opens on the Zambezi Hide
+
+Dermot, 2026-09-27: *Let the Zambesi hide be the default starting point.*
+`state.range` began as `amber`, the Maasai Mara drive, from the first
+commit; it is `zambezi` now. That one field is the whole default: the
+camp card lights the range `state.range` names, and Space or Enter at
+camp begins on it, so the hide is what a player who presses on without
+picking gets. The camp card's order is unchanged (Kenya still heads the
+list, since it is the first country in `RANGES`), and nothing else
+reads the starting range. Nothing is saved across visits; the page opens
+on the hide every time.
