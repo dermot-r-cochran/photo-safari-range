@@ -240,7 +240,7 @@
 <aside>
   <div class="card">
     <h2>Asked</h2>
-    <p id="asked" class="dim">When the driver stops for a call the camera comes up on the animal, and the spotter names what it is doing and the shutter that needs.</p>
+    <p id="asked" class="dim">When the driver stops for a call the camera comes up on the subject, and the spotter names what it is doing and the shutter that needs.</p>
   </div>
   <div class="card">
     <h2>Contact sheet</h2>
@@ -250,7 +250,7 @@
   </div>
   <div class="card">
     <h2>About</h2>
-    <p class="note">A wildlife-photography arcade in one page. The rule is the field's rule: the shutter follows the animal, not the light meter. The animals on the range are drawn shapes, a map rather than a picture; the photographs after a shot are the author's own. Written by a novice for other novices; the thresholds are the author's own two cameras', the DSLR's and the mirrorless's, and a third camera would have its own.</p>
+    <p class="note">A nature-photography arcade in one page. The rule is the field's rule: the shutter follows the subject, not the light meter. The subjects on the range are drawn shapes, a map rather than a picture; the photographs after a shot are the author's own. Written by a novice for other novices; the thresholds are the author's own two cameras', the DSLR's and the mirrorless's, and a third camera would have its own.</p>
     <p class="note">The lessons behind it are in <a href="https://dermot-r-cochran.github.io/photo-safari-tutorial-game/">Photo Safari</a>, the tutorial. Source and licence on <a href="https://github.com/dermot-r-cochran/photo-safari-range">GitHub</a>.</p>
   </div>
 </aside>
@@ -753,10 +753,10 @@ const MODES = { S: "Shutter priority", A: "Aperture priority", M: "Manual" };
 // screen. `af` is "centre" or "eye"; the keys keep their old names.
 const BODIES = {
   older: { name: "DSLR", af: "centre", isoSteps: [100, 200, 400, 800, 1600, 3200], cap: 3200, noiseFrom: 1600, diffraction: { soft: 11, plain: 16 },
-           note: "The basic kit. Optical finder, eleven points with one cross-type in the middle: put the animal under the centre and half-press. Noise from ISO 1600, cap 3200. Lenses: 18–400 mm zoom, 75–240 mm zoom, 50 mm prime, 70 mm macro.",
+           note: "The basic kit. Optical finder, eleven points with one cross-type in the middle: put the subject under the centre and half-press. Noise from ISO 1600, cap 3200. Lenses: 18–400 mm zoom, 75–240 mm zoom, 50 mm prime, 70 mm macro.",
            kit: ["18–400 mm zoom", "75–240 mm zoom", "50 mm prime", "70 mm macro"] },
   newer:   { name: "Mirrorless", af: "eye", isoSteps: [100, 200, 400, 800, 1600, 3200, 6400, 12800], cap: 12800, noiseFrom: 6400, diffraction: { soft: 8, plain: 16 },
-           note: "The step up. Subject detection across the frame finds the nearest animal's eye and holds it while it moves; clean to ISO 6400. The trade: smaller pixels, so diffraction a stop earlier, and a finder that is a screen. Lens: 150–500 mm zoom.",
+           note: "The step up. Subject detection across the frame finds the nearest subject, an eye where there is one, and holds it while it moves; clean to ISO 6400. The trade: smaller pixels, so diffraction a stop earlier, and a finder that is a screen. Lens: 150–500 mm zoom.",
            kit: ["150–500 mm zoom"] }
 };
 const DEFAULT_BODY = "older";
@@ -798,7 +798,7 @@ function apertureBand(N) { return N <= 4 ? "wide" : N <= 8 ? "mid" : N <= 11 ? "
    Dermot's direction. `why` keys are set in fire(); the tip for the
    commonest one is the coaching. */
 const COACH = {
-  none: "No shots today. The animals were there; next time raise the camera on one and see what the spotter says.",
+  none: "No shots today. The subjects were there; next time raise the camera on one and see what the spotter says.",
   all: "Every shot a keeper today. Nothing to coach: go and shoot.",
   good: "A good day: {keepers} keepers from {shots} shots, {stars} with three stars.",
   hard: "A hard day, and the honest kind: {keepers} keepers from {shots} shots. The folder is where the learning is.",
@@ -806,12 +806,12 @@ const COACH = {
   once: "One thing for tomorrow. ",
   often: "The same thing {n} times today, so one thing for tomorrow. ",
   tips: {
-    miss: "Nothing was under the centre when you fired. Half-press on the animal, wait for the box to hold, then shoot.",
+    miss: "Nothing was under the centre when you fired. Half-press on the subject, wait for the box to hold, then shoot.",
     dark: "The light ran out before the ISO did. The beanbag lets the shutter run longer than the hand can hold.",
-    slow: "The shutter was slower than the spotter asked. Turn the shutter wheel up a click before the animal moves, not after.",
-    fast: "Faster than the animal needed, and the ISO paid for it. One click slower buys a cleaner file.",
-    small: "The animal was small in the frame. Let the driver bring you closer, or turn the zoom ring, before you fire.",
-    cut: "The frame cut into the animal. Give it room at the edge; a little sky costs nothing.",
+    slow: "The shutter was slower than the spotter asked. Turn the shutter wheel up a click before the subject moves, not after.",
+    fast: "Faster than the subject needed, and the ISO paid for it. One click slower buys a cleaner file.",
+    small: "The subject was small in the frame. Let the driver bring you closer, or turn the zoom ring, before you fire.",
+    cut: "The frame cut into the subject. Give it room at the edge; a little sky costs nothing.",
     noise: "The ISO climbed into the noise. A support, or a click slower on the shutter, keeps it down.",
     diffraction: "Stopped down past where the pixels can follow. Open up a stop; the depth of field was there already.",
     other: "The misses went for different reasons each time. Read the plates again; the pattern is yours to spot."
@@ -822,7 +822,7 @@ const COACH = {
 const WORDS = {
   miss:     "Nothing in the frame.",
   wait:     "{leg} can wait. Finish the shot.",
-  match:    "The shutter agrees with the animal.",
+  match:    "The shutter agrees with the subject.",
   slow1:    "A stop slow for that. Soft where it moved.",
   slow2:    "Two stops slow. The movement smeared.",
   fast1:    "Faster than it needed. ISO paid for it.",
@@ -945,7 +945,7 @@ const ADVICE = [
   { when: (e) => e.over >= 0.5,
     text: "Too much light for ISO 100 at that setting. A faster shutter, or a smaller stop." },
   { when: (e, b, scale, support) => e.mode === "A" && !STILL[b] && shutterIndex(e.shutter, scale) < shutterIndex(askedFor(b, support, scale), scale),
-    text: "In A the camera sets the shutter for the light, not the animal. For a mover, S, and the shutter it asks for." },
+    text: "In A the camera sets the shutter for the light, not the subject. For a mover, S, and the shutter it asks for." },
   { when: (e, b, scale, support) => shutterIndex(e.shutter, scale) - shutterIndex(askedFor(b, support, scale), scale) >= 2 && e.iso >= 1600,
     text: "You are paying ISO for speed the subject does not need. Come down to the shutter it asks for." },
   { when: (e) => e.aperture >= DIFFRACTION.plain,
@@ -1240,7 +1240,7 @@ function packUp(now) {
   state.day = [];
   state.playing = false; state.camera = false; state.animals = []; state.paused = false; state.waiting = null; state.clock = null; $("pause").hidden = true;
   $("camp").hidden = false; $("radio").hidden = true; $("focus").innerHTML = "";
-  $("asked").textContent = "On the range the spotter calls each animal as it comes into view and the driver stops; the camera comes up on it and this panel names what it is doing and the shutter that needs.";
+  $("asked").textContent = "On the range the spotter calls each subject as it comes into view and the driver stops; the camera comes up on it and this panel names what it is doing and the shutter that needs.";
   buildCamp(); drawHud();
 }
 

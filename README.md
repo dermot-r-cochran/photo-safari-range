@@ -13,18 +13,18 @@ You are in a vehicle on open grassland, sitting a floating hide on the
 Zambezi at eye level with the drinking line, on foot in South Luangwa
 behind the guide, by day or on a night drive where only the lamp's circle
 can be seen or shot, or on foot across the Fifteen Acres in Phoenix Park
-with the camera club, fifty metres from the fallow herd. Animals are on the range, and
+with the camera club, fifty metres from the fallow herd. Subjects are on the range, and
 each one is always doing something: resting, grazing, on sentry, walking,
-stalking, running, in flight. Raise the camera and the spotter names the
-animal, what it is doing, and the shutter that needs. Set the shutter,
-frame the animal, shoot. The plate scores on one rule, the field's rule:
-the shutter follows the animal, not the light meter. A keeper is two stars
+stalking, running, in flight, or holding still. Raise the camera and the spotter names the
+subject, what it is doing, and the shutter that needs. Set the shutter,
+frame the subject, shoot. The plate scores on one rule, the field's rule:
+the shutter follows the subject, not the light meter. A keeper is two stars
 or better; the sheet keeps what you keep.
 
 You know what you are looking at the way you would in the vehicle: the
-spotter calls each animal as it comes into view, with its side and what it
+spotter calls each subject as it comes into view, with its side and what it
 is doing, and the driver stops for it; the Asked panel lists what is on the range, nearest first, while
-the camera is down; and the pointer over an animal shows its name. The
+the camera is down; and the pointer over a subject shows its name. The
 silhouettes are a map, not a quiz.
 
 The loop, in four beats:
@@ -43,7 +43,7 @@ The loop, in four beats:
    macro range, 1:4, 1:2 and 1:1).
 3. **Match** the shutter to what the spotter asked ([ and ]). The camera
    focuses on whatever is under the centre of the frame; Tab picks another
-   animal when several are in it.
+   subject when several are in it.
 4. **Shoot** (Space). Keep the plate or send it to the folder. Then ask
    the driver on (the left and right arrows, with the camera down): that
    puts the camera down and releases him. C puts it down without moving,
@@ -79,9 +79,9 @@ are the two choices the day does not make, and they are made at camp
 before the range is picked. Breakfast,
 camp and the coffee stop are cards with the sheet so far on them; N (or
 the pad's Skip ahead) jumps to the next part of the day. A break never
-interrupts a shot: with the camera up on an animal the guide says it can
+interrupts a shot: with the camera up on a subject the guide says it can
 wait, the clock shows the break waiting, and the card comes when the
-camera goes down or the animal leaves the frame (or on N, to take it at
+camera goes down or the subject leaves the frame (or on N, to take it at
 once). The clock runs on while it waits, so a late break is a short one.
 
 ## The camera
