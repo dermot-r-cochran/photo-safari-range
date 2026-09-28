@@ -126,14 +126,19 @@ spotter's calls are only worth anything if they are true.
 - Written by a novice for other novices; no judging register, no claims
   of expertise. The camera's numbers are one camera's and the README says
   so.
-- Advice, not orders (Dermot, 2026-09-28, extended here from the
-  statistics course at his *Yes please*: *don't tell the reader or
-  student what to do, but offer advice, wisdom and general principles*).
-  The coaching and the settings advice say what happened and what would
-  have done it, not what to do: *a click up before the subject moves is
-  the whole difference*, not *turn the wheel up*. The spotter's calls,
-  the controls help and the README's how-to-play steps describe the game
-  and are not teaching, so they may still say press and shoot.
+- Two registers, split by time (Dermot, 2026-09-28). **In the moment,
+  imperative:** the spotter's calls and the guide's live settings advice
+  (`ADVICE`, shown in the Asked panel while the camera is up) tell the
+  player what to do, because *those are time-bound and time-sensitive
+  decisions where a novice needs more direct guidance* (his words). *Open
+  the aperture*, *rest the camera on the beanbag*, *focus on the eye*.
+  **Afterwards, advisory:** the end-of-day coaching (`COACH`) says what
+  happened and what would have done it, not what to do, on his general
+  rule for teaching (*don't tell the reader or student what to do, but
+  offer advice, wisdom and general principles*): *a click up before the
+  subject moves is the whole difference*, not *turn the wheel up*. The
+  controls help and the README's how-to-play steps describe the game and
+  may say press and shoot.
 - The portfolio carries no generated images. This game may, under
   `images/`, at its own address, never inside the portfolio's pages.
 
