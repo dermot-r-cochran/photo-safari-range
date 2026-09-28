@@ -945,21 +945,21 @@ function exposeFor(mode, shutter, aperture, light, behaviour, scale, lens, suppo
 // rule that applies is the one said; `text` may be a function of the seat.
 const ADVICE = [
   { when: (e) => e.under >= 0.5,
-    text: "Dark: the ISO is at its cap. A wider aperture would do it, or a slower shutter if the subject can take it." },
+    text: "Dark: the ISO is at its cap. Open the aperture, or a slower shutter if the subject can take it." },
   { when: (e) => e.over >= 0.5,
     text: "Too much light for ISO 100 at that setting. A faster shutter, or a smaller stop." },
   { when: (e, b, scale, support) => e.mode === "A" && !STILL[b] && shutterIndex(e.shutter, scale) < shutterIndex(askedFor(b, support, scale), scale),
     text: "In A the camera sets the shutter for the light, not the subject. For a mover, S, and the shutter it asks for." },
   { when: (e, b, scale, support) => shutterIndex(e.shutter, scale) - shutterIndex(askedFor(b, support, scale), scale) >= 2 && e.iso >= 1600,
-    text: "You are paying ISO for speed the subject does not need. The shutter it asks for would give that ISO back." },
+    text: "You are paying ISO for speed the subject does not need. Come down to the shutter it asks for." },
   { when: (e) => e.aperture >= DIFFRACTION.plain,
     text: "f/16 buys depth with diffraction on this body. f/8 to f/11 is where the pixels are sharpest." },
   { when: (e, b, scale, support, pull, seat) => !support && seat !== "tripod" && STILL[b] && e.iso >= 800,
-    text: (seat) => "A still subject in falling light. The " + (seat === "walk" ? "tripod" : "beanbag") + " would give two stops back, and the ISO comes down with them." },
+    text: (seat) => "A still subject in falling light. Rest the camera on the " + (seat === "walk" ? "tripod" : "beanbag") + ": two stops back, and the ISO comes down." },
   { when: (e, b, scale, support, pull) => e.mode === "S" && STILL[b] && e.aperture <= 4 && pull && pull.depth,
     text: "Plenty of light and a still subject. In A you could stop down for the depth." },
   { when: (e, b, scale, support, pull) => e.mode !== "A" && !STILL[b] && e.aperture <= 4 && pull && pull.depth && pull.depth.wide,
-    text: "Wide open on a mover: the eye is the only place focus can go, because nothing behind it will be sharp." }
+    text: "Wide open on a mover: focus on the eye, because nothing behind it will be sharp." }
 ];
 function advise(exp, behaviour, scale, support, pull, seat) {
   for (const a of ADVICE) if (a.when(exp, behaviour, scale || "day", support, pull, seat)) return typeof a.text === "function" ? a.text(seat) : a.text;
