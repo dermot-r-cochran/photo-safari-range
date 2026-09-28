@@ -126,6 +126,14 @@ spotter's calls are only worth anything if they are true.
 - Written by a novice for other novices; no judging register, no claims
   of expertise. The camera's numbers are one camera's and the README says
   so.
+- Advice, not orders (Dermot, 2026-09-28, extended here from the
+  statistics course at his *Yes please*: *don't tell the reader or
+  student what to do, but offer advice, wisdom and general principles*).
+  The coaching and the settings advice say what happened and what would
+  have done it, not what to do: *a click up before the subject moves is
+  the whole difference*, not *turn the wheel up*. The spotter's calls,
+  the controls help and the README's how-to-play steps describe the game
+  and are not teaching, so they may still say press and shoot.
 - The portfolio carries no generated images. This game may, under
   `images/`, at its own address, never inside the portfolio's pages.
 

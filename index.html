@@ -802,7 +802,7 @@ function apertureBand(N) { return N <= 4 ? "wide" : N <= 8 ? "mid" : N <= 11 ? "
    Dermot's direction. `why` keys are set in fire(); the tip for the
    commonest one is the coaching. */
 const COACH = {
-  none: "No shots today. The subjects were there; next time raise the camera on one and see what the spotter says.",
+  none: "No shots today. The subjects were there, and the camera raised on one is where the spotter's call starts.",
   all: "Every shot a keeper today. Nothing to coach: go and shoot.",
   good: "A good day: {keepers} keepers from {shots} shots, {stars} with three stars.",
   hard: "A hard day, and the honest kind: {keepers} keepers from {shots} shots. The folder is where the learning is.",
@@ -810,15 +810,15 @@ const COACH = {
   once: "One thing for tomorrow. ",
   often: "The same thing {n} times today, so one thing for tomorrow. ",
   tips: {
-    miss: "Nothing was under the centre when you fired. Half-press on the subject, wait for the box to hold, then shoot.",
+    miss: "Nothing was under the centre when you fired. The half-press on the subject, held until the box settles, was what the shot was missing.",
     dark: "The light ran out before the ISO did. The beanbag lets the shutter run longer than the hand can hold.",
-    slow: "The shutter was slower than the spotter asked. Turn the shutter wheel up a click before the subject moves, not after.",
+    slow: "The shutter was slower than the spotter asked. A click up on the shutter wheel before the subject moves, not after, is the whole difference.",
     fast: "Faster than the subject needed, and the ISO paid for it. One click slower buys a cleaner file.",
-    small: "The subject was small in the frame. Let the driver bring you closer, or turn the zoom ring, before you fire.",
-    cut: "The frame cut into the subject. Give it room at the edge; a little sky costs nothing.",
+    small: "The subject was small in the frame. The driver can bring you closer, and so can the zoom ring, before the shot is taken.",
+    cut: "The frame cut into the subject. Room at the edge costs nothing; a little sky is cheaper than a clipped ear.",
     noise: "The ISO climbed into the noise. A support, or a click slower on the shutter, keeps it down.",
-    diffraction: "Stopped down past where the pixels can follow. Open up a stop; the depth of field was there already.",
-    other: "The misses went for different reasons each time. Read the plates again; the pattern is yours to spot."
+    diffraction: "Stopped down past where the pixels can follow. A stop wider loses nothing; the depth of field was there already.",
+    other: "The misses went for different reasons each time. The plates, read again, will show the pattern; it is yours to spot."
   },
   packEarly: "Packing up early. Here is the day so far."
 };
@@ -945,21 +945,21 @@ function exposeFor(mode, shutter, aperture, light, behaviour, scale, lens, suppo
 // rule that applies is the one said; `text` may be a function of the seat.
 const ADVICE = [
   { when: (e) => e.under >= 0.5,
-    text: "Dark: the ISO is at its cap. Open the aperture, or a slower shutter if the subject can take it." },
+    text: "Dark: the ISO is at its cap. A wider aperture would do it, or a slower shutter if the subject can take it." },
   { when: (e) => e.over >= 0.5,
     text: "Too much light for ISO 100 at that setting. A faster shutter, or a smaller stop." },
   { when: (e, b, scale, support) => e.mode === "A" && !STILL[b] && shutterIndex(e.shutter, scale) < shutterIndex(askedFor(b, support, scale), scale),
     text: "In A the camera sets the shutter for the light, not the subject. For a mover, S, and the shutter it asks for." },
   { when: (e, b, scale, support) => shutterIndex(e.shutter, scale) - shutterIndex(askedFor(b, support, scale), scale) >= 2 && e.iso >= 1600,
-    text: "You are paying ISO for speed the subject does not need. Come down to the shutter it asks for." },
+    text: "You are paying ISO for speed the subject does not need. The shutter it asks for would give that ISO back." },
   { when: (e) => e.aperture >= DIFFRACTION.plain,
     text: "f/16 buys depth with diffraction on this body. f/8 to f/11 is where the pixels are sharpest." },
   { when: (e, b, scale, support, pull, seat) => !support && seat !== "tripod" && STILL[b] && e.iso >= 800,
-    text: (seat) => "A still subject in falling light. Rest the camera on the " + (seat === "walk" ? "tripod" : "beanbag") + ": two stops back, and the ISO comes down." },
+    text: (seat) => "A still subject in falling light. The " + (seat === "walk" ? "tripod" : "beanbag") + " would give two stops back, and the ISO comes down with them." },
   { when: (e, b, scale, support, pull) => e.mode === "S" && STILL[b] && e.aperture <= 4 && pull && pull.depth,
     text: "Plenty of light and a still subject. In A you could stop down for the depth." },
   { when: (e, b, scale, support, pull) => e.mode !== "A" && !STILL[b] && e.aperture <= 4 && pull && pull.depth && pull.depth.wide,
-    text: "Wide open on a mover: focus on the eye, because nothing behind it will be sharp." }
+    text: "Wide open on a mover: the eye is the only place focus can go, because nothing behind it will be sharp." }
 ];
 function advise(exp, behaviour, scale, support, pull, seat) {
   for (const a of ADVICE) if (a.when(exp, behaviour, scale || "day", support, pull, seat)) return typeof a.text === "function" ? a.text(seat) : a.text;
