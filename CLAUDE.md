@@ -434,3 +434,33 @@ crosses over the water as before. The check holds a hide's plan to
 that: no ground animal in the water, no water animal on the bank.
 The world data is the only place this is switched on: a new hide range
 gets the river by its seat, and a new water animal by the flag.
+
+## Related repositories
+
+The map of Dermot's public repositories and what crosses between them is
+`RELATED-REPOSITORIES.md` in `dermot-r-cochran/star-rangers`; this section
+names only this repository's own neighbours (added 2026-09-29 at his
+direction, after a session had to discover a sibling by listing his
+repositories).
+
+- **`dermot-r-cochran/dermot-cochran-photography`** supplies the frames in
+  `PLATES` and `MISSES` (copies at site size under the portfolio's
+  CC BY-NC-ND terms, 57 at the time of writing) and the field notes the
+  thresholds follow, as *The one rule the game teaches* says. Copies, not
+  links: a frame unlisted or re-edited there stays as it was here until
+  someone copies it again, and the portfolio's pull requests say so when a
+  frame this game carries changes.
+- **`dermot-r-cochran/photo-safari-tutorial-game`** is the sibling this game
+  was rebuilt beside: the older DSLR's numbers are the tutorial's, the
+  no-makes rule was made here and applied there the same day, and the two
+  registers rule is shared. Deliberately not shared: the scoring. The
+  tutorial counts keepers per stop; this game runs on the clock, and *The
+  clock is the limit* above says not to change that. No code crosses; each
+  has its own engine and check.
+- **`dermot-r-cochran/four-islands-quest`** is where the prime directive above
+  was written; this repository inherits it whole, and the README names both
+  it and the tutorial as the author's other one-file repositories.
+- **`dermot-r-cochran/applied-statistics-for-AI-engineers`** is the other
+  one-file page in the account, and where *advice, not orders* was first
+  given (2026-09-28), the same day it reached this game's end-of-day
+  coaching.
