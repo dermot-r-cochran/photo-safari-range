@@ -145,9 +145,10 @@ spotter's calls are only worth anything if they are true.
 ## The clock is the limit, not a stroke count
 
 Dermot, 2026-09-19: *Range game is time limited rather than counting
-shots. It was no penalty for non-keepers.* The tutorial scores like golf
-(every press a stroke, par one a stop); this game does not, and should
-not be made to. The day's clock is the whole constraint: a plate for the
+shots. It was no penalty for non-keepers.* The tutorial scored like golf
+(every press a stroke, par one a stop) until 2026-09-21 and now counts
+keepers per stop; this game keeps neither strokes nor a per-stop count,
+and should not be made to. The day's clock is the whole constraint: a plate for the
 folder costs the minutes it took and nothing else, the sheet counts what
 was kept, and the end-of-day card gives keepers from shots as a tally
 with one piece of coaching, never as a score against par. Don't add

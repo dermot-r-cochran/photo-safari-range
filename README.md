@@ -30,9 +30,10 @@ silhouettes are a map, not a quiz.
 The loop, in four beats:
 
 1. **Ride.** The driver drives, without being asked: a steady pace, a stop
-   when the spotter calls something, a wait while you work, then on. A and
-   D (or the left and right arrows while the camera is down) are requests,
-   closer or back, and he obliges; a tap is a nudge at his own pace, a key
+   when the spotter calls something, a wait while you work, then on. The
+   left and right arrows while the camera is down (or the pad's two
+   Driver buttons) are requests, closer or back, and he obliges; A is
+   aperture priority, not a driving key; a tap is a nudge at his own pace, a key
    held past a second is hurrying him. On foot the same keys walk you
    closer or back, and the pad's buttons say Walk rather than Driver. In
    the hide and at the tripod nothing moves but the animals, and the pad
@@ -233,8 +234,10 @@ the answer: the stars and the verdict are about your plate; the photograph
 is what the same moment looked like when it was got. Forty-nine frames
 so far, under `images/`, at portfolio size, chosen by animal and
 behaviour; an animal with no frame yet shows the crop alone with the line
-"No frame of this yet. One to make.", and each range's camp lists the
-animals still wanting one, which is the shooting list for the next trip.
+"The author has no photograph of this one yet, so the crop stands
+alone." Which animals still want a frame is the author's own shooting
+list, not the player's, so the camp card does not show it;
+`node tools/check.js` prints it per range.
 The page works with no picture files at all.
 
 The animals on the range are placeholder silhouettes drawn on the canvas.

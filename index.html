@@ -2040,7 +2040,12 @@ function drawHud() {
     if (apLive) e.onclick = () => { state.aperture = N; drawHud(); };
   }
   add("ISO " + exp.iso + (exp.under >= 0.5 ? " · dark" : exp.over >= 0.5 ? " · blown" : ""));
-  if (state.camera) add("Space: shoot · ← →: " + (RANGES[state.range].seat === "walk" ? "walk on" : "drive on"), "dim");
+  // with the camera up the arrows aim, so moving on is C (camera down)
+  // and then the arrows; in the hide and at the tripod nothing moves on
+  if (state.camera) {
+    const seat = RANGES[state.range].seat;
+    add(seat === "hide" || seat === "tripod" ? "Space: shoot" : "Space: shoot · C, then ← →: " + (seat === "walk" ? "walk on" : "drive on"), "dim");
+  }
 }
 
 // The support the seat offers: a beanbag on the sill of the jeep or the
