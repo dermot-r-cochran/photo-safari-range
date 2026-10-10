@@ -371,7 +371,12 @@ add to `RANGES` with `seat` (drive or hide), sky and ground colours, a
 
 `.github/workflows/pages.yml` serves `index.html` from GitHub Pages on
 every push to `main`, like the tutorial repo. CI (`ci.yml`) runs the check
-on every PR and installs nothing. A subdomain of the photography site can
+on every PR and installs nothing, and `tools/check-docs.js` beside it: the
+README's relative links resolve, no Markdown file has a second front-matter
+block, and the README's frame counts match `images/`. Every capability the
+README lists names the check in `tools/check.js` that proves it, or says
+"no test yet" or "not yet implemented" (Dermot, 10 October 2026); keep that
+true when a capability or a check changes. A subdomain of the photography site can
 point at the Pages site later with a CNAME; it is not set up.
 
 ## Licence

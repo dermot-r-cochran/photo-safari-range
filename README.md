@@ -37,18 +37,23 @@ The loop, in four beats:
    held past a second is hurrying him. On foot the same keys walk you
    closer or back, and the pad's buttons say Walk rather than Driver. In
    the hide and at the tripod nothing moves but the animals, and the pad
-   shows no mover at all.
+   shows no mover at all. *No test yet: the driver and the pad live in
+   the page's document code, which `tools/check.js` does not load.*
 2. **Camera** up. At the stop it comes up by itself on what was called;
    Space raises it at any other time. The plate rectangle follows the
    mouse or the arrow keys; Z zooms through wide, normal and tight (on the
-   macro range, 1:4, 1:2 and 1:1).
+   macro range, 1:4, 1:2 and 1:1). *The pulls: `tools/check.js`, check
+   "pulls, the default set and any range's own"; raising and aiming have
+   no test yet.*
 3. **Match** the shutter to what the spotter asked ([ and ]). The camera
    focuses on whatever is under the centre of the frame; Tab picks another
-   subject when several are in it.
+   subject when several are in it. *`tools/check.js`, check "scorer" (a
+   matched shutter, clean frame and clean exposure is three stars and a
+   keeper); focus and Tab have no test yet.*
 4. **Shoot** (Space). Keep the plate or send it to the folder. Then ask
    the driver on (the left and right arrows, with the camera down): that
    puts the camera down and releases him. C puts it down without moving,
-   if you want him to drive on at his own pace.
+   if you want him to drive on at his own pace. *No test yet.*
 
 The controls under the picture are laid out as they sit on a camera: the
 three mode buttons (S, A and M, one lit; the same keys pick them), the top
@@ -143,13 +148,19 @@ what to do about the animal.
   running cheetah 1/1000; a fish eagle in flight 1/2000. The spotter's
   ethogram note says what to look for, and the plate scores on whether the
   shutter agreed with the animal at the moment the shutter fired.
+  *`tools/check.js`, checks "behaviours" (every behaviour asks a shutter
+  the camera has) and "scorer"; the particular speeds have no test yet.*
 - **The cost of the wrong shutter.** A stop slow smears the movement; a
   stop fast is bought with ISO the light did not have. Last light at
   1/2000 is ISO 3200 on this camera, and the verdict says so.
+  *`tools/check.js`, check "the camera" ("S at last light, 1/2000: wide
+  open and the ISO up"); the star a slow stop costs has no test yet.*
 - **Framing.** An animal cut by the frame edge loses a star; a speck loses
   a star; an animal that fills the working pull is the plate you wanted.
   Tighter is head and shoulders, and the note is the field's: long glass
   stacks the background, which is compression, not walking closer.
+  *`tools/check.js`, check "measureFrame" (a box over the edge reads as
+  cut); the stars the cut and the speck cost have no test yet.*
 - **The frame this was got wrong on.** A keeper shows the author's own
   frame of that animal and behaviour, the crop inset. A plate for the
   folder shows, where he has one, the frame he got wrong the same way: a
@@ -160,6 +171,8 @@ what to do about the animal.
   such frame of your animal, an empty or hazy scene of his may stand
   in, since a black frame teaches the same under any heading; a frame in
   which a different kind of animal can still be made out never does.
+  *`tools/check.js`, checks "plates", "misses", "missFor: the plate's own
+  animal first" and "plateFor: exact before any".*
 - **Beech Wood is the macro range.** A beech wood and a garden near home,
   the week after, on foot with the 70 mm macro: mushrooms, roses, a spear
   thistle, wild angelica, a sloe and a bramble, bumblebees, a hoverfly and
@@ -170,6 +183,9 @@ what to do about the animal.
   70 mm, 1/125; a breeze asks for 1/250; a bee working a flower asks for
   1/500 and in flight 1/2000. Walk at the bees and they leave. Seventeen
   frames from the portfolio's Macro and Nature pages are the reveal.
+  *`tools/check.js`, checks "pulls, the default set and any range's own"
+  and "the camera" (1:1 at f/8 says millimetre); the bees leaving has no
+  test yet.*
 - **Your own camera, and what it rests on.** In the jeep and in the hide
   you have a beanbag; on foot, a tripod; at the night sky, the tripod
   always. Press B (or the pad's Beanbag or Tripod) to rest the camera on
@@ -177,16 +193,21 @@ what to do about the animal.
   resting lion at 1/15 instead of 1/60, and the ISO comes down with it;
   a moving subject asks the same shutter on a support as off it. The
   driver won't drive on while the beanbag is on the sill, and the guide
-  waits while the tripod is up.
+  waits while the tripod is up. *`tools/check.js`, check "a support lowers
+  the floor for a still subject by two stops and leaves a moving one
+  alone"; the driver and the guide waiting have no test yet.*
 - **The country is a subject too.** A flat-topped acacia stands on the
   range like anything else and asks for the hand-held floor, about 1/30 at
   the wide end on this body, or 1/125 when the wind is in the canopy. A
   fast shutter on a still subject in good light costs nothing and the
-  verdict says so; it only costs a star when the ISO paid for it.
+  verdict says so; it only costs a star when the ISO paid for it. *No
+  test yet of the acacia's own shutters beyond the "scorer" check, which
+  covers every subject alike.*
 - **Stay in the vehicle.** The guide's one hard rule, and the game's. On
   foot the rule is the walking guide's: single file, stop when he stops,
   because nothing runs from a still person and everything runs from a
-  moving one.
+  moving one. *No test yet: the guide's words live in the page's document
+  code.*
 - **The Earth turns; that is the movement.** On the Night Sky range the
   shutter scale is seconds and minutes on a tripod. The moon is a sunlit
   rock and asks for 1/250 at ISO 100 whatever the hour; stars as points
@@ -196,11 +217,17 @@ what to do about the animal.
   so it comes with the noise note; the pole asks for eight minutes and
   gives you arcs on purpose; a meteor cannot be timed, so the shutter stays
   open and the sky decides. New moon or moonlit: under the moon the sky is
-  brighter, the core is gone, and the ISO drops.
+  brighter, the core is gone, and the ISO drops. *`tools/check.js`, checks
+  "the sky: the words say lines, not smear, and a unique subject spawns
+  once" and "the camera" (the moon meters as a sunlit rock); the pole's
+  arcs and the meteor have no test yet.*
 - **The small ones are the range.** In South Luangwa a keeper of a serval,
   a hyrax, a genet or a carmine bee-eater is a hard plate and the sheet
   says so; an elephant is an elephant. The genet only comes out on the
   night drive, and on a night drive everything is ISO 3200.
+  *`tools/check.js`, checks "a keeper on a prize animal says so", "a day
+  plan never spawns a night-only animal" and "the camera" (A at night,
+  f/8, holds the ISO at the cap).*
 
 ## Where it came from
 
@@ -254,6 +281,14 @@ animal's states are behaviours, every range's cast is animals, every light
 prices every shutter, the scorer stays within 0–3 and a matched shutter
 with a clean frame is always a keeper, and a spawn plan is deterministic
 and spaced. CI runs it and installs nothing.
+
+Each capability in the lists above names the check in `tools/check.js`
+that proves it, by the comment it sits under, or says it has no test yet
+(the README-proof convention, 10 October 2026). `tools/check-docs.js`
+holds the Markdown to the disk: every relative link in this README
+resolves, no Markdown file carries a second front-matter block, and the
+two frame counts above match the plate files under `images/`. CI runs
+both and installs nothing.
 
 ## Licence
 
