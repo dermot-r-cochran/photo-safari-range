@@ -17,6 +17,9 @@ jobs:
       - name: Every behaviour asks a real shutter, every animal a real state, every plate scores
         run: node tools/check.js
 
+      - name: Every README link resolves, one front-matter block at most, the counts match the disk
+        run: node tools/check-docs.js
+
       - name: The page is one file with its two sections
         run: |
           grep -q "WORLD DATA" index.html
