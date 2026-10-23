@@ -167,7 +167,10 @@ what to do about the animal.
   line of zebra black on yesterday's dial, a gazelle at a sixtieth, a
   lioness at a twenty-five-hundredth and ISO 3200, a flamingo the frame
   edge took, elephants at f/40. Real frames, as shot, with the settings
-  in the caption because the settings are the point. Where he has no
+  in the caption because the settings are the point. Frames the
+  portfolio took down as below its bar are misses here too, never
+  keepers: a vulture landing with its wing edges moving, a puffball the
+  focus went past, a bee a speck on its flower. Where he has no
   such frame of your animal, an empty or hazy scene of his may stand
   in, since a black frame teaches the same under any heading; a frame in
   which a different kind of animal can still be made out never does.
@@ -188,7 +191,7 @@ what to do about the animal.
   millimetres at 1:2, about a millimetre at 1:1 at f/8, with f/16 buying
   depth in diffraction. A still subject asks for the hand-held floor at
   70 mm, 1/125; a breeze asks for 1/250; a bee working a flower asks for
-  1/500 and in flight 1/2000. Walk at the bees and they leave. Seventeen
+  1/500 and in flight 1/2000. Walk at the bees and they leave. Fifteen
   frames from the portfolio's Macro and Nature pages are the reveal.
   *`tools/check.js`, checks "pulls, the default set and any range's own"
   and "the camera" (1:1 at f/8 says millimetre); the bees leaving has no
@@ -265,7 +268,7 @@ learned on**: the author's own photograph of that animal doing that thing,
 from the outings the range was written from, with your crop inset in the
 corner and a caption that says what the frame is. It is a comparison, not
 the answer: the stars and the verdict are about your plate; the photograph
-is what the same moment looked like when it was got. Forty-nine frames
+is what the same moment looked like when it was got. Fifty-two frames
 so far, under `images/`, at portfolio size, chosen by animal and
 behaviour; an animal with no frame yet shows the crop alone with the line
 "The author has no photograph of this one yet, so the crop stands
