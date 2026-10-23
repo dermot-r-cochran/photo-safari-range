@@ -87,6 +87,21 @@ that, and they are the `four-islands-quest` rules this repository inherits:
   removes the card; the day's record keeps every shot for the coaching
   either way.
 
+## A frame is shown only at its own hour
+
+Dermot, 2026-10-23: *for each stop check the time of day for each photo
+aligns with the hour of the stop*. Every frame in `PLATES` and `MISSES`
+carries `hours`, parts of the day from `HOURS` (dawn 05:30, morning
+07:00, midday 11:30, afternoon 15:00, dusk 18:00, night 19:15), and
+`plateFor` and `missFor` take the clock and keep only frames whose
+`hours` hold `hourOf(clock)`; with no clock (the night sky) any hour
+stands. Where the caption or alt names the hour, that is the tag; where
+it does not, the light in the frame is read: a low warm sun is morning
+or afternoon, plain daylight is morning, midday and afternoon. The site
+JPEGs carry no EXIF, so a tag read from the light is a judgement, and
+the originals on `F:` can correct it. A stop with no frame of its hour
+shows the crop alone; `tools/check.js` prints those stops as a note.
+
 ## The one rule the game teaches
 
 The shutter follows the animal. Every behaviour in `BEHAVIOURS` carries

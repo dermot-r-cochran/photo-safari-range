@@ -173,6 +173,13 @@ what to do about the animal.
   which a different kind of animal can still be made out never does.
   *`tools/check.js`, checks "plates", "misses", "missFor: the plate's own
   animal first" and "plateFor: exact before any".*
+- **The frame is of the hour you shot in.** Every frame names the parts
+  of the day it was taken in (dawn, morning, midday, afternoon, dusk,
+  night), read from its caption where the caption says, else from its
+  light, and a plate shows only a frame of the clock's hour: the topi at
+  sunrise at first light, never at last light. With no frame of that hour
+  the crop stands alone. *`tools/check.js`, check "hours" (walks every
+  stop of every range's day every five minutes).*
 - **Beech Wood is the macro range.** A beech wood and a garden near home,
   the week after, on foot with the 70 mm macro: mushrooms, roses, a spear
   thistle, wild angelica, a sloe and a bramble, bumblebees, a hoverfly and

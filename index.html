@@ -365,155 +365,183 @@ const ANIMALS = {
 // A plate looks for a frame of the same animal and behaviour, then any
 // frame of the animal; with none it shows the crop alone. The captions
 // state no settings; the site JPEGs carry no EXIF.
+//
+// Each frame names the `hours` it was taken in, parts of the day from
+// HOURS, and is shown only when the clock at the shot falls in one of
+// them: no dawn frame at the heat, no dusk frame at first light
+// (Dermot, 2026-10-23: the time of day of each photo aligns with the
+// hour of the stop). The hour is read from the caption or alt where
+// they name it (dawn, morning, afternoon, dusk), else from the light in
+// the frame: a low warm sun is morning or afternoon, and plain daylight
+// with no hour in it is morning, midday and afternoon. A range with no
+// clock (the night sky) shows any hour, and an animal with no frame at
+// that hour shows the crop alone.
+const HOURS = {
+  dawn:      { from: "05:30", to: "07:00" },
+  morning:   { from: "07:00", to: "11:30" },
+  midday:    { from: "11:30", to: "15:00" },
+  afternoon: { from: "15:00", to: "18:00" },
+  dusk:      { from: "18:00", to: "19:15" },
+  night:     { from: "19:15", to: "05:30" }
+};
+function hourOf(clock) {
+  const t = ((clock % 1440) + 1440) % 1440;
+  for (const k in HOURS) {
+    const f = hm(HOURS[k].from), e = hm(HOURS[k].to);
+    if (f < e ? t >= f && t < e : t >= f || t < e) return k;
+  }
+  return null;
+}
+function atHour(frame, clock) { return clock === null || clock === undefined || frame.hours.includes(hourOf(clock)); }
 const PLATES = [
-  { file: "zebra-in-the-morning-dust.jpg", animal: "zebra", behaviours: ["walking"], title: "Zebra in the Morning Dust",
+  { file: "zebra-in-the-morning-dust.jpg", hours: ["dawn"], animal: "zebra", behaviours: ["walking"], title: "Zebra in the Morning Dust",
     alt: "A zebra walking through drifting dust at dawn, with a grove of acacias receding into golden haze behind",
     caption: "Amboseli at dawn. The dust is the herd's own, kicked up ahead of it, and the light is in it." },
-  { file: "mixed-company.jpg", animal: "zebra", behaviours: ["grazing"], title: "Mixed Company",
+  { file: "mixed-company.jpg", hours: ["morning", "midday", "afternoon"], animal: "zebra", behaviours: ["grazing"], title: "Mixed Company",
     alt: "A mixed herd grazing on Mara grassland - zebra in the foreground, wildebeest beyond them, and a giraffe walking away toward the wooded hillside",
     caption: "Zebra, wildebeest and a giraffe on the same grass. The plain does the framing; the plate keeps the country in." },
-  { file: "topi-at-sunrise.jpg", animal: "topi", behaviours: ["sentinel"], title: "Topi at Sunrise",
+  { file: "topi-at-sunrise.jpg", hours: ["dawn"], animal: "topi", behaviours: ["sentinel"], title: "Topi at Sunrise",
     alt: "A topi standing in full silhouette on a ridge as the sun rises behind it, ranges of hills receding in orange haze",
     caption: "On a termite mound to see over the grass, up there since before the sun. Exposed for the sky; the animal is a shape." },
-  { file: "topi-in-the-long-grass.jpg", animal: "topi", behaviours: ["walking", "grazing"], title: "Topi in the Long Grass",
+  { file: "topi-in-the-long-grass.jpg", hours: ["afternoon", "dusk"], animal: "topi", behaviours: ["walking", "grazing"], title: "Topi in the Long Grass",
     alt: "A topi antelope moving through tall golden grass in warm evening light",
     caption: "Last light, the grass higher than the legs. The walk is slow enough for 1/250." },
-  { file: "cape-buffalo.jpg", animal: "buffalo", behaviours: ["grazing", "resting", "walking"], title: "Cape Buffalo",
+  { file: "cape-buffalo.jpg", hours: ["morning", "afternoon"], animal: "buffalo", behaviours: ["grazing", "resting", "walking"], title: "Cape Buffalo",
     alt: "A Cape buffalo facing the camera with heavy curved horns and a boss across its forehead, the herd behind it",
     caption: "Head up, straight at the vehicle, the herd behind. A buffalo does not run from a jeep, and does not need to." },
-  { file: "tusker-on-the-plain.jpg", animal: "elephant", behaviours: ["grazing"], title: "Tusker on the Plain",
+  { file: "tusker-on-the-plain.jpg", hours: ["morning", "midday", "afternoon"], animal: "elephant", behaviours: ["grazing"], title: "Tusker on the Plain",
     alt: "A bull elephant with long tusks grazing on open grassland, a line of wildebeest strung across the horizon behind",
     caption: "Grazing on the open Mara, the migration strung along the horizon behind him." },
-  { file: "elephants-beneath-kilimanjaro.jpg", animal: "elephant", behaviours: ["walking"], title: "Elephants Beneath Kilimanjaro",
+  { file: "elephants-beneath-kilimanjaro.jpg", hours: ["dawn"], animal: "elephant", behaviours: ["walking"], title: "Elephants Beneath Kilimanjaro",
     alt: "A family of elephants crossing open grassland at dawn with the cone of Kilimanjaro standing in pink haze behind them",
     caption: "A family on the move at dawn, the mountain out for once. Context is the pull that earns this one." },
-  { file: "bull-elephant-portrait.jpg", animal: "elephant", behaviours: ["resting"], title: "Bull Elephant",
+  { file: "bull-elephant-portrait.jpg", hours: ["morning", "midday", "afternoon"], animal: "elephant", behaviours: ["resting"], title: "Bull Elephant",
     alt: "A close portrait of a bull elephant facing the camera, showing long tusks and deeply wrinkled skin",
     caption: "Tighter: the head, the tusks, the skin. He stood, and the plate could afford to." },
-  { file: "lion-at-golden-hour.jpg", animal: "lion", behaviours: ["resting"], title: "Lion at Golden Hour",
+  { file: "lion-at-golden-hour.jpg", hours: ["afternoon", "dusk"], animal: "lion", behaviours: ["resting"], title: "Lion at Golden Hour",
     alt: "A male lion resting in grass in warm evening light, with a flat-topped acacia on the ridge behind",
     caption: "Resting in the last hour of light, the acacia on the ridge behind. Nothing moved but the ears." },
-  { file: "lion-portrait-at-dusk.jpg", animal: "lion", behaviours: ["resting"], title: "Lion Portrait at Dusk",
+  { file: "lion-portrait-at-dusk.jpg", hours: ["dusk"], animal: "lion", behaviours: ["resting"], title: "Lion Portrait at Dusk",
     alt: "Close portrait of a male lion with a full mane, lit by soft evening light, a second lion visible behind",
     caption: "Dusk, about five stops below a bright afternoon. A resting lion is the one subject that lets the shutter drop." },
-  { file: "young-lion-in-morning-light.jpg", animal: "lion", behaviours: ["resting"], title: "Young Lion in Morning Light",
+  { file: "young-lion-in-morning-light.jpg", hours: ["morning"], animal: "lion", behaviours: ["resting"], title: "Young Lion in Morning Light",
     alt: "A young lion lying in green grass in low morning sunlight, faint juvenile spotting still visible on its flank, looking away to one side",
     caption: "About three years old, recently pushed out of his pride. The track was warm before the grass was." },
-  { file: "the-coalition.jpg", animal: "lion", behaviours: ["resting"], title: "The Coalition",
+  { file: "the-coalition.jpg", hours: ["dusk"], animal: "lion", behaviours: ["resting"], title: "The Coalition",
     alt: "Two male lions resting side by side in long grass at dusk, both alert and looking off to the right",
     caption: "Two males, resting but not asleep, both watching the same thing off the frame." },
-  { file: "cheetah-on-the-mound-in-colour.jpg", animal: "cheetah", behaviours: ["sentinel"], title: "Cheetah on the Mound, in Colour",
+  { file: "cheetah-on-the-mound-in-colour.jpg", hours: ["morning", "midday", "afternoon"], animal: "cheetah", behaviours: ["sentinel"], title: "Cheetah on the Mound, in Colour",
     alt: "A cheetah standing on a termite mound looking back over its shoulder to the right, tawny spotted coat against a flat grey-blue sky, dry grass below",
     caption: "A mound is a seat. The look back over the shoulder is the moment; the sprint, if it came, came later." },
-  { file: "cheetah-on-the-mound.jpg", animal: "cheetah", behaviours: ["sentinel"], title: "Cheetah on the Mound",
+  { file: "cheetah-on-the-mound.jpg", hours: ["morning", "midday", "afternoon"], animal: "cheetah", behaviours: ["sentinel"], title: "Cheetah on the Mound",
     alt: "A cheetah standing on a termite mound scanning the plain, in monochrome, its spotted profile clear against a pale sky",
     caption: "The same cheetah in mono, the profile clear against the sky. First in Novice Mono, Dublin Camera Club, summer 2026." },
-  { file: "african-fish-eagle.jpg", animal: "eagle", behaviours: ["flight"], title: "African Fish Eagle",
+  { file: "african-fish-eagle.jpg", hours: ["morning", "midday", "afternoon"], animal: "eagle", behaviours: ["flight"], title: "African Fish Eagle",
     alt: "An African fish eagle in level flight seen head-on, wings fully outstretched, its white head and chest bright against a clear sky",
     caption: "Head-on and level, the white head the still point. 1/2000 is what flight asks for." },
-  { file: "fish-eagle-over-the-drowned-forest.jpg", animal: "eagle", behaviours: ["flight"], title: "Fish Eagle over the Drowned Forest",
+  { file: "fish-eagle-over-the-drowned-forest.jpg", hours: ["morning", "midday", "afternoon"], animal: "eagle", behaviours: ["flight"], title: "Fish Eagle over the Drowned Forest",
     alt: "An African fish eagle banking in flight with its wings raised and its white head and chest catching the light, above a stand of bare grey drowned trees standing in the lake, with green acacias behind them, the escarpment beyond and cloud in a blue sky",
     caption: "Banking over the drowned trees at Naivasha. The habitat stayed in the plate on purpose." },
-  { file: "fish-eagle-with-a-catch.jpg", animal: "eagle", behaviours: ["flight"], title: "Fish Eagle with a Catch",
+  { file: "fish-eagle-with-a-catch.jpg", hours: ["morning", "midday", "afternoon"], animal: "eagle", behaviours: ["flight"], title: "Fish Eagle with a Catch",
     alt: "An African fish eagle lifting away from the surface of the lake with a fish gripped in its talons, wings fully spread, water streaming from its feet and a burst of frozen droplets arcing back across the calm green water behind it",
     caption: "Lifting off the water with the fish. The boatman threw it, which files the frame under a different rulebook, and the droplets are frozen all the same." },
-  { file: "the-break.jpg", animal: "gazelle", behaviours: ["running"], title: "The Break",
+  { file: "the-break.jpg", hours: ["afternoon"], animal: "gazelle", behaviours: ["running"], title: "The Break",
     alt: "Six Thomson's gazelles breaking into a run across dry grass, two of them crossing in mid-stride at the centre, one bounding towards the camera, three more scattering along the top of the frame",
     caption: "Amboseli in full afternoon sun, 1/4000, and the run stopped mid-stride. Two days earlier the same scene at a sixtieth was a smear." },
-  { file: "thomsons-gazelle.jpg", animal: "gazelle", behaviours: ["sentinel", "grazing"], title: "Thomson's Gazelle",
+  { file: "thomsons-gazelle.jpg", hours: ["morning", "midday", "afternoon"], animal: "gazelle", behaviours: ["sentinel", "grazing"], title: "Thomson's Gazelle",
     alt: "A Thomson's gazelle standing side-on in short green and straw-coloured grass with its head turned towards the camera, its strongly ringed horns rising in a slight curve, the broad black band along its flank and the white belly beneath it clearly marked, with a wildebeest and two zebras grazing out of focus behind",
     caption: "Side-on, head turned, the flank band sharp. The grazers behind are out of focus, which is where they belong." },
-  { file: "the-line.jpg", animal: "gazelle", behaviours: ["walking"], title: "The Line",
+  { file: "the-line.jpg", hours: ["morning", "midday", "afternoon"], animal: "gazelle", behaviours: ["walking"], title: "The Line",
     alt: "Six Thomson's gazelles walking in a line along a grassy ridge, evenly spaced and all facing the same way, a row of palms and trees fading into haze behind them",
     caption: "Six in a line along the ridge, evenly spaced. The walk asked for 1/250 and the ridge did the composing." },
-  { file: "the-itch.jpg", animal: "gazelle", behaviours: ["grazing"], title: "The Itch",
+  { file: "the-itch.jpg", hours: ["morning", "midday", "afternoon"], animal: "gazelle", behaviours: ["grazing"], title: "The Itch",
     alt: "Three Thomson's gazelles close together in dry grass, one with its head turned back and a hind hoof raised to scratch its ear, the other two standing alongside, a line of zebra grazing far behind",
     caption: "A hind hoof to the ear. The small behaviours are the plates nobody else has." },
-  { file: "giraffe-above-the-bush-line.jpg", animal: "giraffe", behaviours: ["sentinel", "grazing"], title: "Giraffe Above the Bush Line",
+  { file: "giraffe-above-the-bush-line.jpg", hours: ["afternoon", "dusk"], animal: "giraffe", behaviours: ["sentinel", "grazing"], title: "Giraffe Above the Bush Line",
     alt: "A Masai giraffe looking directly at the camera over the top of a thicket, its blotched leaf-shaped markings and ossicones clear against a pale evening sky",
     caption: "Over the top of the thicket, straight at the camera. The evening sky is the background a giraffe gives you." },
-  { file: "looking-up.jpg", animal: "giraffe", behaviours: ["walking", "sentinel"], title: "Looking Up",
+  { file: "looking-up.jpg", hours: ["morning"], animal: "giraffe", behaviours: ["walking", "sentinel"], title: "Looking Up",
     alt: "A Masai giraffe standing upright above tall green grass and looking straight at the camera, a zebra grazing head-down in the foreground to the left, and the faint outline of city towers on the skyline through grey morning haze",
     caption: "Nairobi National Park, the towers in the haze behind. Filed as urban wildlife, not nature; the plate is still the plate." },
-  { file: "spotted-hyena-at-the-den.jpg", animal: "hyena", behaviours: ["resting"], title: "Spotted Hyena at the Den",
+  { file: "spotted-hyena-at-the-den.jpg", hours: ["morning", "afternoon"], animal: "hyena", behaviours: ["resting"], title: "Spotted Hyena at the Den",
     alt: "A spotted hyena looking out from the mouth of its earthen den, ears forward",
     caption: "At the mouth of the den, ears forward. It watched the vehicle longer than the vehicle watched it." },
-  { file: "hyena-below-the-migration.jpg", animal: "hyena", behaviours: ["resting"], title: "Hyena Below the Migration",
+  { file: "hyena-below-the-migration.jpg", hours: ["morning", "midday", "afternoon"], animal: "hyena", behaviours: ["resting"], title: "Hyena Below the Migration",
     alt: "A spotted hyena sunk to the shoulders in a muddy pool, head and wet ginger back above the surface, with wildebeest standing along the skyline beyond",
     caption: "Sunk to the shoulders in a pool in the heat, the wildebeest along the skyline above. The joke is the frame's." },
-  { file: "vulture-in-flight.jpg", animal: "vulture", behaviours: ["flight"], title: "Vulture in Flight",
+  { file: "vulture-in-flight.jpg", hours: ["morning", "midday", "afternoon"], animal: "vulture", behaviours: ["flight"], title: "Vulture in Flight",
     alt: "A vulture banking low over the grass on broad dark wings as it comes in to land",
     caption: "Banking low over the grass on the way in. Broad wings, slow for a bird, and still 1/2000 to hold the tips." },
-  { file: "vulture-landing.jpg", animal: "vulture", behaviours: ["flight", "sentinel"], title: "Vulture Landing",
+  { file: "vulture-landing.jpg", hours: ["morning", "midday", "afternoon"], animal: "vulture", behaviours: ["flight", "sentinel"], title: "Vulture Landing",
     alt: "A vulture with both wings still raised, settling onto the crown of a thorn bush against a pale sky",
     caption: "Both wings still up as it settles on the thorn. The frame was got on the shooting-birds setting, not the walking-around one." },
   // the beech wood
-  { file: "a-single-mushroom.jpg", animal: "mushroom", behaviours: ["still"], title: "A Single Mushroom",
+  { file: "a-single-mushroom.jpg", hours: ["morning", "midday", "afternoon"], animal: "mushroom", behaviours: ["still"], title: "A Single Mushroom",
     alt: "One small pale mushroom seen from above, its cap finely striated from the centre to the rim, isolated against a soft blur of green moss and amber leaf litter, with a single strand of spider silk crossing the frame beside it",
     caption: "From above, the cap's striations sharp and the floor gone soft. The strand of silk stayed because it was there." },
-  { file: "puffball-with-a-fly.jpg", animal: "mushroom", behaviours: ["still"], title: "Puffball with a Fly",
+  { file: "puffball-with-a-fly.jpg", hours: ["morning", "midday", "afternoon"], animal: "mushroom", behaviours: ["still"], title: "Puffball with a Fly",
     alt: "A white puffball covered in short conical spines, resting among dark brown beech leaves on the woodland floor, with a small fly perched on the very top of it and the background falling away into shadow",
     caption: "The fly on top is the plate. Wait for it; a puffball is not going anywhere." },
-  { file: "turkeytail.jpg", animal: "mushroom", behaviours: ["still"], title: "Turkeytail",
+  { file: "turkeytail.jpg", hours: ["morning", "midday", "afternoon"], animal: "mushroom", behaviours: ["still"], title: "Turkeytail",
     alt: "A row of turkeytail bracket fungi hanging from the underside of a dark fallen log that runs diagonally across the frame, each cap banded in concentric rings of grey, brown and violet and edged with a wavy cream-white margin, above a bed of bright green moss",
     caption: "Brackets on the underside of a log. The camera has to be lower than the fungus, which means the leaf litter." },
-  { file: "the-troop.jpg", animal: "mushroom", behaviours: ["still"], title: "The Troop",
+  { file: "the-troop.jpg", hours: ["morning", "midday", "afternoon"], animal: "mushroom", behaviours: ["still"], title: "The Troop",
     alt: "A square frame packed edge to edge with rounded tawny fungus caps, each finely grooved and flecked with pale granules, pressed together in a dense mass with a wedge of dark wood and bright green moss at the top",
     caption: "Edge to edge with caps. At 1:2 the near ones are sharp and the far ones are not, and the frame is about the pattern, not the one." },
-  { file: "amber-rose-in-dappled-light.jpg", animal: "rose", behaviours: ["still"], title: "Amber Rose in Dappled Light",
+  { file: "amber-rose-in-dappled-light.jpg", hours: ["morning", "midday", "afternoon"], animal: "rose", behaviours: ["still"], title: "Amber Rose in Dappled Light",
     alt: "A yellow rose with amber-edged petals, lit unevenly by dappled sunlight against a soft garden backdrop",
     caption: "Sun through leaves, so the light is uneven by nature. The petals hold it; the shadow side is where the colour is." },
-  { file: "blush-rose-unfurling.jpg", animal: "rose", behaviours: ["still"], title: "Blush Rose Unfurling",
+  { file: "blush-rose-unfurling.jpg", hours: ["morning", "midday", "afternoon"], animal: "rose", behaviours: ["still"], title: "Blush Rose Unfurling",
     alt: "A pale pink rose caught mid-bloom, its inner petals spiralling around a soft glowing centre",
     caption: "Mid-bloom, the spiral. The depth of field is a few petals; pick which." },
-  { file: "golden-rose-in-full-bloom.jpg", animal: "rose", behaviours: ["still", "breeze"], title: "Golden Rose in Full Bloom",
+  { file: "golden-rose-in-full-bloom.jpg", hours: ["morning", "midday", "afternoon"], animal: "rose", behaviours: ["still", "breeze"], title: "Golden Rose in Full Bloom",
     alt: "A fully open yellow rose with orange-tinged petal edges, glowing in warm sunlight",
     caption: "Fully open in warm sun. Vivid would blow the yellow; this is the standard setting and the colour is the flower's own." },
-  { file: "spear-thistle.jpg", animal: "thistle", behaviours: ["still", "breeze"], title: "Spear Thistle",
+  { file: "spear-thistle.jpg", hours: ["morning", "midday", "afternoon"], animal: "thistle", behaviours: ["still", "breeze"], title: "Spear Thistle",
     alt: "A spear thistle in full flower, a dense purple crown of florets tipped with white pollen rising from a green spine-covered base, against soft green background",
     caption: "The crown in flower, the spines below it. A thistle stands still in more wind than a rose does." },
-  { file: "wild-angelica.jpg", animal: "angelica", behaviours: ["still", "breeze"], title: "Wild Angelica",
+  { file: "wild-angelica.jpg", hours: ["morning", "midday", "afternoon"], animal: "angelica", behaviours: ["still", "breeze"], title: "Wild Angelica",
     alt: "A domed umbel of tiny white flowers flushed with pink, carried on pale green spokes radiating from a single point, sharp against a deep green background thrown completely out of focus",
     caption: "An umbel on a tall stem, the kind that moves in any air. The background is gone because the lens was close, not because of the aperture." },
-  { file: "a-single-sloe.jpg", animal: "sloe", behaviours: ["still"], title: "A Single Sloe",
+  { file: "a-single-sloe.jpg", hours: ["morning", "midday", "afternoon"], animal: "sloe", behaviours: ["still"], title: "A Single Sloe",
     alt: "A single blue-black sloe hanging from a blackthorn twig, its waxy pale bloom intact and unmarked, with one green leaf below it and the rest of the hedge dissolved into soft green behind",
     caption: "The bloom on the skin is the point, and a thumb would have taken it off. Nothing touched." },
-  { file: "blackberries-ripening.jpg", animal: "bramble", behaviours: ["still", "breeze"], title: "Blackberries Ripening",
+  { file: "blackberries-ripening.jpg", hours: ["morning", "midday", "afternoon"], animal: "bramble", behaviours: ["still", "breeze"], title: "Blackberries Ripening",
     alt: "A cluster of bramble fruit at three stages on one stem, two berries fully ripe and glossy black with the dried styles still standing up from them, others still red and hard above, set against green bramble leaves and a softly blurred bank",
     caption: "Three stages on one stem. The frame is a calendar." },
-  { file: "bee-approaching-an-amber-rose.jpg", animal: "bee", behaviours: ["flight"], title: "Bee Approaching an Amber Rose",
+  { file: "bee-approaching-an-amber-rose.jpg", hours: ["morning", "midday", "afternoon"], animal: "bee", behaviours: ["flight"], title: "Bee Approaching an Amber Rose",
     alt: "A bee in flight, wings blurred with motion, coming in to land on a yellow rose with amber-pink edges",
     caption: "Coming in to land, the wings a blur and the body sharp. The wings beat faster than any shutter here; the body is what 1/2000 holds." },
-  { file: "bee-foraging-in-a-sunlit-rose.jpg", animal: "bee", behaviours: ["working"], title: "Bee Foraging in a Sunlit Rose",
+  { file: "bee-foraging-in-a-sunlit-rose.jpg", hours: ["morning", "midday", "afternoon"], animal: "bee", behaviours: ["working"], title: "Bee Foraging in a Sunlit Rose",
     alt: "A bee working the golden stamens at the centre of a yellow rose with pink-tinged petal edges",
     caption: "Head down in the stamens. It stayed while it fed, which is the only time a bee stays." },
-  { file: "bumblebee-on-golden-rose.jpg", animal: "bee", behaviours: ["working"], title: "Bumblebee on Golden Rose",
+  { file: "bumblebee-on-golden-rose.jpg", hours: ["morning", "midday", "afternoon"], animal: "bee", behaviours: ["working"], title: "Bumblebee on Golden Rose",
     alt: "A bumblebee working its way across the petals of a bright yellow rose",
     caption: "Across the petals rather than into the centre. The legs never stopped; 1/500 held the body." },
-  { file: "bumblebee-on-giant-scabious.jpg", animal: "bee", behaviours: ["working"], title: "Bumblebee on Giant Scabious",
+  { file: "bumblebee-on-giant-scabious.jpg", hours: ["morning", "midday", "afternoon"], animal: "bee", behaviours: ["working"], title: "Bumblebee on Giant Scabious",
     alt: "A bumblebee with a tawny thorax feeding on the pale primrose-yellow pincushion head of a giant scabious, seen from below against a bright overcast sky, with dark out-of-focus conifers closing both sides and the flower's tall stem running down out of the frame",
     caption: "From below, against a white sky. Bright overcast is the macro light: no hard shadow, and the meter can be trusted. The bee is a speck in the frame, though, and by this range's own count that costs a star." },
-  { file: "hoverfly-on-thistle-flower.jpg", animal: "hoverfly", behaviours: ["working"], title: "Hoverfly on Thistle Flower",
+  { file: "hoverfly-on-thistle-flower.jpg", hours: ["morning", "midday", "afternoon"], animal: "hoverfly", behaviours: ["working"], title: "Hoverfly on Thistle Flower",
     alt: "A hoverfly on a purple thistle flower",
     caption: "A hoverfly holds still on a flower for a second at a time. That second is the plate." },
-  { file: "ladybird-on-thistle.jpg", animal: "ladybird", behaviours: ["still", "crawling"], title: "Ladybird on Thistle",
+  { file: "ladybird-on-thistle.jpg", hours: ["morning", "midday", "afternoon"], animal: "ladybird", behaviours: ["still", "crawling"], title: "Ladybird on Thistle",
     alt: "A ladybird resting on a spiky thistle seed head",
     caption: "On a seed head, the spikes for scale. At 1:1 the shell is sharp and the spikes behind it are not." },
-  { file: "acacia-in-the-dawn-haze.jpg", animal: "acacia", behaviours: ["standing"], title: "Acacia in the Dawn Haze",
+  { file: "acacia-in-the-dawn-haze.jpg", hours: ["dawn"], animal: "acacia", behaviours: ["standing"], title: "Acacia in the Dawn Haze",
     alt: "A flat-topped acacia silhouetted in golden dawn haze, with wildebeest and zebra grazing beneath it",
     caption: "Amboseli at dawn, the tree a shape in the haze and the herd small beneath it. Nothing moved but the light; the shutter had all the time it wanted." },
-  { file: "acacias-under-a-storm-sky.jpg", animal: "acacia", behaviours: ["wind", "standing"], title: "Acacias Under a Storm Sky",
+  { file: "acacias-under-a-storm-sky.jpg", hours: ["morning", "midday", "afternoon"], animal: "acacia", behaviours: ["wind", "standing"], title: "Acacias Under a Storm Sky",
     alt: "Three widely spaced flat-topped acacias standing on open green grassland beneath a heavy dark blue-grey sky",
     caption: "Three trees on the Mara with the storm coming. Filed as landscape; the sky is the subject and the trees are its scale." },
-  { file: "lappet-faced-vultures.jpg", animal: "vulture", behaviours: ["feeding"], title: "Lappet-faced Vultures",
+  { file: "lappet-faced-vultures.jpg", hours: ["morning", "midday", "afternoon"], animal: "vulture", behaviours: ["feeding"], title: "Lappet-faced Vultures",
     alt: "Lappet-faced and white-backed vultures squabbling over a carcass, one with a wing fully spread",
     caption: "Two species at the carcass, one wing thrown open. Feeding is a bout, and the bout is what the plate is for." },
   // The Fifteen Acres, 19 September 2026, in mist, at 50 mm: the field with
   // deer in it, which is what that lens gives at the park's distance.
-  { file: "bucks-along-the-field.jpg", animal: "buck", behaviours: ["grazing", "alert"], title: "Bucks Along the Field",
+  { file: "bucks-along-the-field.jpg", hours: ["morning"], animal: "buck", behaviours: ["grazing", "alert"], title: "Bucks Along the Field",
     alt: "Eight fallow deer spaced along a green field under a line of trees softened by mist, a dark buck in the middle, the others pale and spotted",
     caption: "The Fifteen Acres in September mist, at 50 mm. The park's fifty metres are the photographer's to keep, so the short lens gives the field and the weather with deer in it, a fortieth of the frame each. The long zoom is for the deer." },
-  { file: "the-herd-in-mist.jpg", animal: "doe", behaviours: ["grazing"], title: "The Herd in Mist",
+  { file: "the-herd-in-mist.jpg", hours: ["morning"], animal: "doe", behaviours: ["grazing"], title: "The Herd in Mist",
     alt: "A fallow deer herd bunched in a line on green grass, antlers among the does, a soft tree line and a grey sky behind",
     caption: "The same morning, the herd bunched. Does and bucks together in September; by October the bucks have their own business, and no frame of that yet." }
 ];
@@ -537,28 +565,28 @@ const PLATES = [
    the archive at site size, as shot except for a healed dust spot;
    captions may state settings, because the settings are the point. */
 const MISSES = [
-  { file: "the-line-before-the-sun.jpg", scene: "empty", fault: "dark", animal: "zebra", title: "The Line Before the Sun",
+  { file: "the-line-before-the-sun.jpg", hours: ["dawn"], scene: "empty", fault: "dark", animal: "zebra", title: "The Line Before the Sun",
     alt: "A frame that is almost black, with a faint pale stripe across its lower third where a line of zebra stood on a dark plain under a dark sky",
     caption: "Amboseli, ten minutes before the sun, on the dial from the afternoon before: 1/4000 s at f/22 and the ISO at its cap. Black, with a paler stripe where the zebra were. Four minutes later the same dial made Zebra in the Morning Dust, with the sun in the frame." },
-  { file: "gazelle-at-a-sixtieth.jpg", fault: "slow", animal: "gazelle", title: "Gazelle at a Sixtieth",
+  { file: "gazelle-at-a-sixtieth.jpg", hours: ["dawn"], fault: "slow", animal: "gazelle", title: "Gazelle at a Sixtieth",
     alt: "A Thomson's gazelle walking through long grass, the whole animal smeared with movement, grass stems blurred across the foreground",
     caption: "Nairobi at first light, 1/60 s on the 400 mm from a vehicle with the engine running. The spotter would have asked 1/250 for a walk; the frame is soft where it moved, and everywhere else." },
-  { file: "lioness-at-a-twenty-five-hundredth.jpg", fault: "fast", animal: "lion", title: "Lioness at a Twenty-five-hundredth",
+  { file: "lioness-at-a-twenty-five-hundredth.jpg", hours: ["morning"], fault: "fast", animal: "lion", title: "Lioness at a Twenty-five-hundredth",
     alt: "A lioness lying on a track in morning light with her head up, looking to the right, green grass behind her",
     caption: "The Mara at seven in the morning, on the shooting-birds setting: 1/2500 s for an animal that was lying down, and ISO 3200 to pay for it. Sharp, and grainy for nothing; a 125th would have done." },
-  { file: "wildebeest-at-dusk.jpg", fault: "noise", title: "Wildebeest at Dusk",
+  { file: "wildebeest-at-dusk.jpg", hours: ["dusk"], fault: "noise", title: "Wildebeest at Dusk",
     alt: "Two wildebeest walking across a dark plain at dusk beneath a mountain, the sky orange behind the ridge, the whole frame dim and grainy",
     caption: "Amboseli at dusk: ISO 2800 at 1/60 s and f/29, the aperture left from the afternoon. The grain is in the shadows and the colour is in the grain, and a sixtieth did not hold the walk either." },
-  { file: "elephants-at-eighteen.jpg", scene: "empty", fault: "small", animal: "elephant", title: "Elephants at Eighteen Millimetres",
+  { file: "elephants-at-eighteen.jpg", hours: ["morning", "midday", "afternoon"], scene: "empty", fault: "small", animal: "elephant", title: "Elephants at Eighteen Millimetres",
     alt: "A wide view of open grassland under a blue sky with two flat-topped trees, and a few elephants as specks beneath the further one",
     caption: "The Mara at the wide end, 18 mm, with the herd under the far tree. The place is in the frame and the elephants are a texture; the zoom ring or the driver would have fixed it, and the shutter could not." },
-  { file: "flamingo-at-the-edge.jpg", fault: "cut", title: "Flamingo at the Edge",
+  { file: "flamingo-at-the-edge.jpg", hours: ["morning", "midday", "afternoon"], fault: "cut", title: "Flamingo at the Edge",
     alt: "Three greater flamingos feeding head-down in still grey water with their reflections beneath them, and a fourth cut off by the left edge of the frame",
     caption: "Amboseli under flat cloud: three birds and their reflections, and a fourth the frame edge took. A little water on the left would have cost nothing." },
-  { file: "elephants-at-f40.jpg", fault: "diffraction", animal: "elephant", title: "Elephants at f/40",
+  { file: "elephants-at-f40.jpg", hours: ["midday"], fault: "diffraction", animal: "elephant", title: "Elephants at f/40",
     alt: "A family of elephants with calves feeding in green marsh grass with egrets around them, in full sun",
     caption: "Amboseli in the middle of the day at f/40 and 1/60 s, the dial nobody had looked at since the day before. The depth was there already; at f/40 the pixels paid for it, and the whole frame is soft at 100%." },
-  { file: "ostrich-in-the-haze.jpg", scene: "blurred", fault: "miss", title: "Ostrich in the Haze",
+  { file: "ostrich-in-the-haze.jpg", hours: ["dawn", "morning"], scene: "blurred", fault: "miss", title: "Ostrich in the Haze",
     alt: "A male ostrich as a soft dark shape at the bottom right of a frame that is almost all pale grey haze, a blurred band of long grass along the lower edge",
     caption: "Nairobi in the first haze: the lens was still hunting when the shutter went, nothing under the centre of the frame was an animal, and the meter took the sky to white. The third press found him." }
 ];
@@ -1087,9 +1115,10 @@ function mulberry(seed) {
 function wantedFor(rangeKey) {
   return Object.keys(RANGES[rangeKey].cast).filter(k => !PLATES.some(p => p.animal === k));
 }
-function plateFor(animal, behaviour, rnd) {
-  const exact = PLATES.filter(p => p.animal === animal && p.behaviours.includes(behaviour));
-  const any = exact.length ? exact : PLATES.filter(p => p.animal === animal);
+function plateFor(animal, behaviour, rnd, clock) {
+  const now = PLATES.filter(p => atHour(p, clock));
+  const exact = now.filter(p => p.animal === animal && p.behaviours.includes(behaviour));
+  const any = exact.length ? exact : now.filter(p => p.animal === animal);
   if (!any.length) return null;
   return any[Math.floor(rnd() * any.length) % any.length];
 }
@@ -1105,15 +1134,15 @@ function plateFor(animal, behaviour, rnd) {
    for a flat-topped acacia: a miss frame may show a blurred or empty
    scene, never a different kind of animal, and if the animal is still
    recognisable it may only be used as a miss for its own kind). */
-function missFor(fault, animal, rnd) {
-  const same = MISSES.filter(m => m.fault === fault);
+function missFor(fault, animal, rnd, clock) {
+  const same = MISSES.filter(m => m.fault === fault && atHour(m, clock));
   const own = animal ? same.filter(m => m.animal === animal) : [];
   const any = own.length ? own : same.filter(m => m.scene);
   if (!any.length) return null;
   return any[Math.floor(rnd() * any.length) % any.length];
 }
 
-const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, BANK, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, missFor, skyAt, STILL, DAYS, CLOCK_RATE,
+const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, BANK, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, HOURS, hourOf, atHour, missFor, skyAt, STILL, DAYS, CLOCK_RATE,
                 APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
                 score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, evAt, EDGE_DROP, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
@@ -1563,7 +1592,7 @@ function fire() {
   const exp = exposeFor(state.mode, state.shutter, state.aperture, lightNow(), a ? behaviour : null, scaleFor(state.range), lensFor(state.range, state.body), state.support, BODIES[state.body]);
   const v = score(exp, behaviour, framing, state.light, a ? a.key : null, scaleFor(state.range), state.support, pullsFor(state.range)[state.pull], BODIES[state.body]);
   if (a && a.spooked > 0 && v.stars > 0) { v.lines.unshift(RANGES[state.range].seat === "walk" ? WORDS.walked : WORDS.spooked); }
-  const frame = a && v.stars > 0 ? plateFor(a.key, behaviour, state.rnd) : null;
+  const frame = a && v.stars > 0 ? plateFor(a.key, behaviour, state.rnd, state.clock) : null;
   // the day's record, for the end-of-day card: every shot, kept or not
   const why = !framing || !framing.inside ? "miss" : framing.dark ? "dark" : null;
   const dd = why ? 0 : shutterIndex(exp.shutter, scaleFor(state.range)) - shutterIndex(v.asked, scaleFor(state.range));
@@ -1571,7 +1600,7 @@ function fire() {
   const fault = why || (exp.under >= 0.5 ? "dark" : dd <= -1 ? "slow" : framing.cut ? "cut" : framing.fill < 0.10 ? "small" : (dd >= 1 && exp.iso > 400) ? "fast" : exp.aperture >= body.diffraction.plain ? "diffraction" : exp.iso >= body.noiseFrom ? "noise" : null);
   (state.day = state.day || []).push({ stars: v.stars, keeper: v.keeper, animal: a ? a.key : null, behaviour: a ? behaviour : null, fault: v.keeper && v.stars === 3 ? null : fault });
   // a folder plate shows the frame the author got wrong the same way, if there is one
-  const miss = !v.keeper && fault ? missFor(fault, a ? a.key : null, state.rnd) : null;
+  const miss = !v.keeper && fault ? missFor(fault, a ? a.key : null, state.rnd, state.clock) : null;
   const plate = { when: Date.now(), range: state.range, light: state.light, shutter: exp.shutter, aperture: exp.aperture, mode: exp.mode,
                   animal: a ? a.key : null, behaviour: a ? behaviour : null, stars: v.stars, keeper: v.keeper, lines: v.lines, iso: v.iso,
                   prize: !!v.prize, frame: frame ? frame.title : null, asked: v.asked, support: state.support, body: BODIES[state.body].name };

@@ -340,6 +340,56 @@ for (const a in R.ANIMALS) for (const b in R.ANIMALS[a].states) {
   if (p && R.PLATES.some(x => x.animal === a && x.behaviours.includes(b)) && !p.behaviours.includes(b)) fail("plateFor skipped an exact frame for " + a + " " + b);
   checks++;
 }
+// hours: every frame names the parts of the day it was taken in, HOURS
+// covers every minute of the clock exactly once, and at every stop of every
+// range's day plateFor and missFor show only a frame of that hour (2026-10-23)
+for (const f of R.PLATES.concat(R.MISSES)) {
+  if (!Array.isArray(f.hours) || !f.hours.length) fail("frame " + f.title + " names no hours");
+  for (const h of f.hours || []) if (!R.HOURS[h]) fail("frame " + f.title + " names hour " + h + ", not in HOURS");
+  ok();
+}
+for (let t = 0; t < 1440; t++) {
+  let n = 0;
+  for (const k in R.HOURS) {
+    const a = R.hm(R.HOURS[k].from), e = R.hm(R.HOURS[k].to);
+    if (a < e ? t >= a && t < e : t >= a || t < e) n++;
+  }
+  if (n !== 1) fail("HOURS covers " + R.clockLabel(t) + " " + n + " times");
+  if (!R.hourOf(t)) fail("hourOf gives nothing at " + R.clockLabel(t));
+}
+ok();
+const faults = [...new Set(R.MISSES.map(m => m.fault))];
+for (const k in R.RANGES) {
+  const day = R.dayFor(k);
+  if (!day) continue;
+  for (const leg of day) {
+    if (R.stopsFor(leg)) continue;
+    const unmet = new Set();
+    for (let t = R.hm(leg.from); t < R.hm(leg.to); t += 5) {
+      const h = R.hourOf(t);
+      for (const a in R.RANGES[k].cast) {
+        for (const b in R.ANIMALS[a].states) {
+          const p = R.plateFor(a, b, R.mulberry(3), t);
+          if (p && !p.hours.includes(h)) fail("plateFor showed " + p.title + " (" + p.hours.join(", ") + ") at " + R.clockLabel(t) + " on " + R.RANGES[k].name);
+          if (!p && R.PLATES.some(x => x.animal === a && x.hours.includes(h))) fail("plateFor gave nothing for " + a + " at " + R.clockLabel(t) + ", though a frame of that hour exists");
+          if (!p && R.PLATES.some(x => x.animal === a)) unmet.add(R.ANIMALS[a].name + " (" + h + ")");
+          checks++;
+        }
+        for (const fault of faults) {
+          const m = R.missFor(fault, a, R.mulberry(3), t);
+          if (m && !m.hours.includes(h)) fail("missFor showed " + m.title + " (" + m.hours.join(", ") + ") at " + R.clockLabel(t) + " on " + R.RANGES[k].name);
+          if (m && m.animal !== a && !m.scene) fail("missFor showed " + m.title + ", a different animal, at " + R.clockLabel(t));
+          checks++;
+        }
+      }
+    }
+    // the author's note: animals with frames, none of them of this stop's hour
+    if (unmet.size) console.log("  no frame of the hour, " + R.RANGES[k].name + ", " + leg.name + ": " + [...unmet].join(", "));
+  }
+}
+if (R.plateFor("topi", "sentinel", R.mulberry(3), R.hm("06:30")).title !== "Topi at Sunrise") fail("plateFor skipped Topi at Sunrise at first light");
+if (R.plateFor("topi", "sentinel", R.mulberry(3), R.hm("17:00")).title === "Topi at Sunrise") fail("plateFor showed Topi at Sunrise in the afternoon");
+ok();
 
 // scorer
 const framings = [
