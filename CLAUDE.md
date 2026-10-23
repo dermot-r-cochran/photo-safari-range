@@ -102,6 +102,20 @@ JPEGs carry no EXIF, so a tag read from the light is a judgement, and
 the originals on `F:` can correct it. A stop with no frame of its hour
 shows the crop alone; `tools/check.js` prints those stops as a note.
 
+## A frame the portfolio took down is a miss, never a keeper
+
+Dermot, 2026-10-23: *pull in more photos from my site as needed,
+including unlisted as negative examples*. The portfolio's own rule is
+that its unlisted pages are the negative examples of its bar, so a frame
+it unlisted for quality goes in `MISSES` with the fault the portfolio
+named, never in `PLATES`. *Vulture Landing* (wing edges moving: `slow`),
+*Puffball with a Fly* (focus past the subject: `miss`) and *Bumblebee on
+Giant Scabious* (a speck: `small`) moved there that day; *African Fish
+Eagle* (soft all over, for no cause the record names) left the game,
+since no fault here describes it. A page unlisted as a duplicate is not
+a quality unlisting and may stay a plate. Before adding a plate, check
+the portfolio page carries no `unlisted: true`.
+
 ## The one rule the game teaches
 
 The shutter follows the animal. Every behaviour in `BEHAVIOURS` carries
@@ -178,8 +192,10 @@ light with `lamp: 1` (dark outside a circle that follows the aim; an
 animal outside it cannot be focused or shot, and the ISO is 3200 at every
 shutter), animals marked `prize` (a keeper is a "hard plate", counted on
 the sheet) and `night` (spawns only on a lamp light). A range lists its
-`lights`; the default is the three day windows. There are no frames for
-these animals yet; the plate shows the crop alone until he has been.
+`lights`; the default is the three day windows. Until he has been, the
+leopard, the serval and the hippo show his Kenyan frames, each caption
+naming the place it is not (Dermot, 2026-10-23: *pull in more photos
+from my site as needed*); the rest show the crop alone.
 
 ## Night Sky
 
@@ -211,7 +227,7 @@ f/11 and the effective aperture two stops darker at 1:1. Behaviours
 `still` (1/125, the hand-held floor at 70 mm), `breeze` (1/250),
 `working` (1/500) and `crawling` (1/250); insects `spook` on foot. Three
 lights: bright overcast (the macro light), dappled sun, the woodland
-floor. Seventeen frames from the portfolio's Macro and Nature pages;
+floor. Fifteen frames from the portfolio's Macro and Nature pages;
 two are stored under their page slug because the site file is a camera
 name (dsc_1030, dsc_1000). Aperture is still not a control the player
 sets; the pulls carry its cost in words. If that ever changes, it is a
@@ -494,7 +510,7 @@ repositories).
 
 - **`dermot-r-cochran/dermot-cochran-photography`** supplies the frames in
   `PLATES` and `MISSES` (copies at site size under the portfolio's
-  CC BY-NC-ND terms, 57 at the time of writing) and the field notes the
+  CC BY-NC-ND terms, 63 at the time of writing) and the field notes the
   thresholds follow, as *The one rule the game teaches* says. Copies, not
   links: a frame unlisted or re-edited there stays as it was here until
   someone copies it again, and the portfolio's pull requests say so when a
