@@ -451,6 +451,22 @@ const out = R.measureFrame({ x: 600, y: 150, w: 80, h: 50 }, plate);
 if (out.inside) fail("a box outside the plate reads as inside");
 ok();
 
+// the Asked panel's empty lines follow the seat: a seat that cannot move
+// is never told to drive or walk, and a seat that can is told which
+for (const k in R.RANGES) {
+  const seat = R.RANGES[k].seat;
+  if (!R.SEAT_WORDS[seat]) fail("range " + k + " sits " + seat + ", a seat the Asked panel has no empty lines for");
+  for (const where of ["frame", "range"]) {
+    const line = R.emptyWords(k, where);
+    if (!line) fail("range " + k + " has no empty " + where + " line");
+    const moves = /\b(drive|walk)\b/i.test(line);
+    if ((seat === "hide" || seat === "tripod") && moves) fail("range " + k + " sits " + seat + " but its empty " + where + " line says to move: " + line);
+    if (seat === "drive" && !/\bdrive\b/i.test(line)) fail("range " + k + " drives but its empty " + where + " line does not say drive: " + line);
+    if (seat === "walk" && !/\bwalk\b/i.test(line)) fail("range " + k + " walks but its empty " + where + " line does not say walk: " + line);
+  }
+  ok();
+}
+
 // spawn plan: deterministic, spaced, valid
 for (const k in R.RANGES) {
   const a = R.spawnPlan(k, 14, R.mulberry(7)), b = R.spawnPlan(k, 14, R.mulberry(7));

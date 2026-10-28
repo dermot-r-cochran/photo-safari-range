@@ -36,9 +36,12 @@ The loop, in four beats:
    aperture priority, not a driving key; a tap is a nudge at his own pace, a key
    held past a second is hurrying him. On foot the same keys walk you
    closer or back, and the pad's buttons say Walk rather than Driver. In
-   the hide and at the tripod nothing moves but the animals, and the pad
-   shows no mover at all. *No test yet: the driver and the pad live in
-   the page's document code, which `tools/check.js` does not load.*
+   the hide and at the tripod nothing moves but the animals, the pad
+   shows no mover at all, and the Asked panel, with nothing in the frame,
+   says sit still rather than drive closer. *`tools/check.js`, check "the
+   Asked panel's empty lines follow the seat"; the driver and the pad
+   themselves live in the page's document code, which the check does not
+   load, and have no test yet.*
 2. **Camera** up. At the stop it comes up by itself on what was called;
    Space raises it at any other time. The plate rectangle follows the
    mouse or the arrow keys; Z zooms through wide, normal and tight (on the
