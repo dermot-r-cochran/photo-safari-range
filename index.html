@@ -906,6 +906,20 @@ const WORDS = {
   dark:     "Outside the lamp. Nothing to expose."
 };
 
+/* What the Asked panel says when nothing is under the centre of the frame
+   (`frame`) or nothing is on the range with the camera down (`range`),
+   by seat. The jeep can drive closer and the walker can walk; in the hide
+   and at the tripod nothing moves but the subjects, so those lines say
+   wait, in the guide's own words from the start of the sit. Added
+   2026-10-28: until then every seat was told to drive closer, the hide
+   included, and the hide is where the page opens. */
+const SEAT_WORDS = {
+  drive:  { frame: "Nothing in the frame. Move the aim, or drive closer.", range: "Nothing on the range yet. Drive on." },
+  walk:   { frame: "Nothing in the frame. Move the aim, or walk closer.",  range: "Nothing on the range yet. Walk on." },
+  hide:   { frame: "Nothing in the frame. Move the aim. Sit still; the water brings them.", range: "Nothing at the water yet. Sit still; the water brings them." },
+  tripod: { frame: "Nothing in the frame. Move the aim. The Earth turns; that is the movement.", range: "Nothing in the sky yet. Your eyes take twenty minutes." }
+};
+
 /* ================================ ENGINE ================================ */
 
 // ---- pure section: no document, no canvas; tools/check.js loads to here ----
@@ -920,6 +934,12 @@ function shutterLabel(s) { return typeof s === "number" ? "1/" + s : s; }
 // hand-held floor for them by two stops on the scale. A moving subject
 // asks the same shutter on a support as off it.
 const STILL = { resting: 1, sentinel: 1, drinking: 1, feeding: 1, standing: 1, still: 1, sunlit: 1 };
+// The Asked panel's line for an empty frame or an empty range, by the
+// range's seat; a seat without words of its own gets the jeep's.
+function emptyWords(rangeKey, where) {
+  const seat = (RANGES[rangeKey] || {}).seat;
+  return (SEAT_WORDS[seat] || SEAT_WORDS.drive)[where];
+}
 function askedFor(behaviour, support, scale) {
   const B = BEHAVIOURS[behaviour];
   scale = scale || "day";
@@ -1165,7 +1185,7 @@ function missFor(fault, animal, rnd, clock) {
 
 const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, BANK, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, HOURS, hourOf, atHour, missFor, skyAt, STILL, DAYS, CLOCK_RATE,
                 APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
-                score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, evAt, EDGE_DROP, pick, mulberry };
+                SEAT_WORDS, emptyWords, score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, evAt, EDGE_DROP, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
 
 // ---- page section: everything below needs a document ----
@@ -1560,7 +1580,7 @@ function refreshFocus() {
       const tip = advise(previewExposure(), a.behaviour, scaleFor(state.range), state.support, pullsFor(state.range)[state.pull], RANGES[state.range].seat);
       if (tip) { say("Guide", tip); state.nextTip = state.t + 10; }
     }
-  } else $("asked").textContent = "Nothing in the frame. Move the aim, or " + (RANGES[state.range].seat === "walk" ? "walk" : "drive") + " closer.";
+  } else $("asked").textContent = emptyWords(state.range, "frame");
   drawHud();
 }
 
@@ -1573,7 +1593,7 @@ function onRange() {
 function refreshRange() {
   const list = onRange();
   const el = $("asked");
-  if (!list.length) { el.textContent = "Nothing on the range yet. " + (RANGES[state.range].seat === "walk" ? "Walk on." : "Drive on."); return; }
+  if (!list.length) { el.textContent = emptyWords(state.range, "range"); return; }
   el.innerHTML = "<span class='dim'>On the range, nearest first:</span><br>" + list.map(a => {
     const A = ANIMALS[a.key], B = BEHAVIOURS[a.behaviour], b = boxOf(a);
     const side = A.sky ? "" : (b.x + b.w / 2 > JEEP_X ? ", right" : ", left");

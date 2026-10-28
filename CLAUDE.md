@@ -317,6 +317,20 @@ on", "A or D: drive on") say walk on a walk seat. `buildCamp` calls
 begins. Keyed on `seat`, not `country`: a future walked range anywhere
 gets it, and a driven one in Ireland would not.
 
+## The Asked panel's empty lines follow the seat too
+
+Found 2026-10-28 on a cold play of the page as it opens: in the hide,
+with nothing under the centre of the frame, the Asked panel said *Move
+the aim, or drive closer*, and with the camera down, *Drive on*; the
+hide has no mover, and the HUD and the pad already knew it. The two
+lines were keyed on walk against everything else. `SEAT_WORDS` in the
+world data now carries a `frame` and a `range` line per seat (the jeep
+drives, the walker walks, the hide and the tripod say wait in the
+guide's own words from the start of the sit), `emptyWords(range, where)`
+in the pure section reads them, and the check holds a seat that cannot
+move to never being told to, and a seat that can to being told which.
+A new seat gets the jeep's lines until it has its own.
+
 ## Three mode buttons, the range sets out, the level follows the clock
 
 Dermot, 2026-09-19, three directions in one line. **The mode dial is
