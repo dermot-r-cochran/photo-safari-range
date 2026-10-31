@@ -524,7 +524,7 @@ repositories).
 
 - **`dermot-r-cochran/dermot-cochran-photography`** supplies the frames in
   `PLATES` and `MISSES` (copies at site size under the portfolio's
-  CC BY-NC-ND terms, 63 at the time of writing) and the field notes the
+  CC BY-NC-ND terms, 65 at the time of writing) and the field notes the
   thresholds follow, as *The one rule the game teaches* says. Copies, not
   links: a frame unlisted or re-edited there stays as it was here until
   someone copies it again, and the portfolio's pull requests say so when a
