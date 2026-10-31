@@ -271,7 +271,7 @@ learned on**: the author's own photograph of that animal doing that thing,
 from the outings the range was written from, with your crop inset in the
 corner and a caption that says what the frame is. It is a comparison, not
 the answer: the stars and the verdict are about your plate; the photograph
-is what the same moment looked like when it was got. Fifty-two frames
+is what the same moment looked like when it was got. Fifty-three frames
 so far, under `images/`, at portfolio size, chosen by animal and
 behaviour; an animal with no frame yet shows the crop alone with the line
 "The author has no photograph of this one yet, so the crop stands
