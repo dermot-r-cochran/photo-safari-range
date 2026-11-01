@@ -303,6 +303,17 @@ const BEHAVIOURS = {
   wheel:    { asked: "8m",     verb: "Wheeling", note: "Around the pole the stars draw arcs. Minutes, a still tripod, and no wind in the legs." },
   streak:   { asked: "30s",    verb: "Streak",   note: "You cannot time a meteor. Leave the shutter open and let the sky decide." }
 };
+// How fast each behaviour carries its animal along the ground, in scene
+// units per second at the near line; 0 holds it where it stands. Every
+// behaviour above needs an entry: a behaviour without one made its
+// animal's position NaN, and it vanished from the range for good (the
+// Fifteen Acres' alert, groaning and sparring, found 2026-11-01). The
+// check holds the two tables to each other.
+const SPEED = { resting: 0, sentinel: 0, grazing: 8, drinking: 0, walking: 40, stalking: 22, running: 220, feeding: 0, flight: 140,
+                standing: 0, wind: 0,
+                still: 0, breeze: 0, working: 3, crawling: 6,
+                alert: 0, groaning: 0, sparring: 0,
+                sunlit: 0, points: 0, core: 0, wheel: 0, streak: 320 };
 
 // Animals. `size` is body length in scene units at the near line (1 unit
 // = 1 px at 1280 wide); `states` weight the behaviours; `shape` picks a
@@ -1189,7 +1200,7 @@ function missFor(fault, animal, rnd, clock) {
   return any[Math.floor(rnd() * any.length) % any.length];
 }
 
-const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, ANIMALS, RANGES, BANK, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, HOURS, hourOf, atHour, missFor, skyAt, STILL, DAYS, CLOCK_RATE,
+const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, SPEED, ANIMALS, RANGES, BANK, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, HOURS, hourOf, atHour, missFor, skyAt, STILL, DAYS, CLOCK_RATE,
                 APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
                 SEAT_WORDS, emptyWords, score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, evAt, EDGE_DROP, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
@@ -1330,11 +1341,6 @@ function say(who, text) {
   state.radio = { who, text }; state.radioUntil = state.t + 6;
   const r = $("radio"); r.hidden = false; r.innerHTML = "<b>" + who + "</b><br>" + text;
 }
-
-// Behaviour speeds in scene units per second at the near line.
-const SPEED = { resting: 0, sentinel: 0, grazing: 8, drinking: 0, walking: 40, stalking: 22, running: 220, feeding: 0, flight: 140,
-                sunlit: 0, points: 0, core: 0, wheel: 0, streak: 320, standing: 0, wind: 0,
-                still: 0, breeze: 0, working: 3, crawling: 6 };
 
 // The clock: advance it, and when it enters a new leg set the light, or
 // stop for the card, or end the day. A stop never interrupts a shot: with
