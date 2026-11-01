@@ -405,12 +405,31 @@ memory): don't add a body he does not carry.
 
 An animal: add to `ANIMALS` with `name`, `latin`, `size`, `shape` (one of
 the silhouettes the engine draws: horse, antelope, bovid, elephant, cat,
-upright, bird), `colour`, `states` (weights over `BEHAVIOURS`), `spook`
-(0 for animals that do not run from a jeep), `fly` for birds. A behaviour:
-add to `BEHAVIOURS` with `asked` (a `SHUTTERS` denominator), `verb`,
-`note`, and a speed in the engine's `SPEED` table if it moves. A range:
-add to `RANGES` with `seat` (drive or hide), sky and ground colours, a
-`note` in the register, and a `cast`. Then `node tools/check.js`.
+giraffe, upright, bird, blob, tree, and the wood's mushroom, flower,
+berry, insect and ladybird; the sky's moon, stars, pole, core and
+meteor), `colour`, `states` (weights over `BEHAVIOURS`), `spook` (0 for
+animals that do not run from a jeep), `fly` for birds. A behaviour: add
+to `BEHAVIOURS` with `asked` (a shutter on the range's scale), `verb` and
+`note`, and its speed to `SPEED` beside it, 0 if it stands. A range: add
+to `RANGES` with `seat` (drive, hide, walk or tripod), a `country` and a
+`place`, a `lens`, sky and ground colours, a `note` in the register, and
+a `cast`. Then `node tools/check.js`.
+
+## Every behaviour has a speed, and the speed is world data
+
+Found 2026-11-01 on a read of the step: `SPEED`, the table of how fast
+each behaviour carries its animal along the ground, sat in the page
+section, so the check could not see it, and the three Fifteen Acres
+behaviours added on 2026-09-19 (`alert`, `groaning`, `sparring`) had no
+entry. `SPEED[behaviour]` was undefined, the animal's `x` became NaN on
+the first tick, and it was never drawn, listed, called properly or
+respawned again: a rutting buck left the range the moment it groaned,
+and every deer left the moment it went alert, so the Fifteen Acres
+emptied of deer within a minute or two of setting out. `SPEED` now sits
+in the world data under `BEHAVIOURS`, with the three at 0 (groaning's
+note says he stands to do it; alert and sparring hold the animal where
+it is), and the check holds every behaviour to a finite speed and every
+speed to a behaviour. The engine's three reads of it are unchanged.
 
 ## Publishing
 

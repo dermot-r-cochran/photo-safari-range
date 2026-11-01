@@ -44,8 +44,13 @@ for (const k in R.BEHAVIOURS) {
   const b = R.BEHAVIOURS[k];
   if (!allShutters.has(b.asked)) fail("behaviour " + k + " asks for " + b.asked + ", not a shutter on any scale");
   if (!b.verb || !b.note) fail("behaviour " + k + " has no verb or note");
+  // every behaviour moves its animal at a speed, 0 included: without one the
+  // position went NaN and the animal left the range for good (the Fifteen
+  // Acres' alert, groaning and sparring, 2026-09-19 to 2026-11-01)
+  if (!Number.isFinite(R.SPEED[k])) fail("behaviour " + k + " has no speed in SPEED");
   ok();
 }
+for (const k in R.SPEED) if (!R.BEHAVIOURS[k]) fail("SPEED names " + k + ", not a behaviour");
 // every animal a range casts asks only for shutters on that range's scale,
 // and every light a range offers is priced on that scale
 for (const k in R.RANGES) {

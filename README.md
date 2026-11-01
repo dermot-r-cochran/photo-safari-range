@@ -289,11 +289,12 @@ portfolio.
 
 `tools/check.js` loads the page's script into a bare VM context — no
 `document`, so the page never boots — and holds the world data and the
-scorer to shape: every behaviour asks for a shutter the camera has, every
-animal's states are behaviours, every range's cast is animals, every light
-prices every shutter, the scorer stays within 0–3 and a matched shutter
-with a clean frame is always a keeper, and a spawn plan is deterministic
-and spaced. CI runs it and installs nothing.
+scorer to shape: every behaviour asks for a shutter the camera has and
+names a ground speed, 0 included, every animal's states are
+behaviours, every range's cast is animals, every light prices every
+shutter, the scorer stays within 0–3 and a matched shutter with a clean
+frame is always a keeper, and a spawn plan is deterministic and spaced.
+CI runs it and installs nothing.
 
 Each capability in the lists above names the check in `tools/check.js`
 that proves it, by the comment it sits under, or says it has no test yet
