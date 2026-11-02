@@ -67,8 +67,11 @@ that, and they are the `four-islands-quest` rules this repository inherits:
   (Dermot, 2026-09-25, in those words, after the game showed flamingos
   for a flat-topped acacia). The test is the frame, not the subject: a
   miss marked `scene` ("blurred" or "empty") has no animal in it a
-  viewer could name (a black frame with a pale stripe, specks under a
-  tree, a soft shape in haze) and the lesson is the same under any
+  viewer could name (a soft shape in haze, *Ostrich in the Haze*; *The
+  Line Before the Sun* and *Elephants at Eighteen Millimetres* were marked
+  empty until 2 November 2026, when the zebra frame showed for a meteor
+  and a look found the animals in both plainly nameable, so each stands
+  for its own kind now) and the lesson is the same under any
   heading, so it stands in for any subject; a frame without the mark
   shows an animal that can still be named, however soft, and stands in
   for that animal alone, or, where the animal is in no cast (the
