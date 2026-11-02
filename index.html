@@ -153,6 +153,7 @@
   @media (max-width: 60rem), (pointer: coarse) {
     .layout { flex-direction: column; padding: 0.6rem 0.8rem 3rem; gap: 0.8rem; }
     aside { position: static; flex: 1 1 auto; width: 100%; }
+    main { width: 100%; }
     header { padding: 0.7rem 0.8rem 0.5rem; }
     header h1 { font-size: 1.15rem; }
     header .sub { display: none; }
@@ -163,8 +164,9 @@
     #radio { font-size: 0.75rem; padding: 0.25rem 0.5rem; max-width: 70%; }
     #focus button { font-size: 0.7rem; }
     #body { padding: 0.5rem 0.6rem; }
-    #body .plate { grid-template-columns: auto 1fr auto; gap: 0.5rem; }
-    #body .lcd { font-size: 0.85rem; gap: 0.2rem 0.6rem; padding: 0.35rem 0.5rem; }
+    #body .plate { grid-template-columns: auto minmax(0, 1fr) auto; gap: 0.5rem; }
+    #body .lcd { font-size: 0.85rem; gap: 0.2rem 0.6rem; padding: 0.35rem 0.5rem; min-width: 0; }
+    #body .lcd .seg { white-space: normal; }
     #body .back { gap: 0.4rem 0.9rem; }
   }
 </style>
@@ -870,8 +872,8 @@ function apertureBand(N) { return N <= 4 ? "wide" : N <= 8 ? "mid" : N <= 11 ? "
 const COACH = {
   none: "No shots today. The subjects were there, and the camera raised on one is where the spotter's call starts.",
   all: "Every shot a keeper today. Nothing to coach: go and shoot.",
-  good: "A good day: {keepers} keepers from {shots} shots, {stars} with three stars.",
-  hard: "A hard day, and the honest kind: {keepers} keepers from {shots} shots. The folder is where the learning is.",
+  good: "A good day: {keepers} kept from {shots}, {stars} with three stars.",
+  hard: "A hard day, and the honest kind: {keepers} kept from {shots}. The folder is where the learning is.",
   best: "The one to keep: {animal}, {verb}.",
   once: "One thing for tomorrow. ",
   often: "The same thing {n} times today, so one thing for tomorrow. ",
@@ -1293,6 +1295,9 @@ function begin() {
   // the light: the day's first window, else the one chosen at camp
   const lights = lightsFor(state.range);
   state.light = lights.includes(state.lightChoice[state.range]) ? state.lightChoice[state.range] : lights[0];
+  // the header names the range set out on from the first minute, not the
+  // one lit at camp when the button was pressed
+  $("range-line").textContent = R.name + " · " + LIGHTS[state.light].name;
   const aps = lensApertures(lensFor(state.range, state.body));
   if (!aps.includes(state.aperture)) state.aperture = aps.includes(8) ? 8 : aps[0];
   // the support you brought: at the tripod range it is the tripod, always;
@@ -1388,7 +1393,7 @@ function dayReport() {
   const fill = (t, v) => t.replace(/\{(\w+)\}/g, (m, k) => v[k]);
   const out = [];
   if (keepers === shots) out.push(COACH.all);
-  else out.push(fill(keepers * 2 >= shots ? COACH.good : COACH.hard, { keepers, shots, stars }));
+  else out.push(fill(keepers * 2 >= shots ? COACH.good : COACH.hard, { keepers, shots: shots + (shots === 1 ? " shot" : " shots"), stars }));
   const best = day.filter(x => x.animal && x.keeper).sort((a, b) => b.stars - a.stars)[0];
   if (best) out.push(fill(COACH.best, { animal: ANIMALS[best.animal].name, verb: BEHAVIOURS[best.behaviour].verb.toLowerCase() }));
   if (keepers < shots) {
@@ -1707,6 +1712,9 @@ function showPlate(plate, img, frame, miss) {
   if (plate.stars === 0) keep.disabled = true;
   row.append(keep, drop); div.appendChild(row);
   $("plates").prepend(div);
+  // the card lands below the camera body; bring it into view, moving the
+  // page only when it is off-screen
+  div.scrollIntoView({ block: "nearest", behavior: "smooth" });
 }
 
 function save() { localStorage.setItem("psr.sheet", JSON.stringify(state.sheet)); drawSheet(); }
