@@ -103,7 +103,7 @@
   .plate figure.learned { margin: 0.5rem 0; position: relative; }
   .plate figure.learned img { display: block; width: 100%; height: auto; border-radius: 4px; }
   .plate figure.learned canvas.inset {
-    position: absolute; right: 0.5rem; bottom: 2.9rem; width: 28%; margin: 0;
+    position: absolute; right: 0.5rem; top: 0.5rem; width: 28%; margin: 0;
     border: 2px solid #f5f0e4; box-shadow: 0 1px 6px rgba(0,0,0,0.4);
   }
   .plate figcaption { margin: 0.4rem 0 0; color: var(--dim); font-size: 0.95rem; }
@@ -598,8 +598,11 @@ const PLATES = [
    the archive at site size, as shot except for a healed dust spot;
    captions may state settings, because the settings are the point. */
 const MISSES = [
-  { file: "the-line-before-the-sun.jpg", hours: ["dawn"], scene: "empty", fault: "dark", animal: "zebra", title: "The Line Before the Sun",
-    alt: "A frame that is almost black, with a faint pale stripe across its lower third where a line of zebra stood on a dark plain under a dark sky",
+  // not a scene: five zebra are plainly zebra even this dark, so the frame
+  // stands in for zebra alone (Dermot's rule of 2026-09-25; found 2 Nov
+  // 2026 when it showed for a meteor)
+  { file: "the-line-before-the-sun.jpg", hours: ["dawn"], fault: "dark", animal: "zebra", title: "The Line Before the Sun",
+    alt: "A very dark frame: five zebra grazing in a line on a dim brown plain, their stripes faintly lit, under a near-black sky",
     caption: "Amboseli, ten minutes before the sun, on the dial from the afternoon before: 1/4000 s at f/22 and the ISO at its cap. Black, with a paler stripe where the zebra were. Four minutes later the same dial made Zebra in the Morning Dust, with the sun in the frame." },
   { file: "gazelle-at-a-sixtieth.jpg", hours: ["dawn"], fault: "slow", animal: "gazelle", title: "Gazelle at a Sixtieth",
     alt: "A Thomson's gazelle walking through long grass, the whole animal smeared with movement, grass stems blurred across the foreground",
@@ -610,7 +613,7 @@ const MISSES = [
   { file: "wildebeest-at-dusk.jpg", hours: ["dusk"], fault: "noise", title: "Wildebeest at Dusk",
     alt: "Two wildebeest walking across a dark plain at dusk beneath a mountain, the sky orange behind the ridge, the whole frame dim and grainy",
     caption: "Amboseli at dusk: ISO 2800 at 1/60 s and f/29, the aperture left from the afternoon. The grain is in the shadows and the colour is in the grain, and a sixtieth did not hold the walk either." },
-  { file: "elephants-at-eighteen.jpg", hours: ["morning", "midday", "afternoon"], scene: "empty", fault: "small", animal: "elephant", title: "Elephants at Eighteen Millimetres",
+  { file: "elephants-at-eighteen.jpg", hours: ["morning", "midday", "afternoon"], fault: "small", animal: "elephant", title: "Elephants at Eighteen Millimetres",
     alt: "A wide view of open grassland under a blue sky with two flat-topped trees, and a few elephants as specks beneath the further one",
     caption: "The Mara at the wide end, 18 mm, with the herd under the far tree. The place is in the frame and the elephants are a texture; the zoom ring or the driver would have fixed it, and the shutter could not." },
   { file: "flamingo-at-the-edge.jpg", hours: ["morning", "midday", "afternoon"], fault: "cut", title: "Flamingo at the Edge",
