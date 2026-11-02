@@ -251,8 +251,12 @@ September 2026 at 50 mm, and their captions name the focal length because
 the lens is the point of the frame, which is the one case captions state
 a setting. Dermot's rule the same day, for this game and the tutorial:
 example frames need not be on the portfolio site, but every one must be a
-real photograph or an edit of a real photograph. No frame of the rut yet;
-the rut on 24 October 2026 is the shooting list.
+real photograph or an edit of a real photograph. Two frames from the rut
+on 31 October 2026 joined the plates on 2 November (Dermot: *would benefit
+from some of my recent deer photos*): *Doe at the Rut* (the doe, alert) and
+*Reading the Air* (a young buck, alert, scenting a doe). Neither shows the
+rutting buck groaning or sparring, so those stops still show the crop
+alone, and that is the shooting list for next October.
 
 ## A break never interrupts a shot
 
