@@ -1324,6 +1324,11 @@ function begin() {
   if (R.seat === "tripod") state.animals.forEach((a, i) => { a.x = 120 + ((i * 0.37 + 0.1) % 1) * (W - 240); a.dir = 1; });
   state.playing = true;
   state.held = 0; state.stayDown = false; state.holdUntil = 0; state.day = [];
+  // the timers kept on the outing's own clock start with it: left over from
+  // an earlier outing they held the spotter, the Asked panel and the guide's
+  // tips mute for as long as that outing had run (found 2026-11-05 by
+  // tools/check-play.js, on the second range picked in one visit)
+  state.nextCall = 0; state.nextRange = 0; state.nextTip = 0;
   $("camp").hidden = true;
   // in the hide and at the tripod nothing moves but the animals, so there
   // is no camera-down to be in: it starts up
@@ -1367,7 +1372,12 @@ function shooting() { return !!(state.camera && state.focus); }
 function tickClock(dt) {
   const day = dayFor(state.range);
   if (!day || state.paused) return;
+  const minute = Math.floor(state.clock);
   state.clock += dt * CLOCK_RATE;
+  // with the camera down nothing else redraws the HUD, so the clock and the
+  // LCD's level stood still between stops (found 2026-11-05 by
+  // tools/check-play.js); a new minute redraws them
+  if (!state.camera && Math.floor(state.clock) !== minute) drawHud();
   if (state.waiting !== null) { if (!shooting()) enterLeg(state.waiting); return; }
   const i = legAt(day, state.clock);
   if (i === state.leg) return;
@@ -2224,8 +2234,10 @@ stage.addEventListener("keydown", (e) => {
   if (k === "n") skipLeg();
   if (k === ",") stepAperture(-1);
   if (k === ".") stepAperture(1);
-  if (state.paused) return;
+  // Esc packs up from a card too, as the pad's own button does; it sat below
+  // the card's guard until 2026-11-05 and did nothing there
   if (k === "escape") packUp();
+  if (state.paused) return;
   const nudge = 24;
   if (k === "arrowleft") state.aim.x = Math.max(0, state.aim.x - nudge);
   if (k === "arrowright") state.aim.x = Math.min(W, state.aim.x + nudge);

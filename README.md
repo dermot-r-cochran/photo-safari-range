@@ -39,15 +39,18 @@ The loop, in four beats:
    the hide and at the tripod nothing moves but the animals, the pad
    shows no mover at all, and the Asked panel, with nothing in the frame,
    says sit still rather than drive closer. *`tools/check.js`, check "the
-   Asked panel's empty lines follow the seat"; the driver and the pad
-   themselves live in the page's document code, which the check does not
-   load, and have no test yet.*
+   Asked panel's empty lines follow the seat"; `tools/check-play.js`,
+   check "every range, from its button to the pack-up" (the spotter calls
+   something from the cast within thirty seconds on every range, and the
+   Asked panel names a subject); the driver's pace and the pad's buttons
+   have no test yet.*
 2. **Camera** up. At the stop it comes up by itself on what was called;
    Space raises it at any other time. The plate rectangle follows the
    mouse or the arrow keys; Z zooms through wide, normal and tight (on the
    macro range, 1:4, 1:2 and 1:1). *The pulls: `tools/check.js`, check
-   "pulls, the default set and any range's own"; raising and aiming have
-   no test yet.*
+   "pulls, the default set and any range's own"; `tools/check-play.js`,
+   check "every range, from its button to the pack-up" (Space raises the
+   camera and fires on every range); aiming has no test yet.*
 3. **Match** the shutter to what the spotter asked ([ and ]). The camera
    focuses on whatever is under the centre of the frame; Tab picks another
    subject when several are in it. *`tools/check.js`, check "scorer" (a
@@ -56,7 +59,12 @@ The loop, in four beats:
 4. **Shoot** (Space). Keep the plate or send it to the folder. Then ask
    the driver on (the left and right arrows, with the camera down): that
    puts the camera down and releases him. C puts it down without moving,
-   if you want him to drive on at his own pace. *No test yet.*
+   if you want him to drive on at his own pace. *`tools/check-play.js`,
+   check "every range, from its button to the pack-up": a shot makes a
+   plate card with its stars and verdict, Keep this puts the plate on the
+   sheet and saves it, the folder button only removes the card, and a
+   plate names the body chosen at camp; the driver moving on has no test
+   yet.*
 
 The controls under the picture are laid out as they sit on a camera: the
 three mode buttons (S, A and M, one lit; the same keys pick them), the top
@@ -92,6 +100,13 @@ interrupts a shot: with the camera up on a subject the guide says it can
 wait, the clock shows the break waiting, and the card comes when the
 camera goes down or the subject leaves the frame (or on N, to take it at
 once). The clock runs on while it waits, so a late break is a short one.
+*`tools/check-play.js`, check "every range, from its button to the
+pack-up": the clock starts at the day's first leg and runs at that rate,
+N brings the break card with the leg's own words, Continue resumes on the
+leg after it, N reaches the end card with the day's tally, and Esc packs
+up from a card as the pad's button does; `tools/check.js`, checks "days"
+(a held break never rewinds the clock); the hold itself has no test
+yet.*
 
 ## The camera
 
@@ -219,8 +234,9 @@ what to do about the animal.
 - **Stay in the vehicle.** The guide's one hard rule, and the game's. On
   foot the rule is the walking guide's: single file, stop when he stops,
   because nothing runs from a still person and everything runs from a
-  moving one. *No test yet: the guide's words live in the page's document
-  code.*
+  moving one. *`tools/check-play.js`, check "every range, from its button
+  to the pack-up": the jeep's guide says stay in the vehicle, the walking
+  guide single file, and the hide's sit still.*
 - **The Earth turns; that is the movement.** On the Night Sky range the
   shutter scale is seconds and minutes on a tripod. The moon is a sunlit
   rock and asks for 1/250 at ISO 100 whatever the hour; stars as points
@@ -301,8 +317,21 @@ that proves it, by the comment it sits under, or says it has no test yet
 (the README-proof convention, 10 October 2026). `tools/check-docs.js`
 holds the Markdown to the disk: every relative link in this README
 resolves, no Markdown file carries a second front-matter block, and the
-two frame counts above match the plate files under `images/`. CI runs
-both and installs nothing.
+two frame counts above match the plate files under `images/`.
+
+`tools/check-play.js` plays the page without a browser. It runs the same
+script with a stub for the document: every element the HTML gives an id,
+a canvas whose context accepts any call and draws nothing, a localStorage
+in memory, a frame loop pumped by hand, and a clock that does not move,
+so every run is the same. Then it does what a player does: reads the camp
+(a sheet saved by an earlier version of the page reads back), picks each
+range by its button, lets thirty seconds run, presses every key the pad
+prints, fires, keeps a plate, takes the break card and the end card, and
+packs up. It found three things on its first run (5 November 2026): the
+spotter, the Asked panel and the guide's tips were mute on a second range
+for as long as the first had run, Esc did nothing on a card though the
+pad prints it, and the clock on the HUD stood still while the camera was
+down. CI runs all three checks and installs nothing.
 
 ## Licence
 
