@@ -104,7 +104,7 @@ once). The clock runs on while it waits, so a late break is a short one.
 pack-up": the clock starts at the day's first leg and runs at that rate,
 N brings the break card with the leg's own words, Continue resumes on the
 leg after it, N reaches the end card with the day's tally, and Esc packs
-up from a card as the pad's button does; `tools/check.js`, checks "days"
+up from the end card as the pad's button does; `tools/check.js`, checks "days"
 (a held break never rewinds the clock); the hold itself has no test
 yet.*
 

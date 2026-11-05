@@ -443,10 +443,10 @@ speed to a behaviour. The engine's three reads of it are unchanged.
 
 ## The page is played without a browser
 
-Added 2026-11-05 on the next-improvement question: the README said "no
-test yet" eight times, every one because the page section (the camp, the
-clock, the cards, the keys, the sheet) sits below the `RANGE` export and
-`tools/check.js` loads no document. `tools/check-play.js` runs the same
+Added 2026-11-05 on the next-improvement question: most of the
+README's "no test yet" lines were there because the page section (the
+camp, the clock, the cards, the keys, the sheet) sits below the `RANGE`
+export and `tools/check.js` loads no document. `tools/check-play.js` runs the same
 script with a stub for the browser: every element the HTML gives an id
 (parsed from the markup, with its `hidden` and the canvas's size, so an
 id the page asks for and the HTML lacks is null, as in a browser),

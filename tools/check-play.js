@@ -13,8 +13,9 @@
  * time. Then it does what a player does: reads the camp, picks each range
  * by its button, lets the day run, presses the keys the pad prints, fires
  * a shot, keeps a plate, takes the break card and the end card, and packs
- * up. Nothing in index.html is read programmatically; the stub only
- * stands in for the browser. Node only — nothing to install.
+ * up. Only the element ids and the canvas size are read out of
+ * index.html, and the page gets no test hook; the stub only stands in
+ * for the browser. Node only — nothing to install.
  *
  *     node tools/check-play.js
  */
@@ -212,7 +213,12 @@ for (const k in R.RANGES) {
         if (!JSON.parse(store["psr.sheet"]).length) fail(where + ": a kept plate was not saved");
         if (card.parent) fail(where + ": a kept plate's card stayed");
         $("clear").onclick();
-      } else { drop.onclick(); if (card.parent) fail(where + ": the folder button left the card"); }
+      } else {
+        const kept = store["psr.sheet"];
+        drop.onclick();
+        if (card.parent) fail(where + ": the folder button left the card");
+        if (store["psr.sheet"] !== kept) fail(where + ": the folder button changed the sheet");
+      }
     }
     if (day) {
       // N takes the day to its first break: the card shows the leg's words and Continue resumes on the next leg
@@ -258,6 +264,22 @@ for (const k in R.RANGES) {
     // back to camp for the next range, if the page can get there
     try { if ($("camp").hidden) { key("escape"); run(0.2); const pack = button($("pause"), "Pack up"); if (pack) pack.onclick(); } } catch (e2) { /* the next range reports its own */ }
   }
+}
+
+// ---- with the camera down, only the clock redraws the HUD ----
+// on a trip of its own after the ranges, so these seconds move no range's seeded spawn
+try {
+  button($("range-pick"), R.RANGES.amber.name).onclick();
+  run(30); key("c"); run(0.2); // whatever the spotter raised, the camera comes down
+  const c0 = hudClock();
+  run(2);
+  if ($("pause").hidden && hudClock() === c0) fail("with the camera down the HUD's clock stood still: " + $("hud").textContent);
+  key("escape"); run(0.2);
+  const pack = button($("pause"), "Pack up"); if (pack) pack.onclick();
+  if ($("camp").hidden) fail("could not pack up after the clock check");
+  ok();
+} catch (e) {
+  fail("the clock with the camera down: " + String(e.stack || e).slice(0, 300));
 }
 
 // ---- a body chosen at camp carries onto the range ----
