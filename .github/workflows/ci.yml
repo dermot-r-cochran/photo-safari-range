@@ -20,6 +20,9 @@ jobs:
       - name: Every README link resolves, one front-matter block at most, the counts match the disk
         run: node tools/check-docs.js
 
+      - name: The page boots and every range plays, on a stub for the browser
+        run: node tools/check-play.js
+
       - name: The page is one file with its two sections
         run: |
           grep -q "WORLD DATA" index.html

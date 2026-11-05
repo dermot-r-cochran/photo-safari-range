@@ -35,7 +35,10 @@ that, and they are the `four-islands-quest` rules this repository inherits:
   an assistant. The check loads the script into a bare VM context (no
   `document`) and reads the `RANGE` export at the end of the engine's pure
   section; everything that needs a document sits below that export inside
-  the `if (typeof document !== "undefined")` block.
+  the `if (typeof document !== "undefined")` block. `tools/check-play.js`
+  runs the same script a second time with a stub document, so that block
+  is played too (see *The page is played without a browser*); it reads
+  nothing out of the file but the element ids and the canvas size.
 - **The page works with no picture files.** The animals are canvas
   silhouettes, and a plate with no frame shows the crop alone.
 - **The photograph comes after the verdict, as a comparison.** `PLATES`
@@ -438,13 +441,49 @@ note says he stands to do it; alert and sparring hold the animal where
 it is), and the check holds every behaviour to a finite speed and every
 speed to a behaviour. The engine's three reads of it are unchanged.
 
+## The page is played without a browser
+
+Added 2026-11-05 on the next-improvement question: most of the
+README's "no test yet" lines were there because the page section (the
+camp, the clock, the cards, the keys, the sheet) sits below the `RANGE`
+export and `tools/check.js` loads no document. `tools/check-play.js` runs the same
+script with a stub for the browser: every element the HTML gives an id
+(parsed from the markup, with its `hidden` and the canvas's size, so an
+id the page asks for and the HTML lacks is null, as in a browser),
+elements that keep what is written to them, a 2D context that accepts any
+call and draws nothing, a localStorage in memory, a `requestAnimationFrame`
+the check pumps at twenty frames a second, and a `Date.now` that does not
+move, so the seeded spawn is the same on every run. It then plays: the
+camp as the page opens (a sheet saved by an earlier version reads back,
+with a numeric shutter and an animal the cast no longer has), every range
+from its camp button, thirty seconds of the outing, every key the pad
+prints, a shot, a kept plate, the break card and Continue, the end card
+and its tally, Esc, and a body chosen at camp. The stub lives in the tool;
+the page gets no test hook, and a new document API the page section uses
+is added to the stub when the check fails with a TypeError naming it.
+
+Its first run found three flaws, each repaired in the page section the
+same day. `state.nextCall`, `state.nextRange` and `state.nextTip` are
+timestamps on the outing's own clock `state.t`, which `begin` resets; the
+three were not, so on the second range picked in one visit the spotter,
+the Asked panel and the guide's tips were mute for as long as the first
+outing had run, and the Asked panel kept the first range's list (a hippo
+on the Amber Range, seen on the live page). They start at 0 with the
+outing now. Esc on a break or end card did nothing: the key handler let
+it past the card's first guard on purpose and a second guard below
+swallowed it, while the pad's own Pack up button worked; the line moved
+above the guard. And with the camera down nothing redrew the HUD, so its
+clock and the LCD's level stood still between stops; `tickClock` redraws
+them when the minute changes.
+
 ## Publishing
 
 `.github/workflows/pages.yml` serves `index.html` from GitHub Pages on
 every push to `main`, like the tutorial repo. CI (`ci.yml`) runs the check
-on every PR and installs nothing, and `tools/check-docs.js` beside it: the
+on every PR and installs nothing, with `tools/check-docs.js` beside it (the
 README's relative links resolve, no Markdown file has a second front-matter
-block, and the README's frame counts match `images/`. Every capability the
+block, and the README's frame counts match `images/`) and
+`tools/check-play.js` (the page boots and every range plays). Every capability the
 README lists names the check in `tools/check.js` that proves it, or says
 "no test yet" or "not yet implemented" (Dermot, 10 October 2026); keep that
 true when a capability or a check changes. A subdomain of the photography site can
