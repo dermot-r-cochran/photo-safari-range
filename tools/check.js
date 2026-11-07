@@ -446,6 +446,56 @@ for (const b in R.BEHAVIOURS) {
   checks++;
 }
 
+// the one rule, in the README's numbers: the shutter each behaviour asks,
+// on the animal the README names it for, and the stars each fault costs.
+// Until 2026-11-07 the scorer check above held only the shape (a match is
+// three stars, a keeper is two), so the walking shutter could change, or
+// the star a cut or a speck costs go, and every check stayed green. Change
+// a number here only when the field notes change, and say which note.
+{
+  const asks = [
+    ["lion", "resting", "1/60"], ["zebra", "walking", "1/250"], ["cheetah", "running", "1/1000"], ["eagle", "flight", "1/2000"],
+    ["acacia", "standing", "1/30"], ["acacia", "wind", "1/125"],
+    ["mushroom", "still", "1/125"], ["rose", "breeze", "1/250"], ["bee", "working", "1/500"], ["bee", "flight", "1/2000"],
+    ["moon", "sunlit", "1/250"], ["stars", "points", "15s"], ["milky", "core", "15s"], ["pole", "wheel", "8m"], ["meteor", "streak", "30s"]
+  ];
+  for (const [a, b, s] of asks) {
+    if (!R.ANIMALS[a] || !R.ANIMALS[a].states[b]) fail("the README says " + a + " can be " + b + ", and the world data does not");
+    else if (R.BEHAVIOURS[b].asked !== s) fail("the README says " + b + " asks " + s + "; the world data asks " + R.BEHAVIOURS[b].asked);
+    checks++;
+  }
+  const lens = R.lensFor("amber"), day = R.SCALES.day, clean = { inside: true, cut: false, fill: 0.3 };
+  const at = (b, stops, light, framing) => {
+    const s = day[day.indexOf(R.BEHAVIOURS[b].asked) + stops];
+    const e = R.exposeFor("S", s, 8, light, b, "day", lens, null);
+    return Object.assign(R.score(e, b, framing || clean, light, null, "day"), { iso: e.iso, under: e.under });
+  };
+  const cost = (name, v, stars, word) => {
+    if (v.under) fail(name + ": the exposure went dark, so the stars are not the fault's alone");
+    if (v.stars !== stars || !v.lines.includes(word)) fail(name + " is " + v.stars + " stars, not " + stars + ": " + v.lines.join(" | "));
+    checks++;
+  };
+  // a stop slow costs one star, two stops slow two
+  cost("a walking zebra a stop slow", at("walking", -1, "heat"), 2, R.WORDS.slow1);
+  cost("a walking zebra two stops slow", at("walking", -2, "heat"), 1, R.WORDS.slow2);
+  // a stop fast costs nothing; two stops fast costs nothing while the light
+  // paid for it, and a star once the ISO did
+  cost("a resting lion a stop fast in the heat", at("resting", 1, "heat"), 3, R.WORDS.fast1);
+  const free = at("resting", 2, "heat");
+  if (free.iso > 400) fail("the heat did not pay for two stops fast on a resting lion: ISO " + free.iso);
+  cost("a resting lion two stops fast in the heat", free, 3, R.WORDS.fastfree);
+  cost("a standing acacia two stops fast in the heat", at("standing", 2, "heat"), 3, R.WORDS.fastfree);
+  const paid = at("walking", 2, "last");
+  if (paid.iso < R.BODIES.older.noiseFrom) fail("two stops fast at last light did not climb into the noise: ISO " + paid.iso);
+  cost("a walking zebra two stops fast at last light", paid, 2, R.WORDS.fast2);
+  if (!paid.lines.includes(R.WORDS.noise)) fail("two stops fast at ISO " + paid.iso + " did not name the noise");
+  // a cut costs one star, a speck one, and the costs add
+  cost("a matched shutter on a cut frame", at("walking", 0, "heat", { inside: true, cut: true, fill: 0.3 }), 2, R.WORDS.cut);
+  cost("a matched shutter on a speck", at("walking", 0, "heat", { inside: true, cut: false, fill: 0.05 }), 2, R.WORDS.small);
+  cost("a stop slow and a cut", at("walking", -1, "heat", { inside: true, cut: true, fill: 0.3 }), 1, R.WORDS.cut);
+  ok();
+}
+
 // measureFrame
 const plate = { x: 100, y: 100, w: 400, h: 225 };
 const inside = R.measureFrame({ x: 200, y: 150, w: 80, h: 50 }, plate);

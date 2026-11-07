@@ -167,18 +167,23 @@ what to do about the animal.
   ethogram note says what to look for, and the plate scores on whether the
   shutter agreed with the animal at the moment the shutter fired.
   *`tools/check.js`, checks "behaviours" (every behaviour asks a shutter
-  the camera has) and "scorer"; the particular speeds have no test yet.*
+  the camera has), "scorer", and "the one rule, in the README's numbers"
+  (the lion's 1/60, the zebra's 1/250, the cheetah's 1/1000, the eagle's
+  1/2000, and the rest of the shutters this list names).*
 - **The cost of the wrong shutter.** A stop slow smears the movement; a
   stop fast is bought with ISO the light did not have. Last light at
   1/2000 is ISO 3200 on this camera, and the verdict says so.
-  *`tools/check.js`, check "the camera" ("S at last light, 1/2000: wide
-  open and the ISO up"); the star a slow stop costs has no test yet.*
+  *`tools/check.js`, checks "the camera" ("S at last light, 1/2000: wide
+  open and the ISO up") and "the one rule, in the README's numbers" (a
+  stop slow costs one star and two stops slow two; two stops fast costs
+  nothing while the light paid for it and a star once the ISO did).*
 - **Framing.** An animal cut by the frame edge loses a star; a speck loses
   a star; an animal that fills the working pull is the plate you wanted.
   Tighter is head and shoulders, and the note is the field's: long glass
   stacks the background, which is compression, not walking closer.
-  *`tools/check.js`, check "measureFrame" (a box over the edge reads as
-  cut); the stars the cut and the speck cost have no test yet.*
+  *`tools/check.js`, checks "measureFrame" (a box over the edge reads as
+  cut) and "the one rule, in the README's numbers" (a cut costs one star,
+  a speck one, and a stop slow on a cut frame costs both).*
 - **The frame this was got wrong on.** A keeper shows the author's own
   frame of that animal and behaviour, the crop inset. A plate for the
   folder shows, where he has one, the frame he got wrong the same way: a
@@ -228,9 +233,10 @@ what to do about the animal.
   range like anything else and asks for the hand-held floor, about 1/30 at
   the wide end on this body, or 1/125 when the wind is in the canopy. A
   fast shutter on a still subject in good light costs nothing and the
-  verdict says so; it only costs a star when the ISO paid for it. *No
-  test yet of the acacia's own shutters beyond the "scorer" check, which
-  covers every subject alike.*
+  verdict says so; it only costs a star when the ISO paid for it.
+  *`tools/check.js`, check "the one rule, in the README's numbers" (the
+  acacia's 1/30 standing and 1/125 in wind, and a fast shutter in good
+  light at three stars).*
 - **Stay in the vehicle.** The guide's one hard rule, and the game's. On
   foot the rule is the walking guide's: single file, stop when he stops,
   because nothing runs from a still person and everything runs from a
@@ -309,8 +315,9 @@ scorer to shape: every behaviour asks for a shutter the camera has and
 names a ground speed, 0 included, every animal's states are
 behaviours, every range's cast is animals, every light prices every
 shutter, the scorer stays within 0–3 and a matched shutter with a clean
-frame is always a keeper, and a spawn plan is deterministic and spaced.
-CI runs it and installs nothing.
+frame is always a keeper, the shutters and star costs this README states
+are the ones the scorer uses, and a spawn plan is deterministic and
+spaced. CI runs it and installs nothing.
 
 Each capability in the lists above names the check in `tools/check.js`
 that proves it, by the comment it sits under, or says it has no test yet
