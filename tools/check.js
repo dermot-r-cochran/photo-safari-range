@@ -489,6 +489,18 @@ for (const b in R.BEHAVIOURS) {
   if (paid.iso < R.BODIES.older.noiseFrom) fail("two stops fast at last light did not climb into the noise: ISO " + paid.iso);
   cost("a walking zebra two stops fast at last light", paid, 2, R.WORDS.fast2);
   if (!paid.lines.includes(R.WORDS.noise)) fail("two stops fast at ISO " + paid.iso + " did not name the noise");
+  // the free ISO is the body's own, two steps under where its noise starts:
+  // 400 on the DSLR, 1600 on the mirrorless, which is clean to 6400
+  // (settled by precedent 2026-11-07, as The two bodies does for the cap,
+  // the noise and diffraction)
+  if (R.freeIso(R.BODIES.older) !== 400) fail("the DSLR's free ISO is " + R.freeIso(R.BODIES.older) + ", not 400");
+  {
+    const newer = R.BODIES.newer, zl = R.lensFor("zambezi", "newer");
+    const s = day[day.indexOf(R.BEHAVIOURS.walking.asked) + 2];
+    const e = R.exposeFor("S", s, 8, "first", "walking", "day", zl, null, newer);
+    if (e.iso !== 1600) fail("two stops fast on a walking subject at first light on the newer body is not ISO 1600: ISO " + e.iso);
+    cost("a walking subject two stops fast at ISO 1600 on the newer body", Object.assign(R.score(e, "walking", clean, "first", null, "day", null, null, newer), { under: e.under }), 3, R.WORDS.fastfree);
+  }
   // a cut costs one star, a speck one, and the costs add
   cost("a matched shutter on a cut frame", at("walking", 0, "heat", { inside: true, cut: true, fill: 0.3 }), 2, R.WORDS.cut);
   cost("a matched shutter on a speck", at("walking", 0, "heat", { inside: true, cut: false, fill: 0.05 }), 2, R.WORDS.small);
@@ -518,6 +530,18 @@ for (const k in R.RANGES) {
     if ((seat === "hide" || seat === "tripod") && moves) fail("range " + k + " sits " + seat + " but its empty " + where + " line says to move: " + line);
     if (seat === "drive" && !/\bdrive\b/i.test(line)) fail("range " + k + " drives but its empty " + where + " line does not say drive: " + line);
     if (seat === "walk" && !/\bwalk\b/i.test(line)) fail("range " + k + " walks but its empty " + where + " line does not say walk: " + line);
+  }
+  ok();
+}
+// and so do the day's cards: a range that does not drive never has a day
+// whose pause or end words put a driver, a drive or the tyres in it, so a
+// day it uses is one no driving seat needs to share (2026-11-07: the hide
+// shared the drive's day, and its breakfast had the driver at the tyres)
+for (const k in R.RANGES) {
+  const r = R.RANGES[k], day = R.dayFor(k);
+  if (r.seat === "drive" || !day) continue;
+  for (const leg of day) for (const words of [leg.pause, leg.end]) {
+    if (words && /\b(driver|drive|tyres)\b/i.test(words)) fail("range " + k + " sits " + r.seat + " but its day's " + leg.name + " card says: " + words);
   }
   ok();
 }

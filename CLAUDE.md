@@ -129,8 +129,12 @@ the shutter it asks for and a one-line ethogram note; the scorer
 (`score`) gives three stars for a match with a clean frame, loses one for
 a stop slow, two for two stops slow, one for two stops fast, one for a
 frame-edge cut, one for a speck. Two stars is a keeper. A stop fast is
-free except for the ISO it costs, and the verdict names the noise at 1600
-or more. Change a threshold only when the field notes in
+free except for the ISO it costs, and the verdict names the noise from
+the body's `noiseFrom`. Two stops fast is free while the ISO stays at or
+under `freeIso(body)`, two steps under `noiseFrom` (400 on the DSLR, 1600
+on the mirrorless), and costs a star above it; until 2026-11-07 the scorer
+and the day's record held the DSLR's 400 for both bodies, so the default
+hide called a shot at ISO 1600 on the mirrorless *Noise for nothing*. Change a threshold only when the field notes in
 `dermot-cochran-photography` change; say which note.
 
 `tools/check.js` pins these numbers under *the one rule, in the README's
@@ -352,6 +356,12 @@ in the pure section reads them, and the check holds a seat that cannot
 move to never being told to, and a seat that can to being told which.
 A new seat gets the jeep's lines until it has its own.
 
+The day's cards follow the seat on the same rule (2026-11-07): the hide
+shared the drive's `safari` day, so its breakfast card had the driver
+looking at the tyres. `DAYS.hide` keeps the drive's hours with its own
+breakfast, on the platform, and the check holds a range that does not
+drive to a day whose pause and end words name no driver, drive or tyres.
+
 ## Three mode buttons, the range sets out, the level follows the clock
 
 Dermot, 2026-09-19, three directions in one line. **The mode dial is
@@ -416,7 +426,8 @@ soft from f/8). A range names its default `body` (Zambia ranges the newer
 body, Kenya and home the older) and may carry a `zlens`, the longer zoom the
 newer body is paired with. `exposeFor`, `isoStep` and `score` take a body and
 default to the older DSLR, so old calls stand; `ISO_STEPS`, `ISO_CAP` and
-`DIFFRACTION` are the older body's by name. Focus: a centre body orders the
+`DIFFRACTION` are the older body's by name. The free ISO for two stops fast
+is the body's too: `freeIso(body)`, two steps under its `noiseFrom`. Focus: a centre body orders the
 frame by distance from the aim; an eye body by size, and holds the pick
 while it stays in the plate; the finder draws the eye box at the head end
 the animal faces. The bodies are Dermot's own ([[camera-gear]] in his
