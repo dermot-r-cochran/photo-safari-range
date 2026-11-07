@@ -650,7 +650,7 @@ const RANGES = {
   amber:   { name: "Amber Range",  country: "Kenya", place: "Maasai Mara, Kenya", seat: "drive", day: "safari", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#f2c27a", "#e9a85a"], ground: "#c9b27f", far: "#9c7f4e",
              note: "Open grassland. The pride, the cheetah on the mound, a mongoose on sentry at the termite mound. Stay in the vehicle.",
              cast: { zebra: 5, topi: 3, gazelle: 4, buffalo: 2, elephant: 2, giraffe: 2, lion: 2, cheetah: 2, hyena: 2, vulture: 2, mongoose: 2, acacia: 3 } },
-  zambezi: { name: "Zambezi Hide", country: "Zambia", place: "Lower Zambezi, Zambia", seat: "hide", day: "safari", body: "newer", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, zlens: { name: "the longer zoom at 500 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#d9c9a8", "#b9a684"], ground: "#8fa0a4", far: "#6f7f5a",
+  zambezi: { name: "Zambezi Hide", country: "Zambia", place: "Lower Zambezi, Zambia", seat: "hide", day: "hide", body: "newer", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, zlens: { name: "the longer zoom at 500 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#d9c9a8", "#b9a684"], ground: "#8fa0a4", far: "#6f7f5a",
              note: "A floating hide, eye level with the drinking line. Nothing to drive. Wait, and the water brings them.",
              cast: { puku: 5, hippo: 3, elephant: 2, buffalo: 2, eagle: 3 } },
   luangwa: { name: "South Luangwa", country: "Zambia", place: "South Luangwa, Zambia", seat: "walk", day: "luangwa", body: "newer", lens: { name: "the long zoom at 400 mm", min: 5.6, max: 22, floor: "1/125" }, zlens: { name: "the longer zoom at 500 mm", min: 5.6, max: 22, floor: "1/125" }, sky: ["#e8d6a8", "#c9a86a"], ground: "#a8905c", far: "#6a6a3a",
@@ -693,6 +693,15 @@ const DAYS = {
   safari: [
     { name: "First light", from: "06:15", to: "09:00", light: "first" },
     { name: "Breakfast", from: "09:00", to: "09:30", light: "heat", pause: "Breakfast under a tree. Flask, eggs, the sheet so far. The driver has a look at the tyres." },
+    { name: "Heat", from: "09:30", to: "11:30", light: "heat" },
+    { name: "Camp", from: "11:30", to: "15:30", pause: "Back to camp for the hottest part of the day. Lunch, a siesta, and the cards copied. Out again at half three." },
+    { name: "Last light", from: "15:30", to: "18:45", light: "last" },
+    { name: "Sunset", from: "18:45", to: "18:45", end: "Sunset. Pack up; the gate closes." }
+  ],
+  // the hide keeps the drive's hours and has no driver: its breakfast is its own
+  hide: [
+    { name: "First light", from: "06:15", to: "09:00", light: "first" },
+    { name: "Breakfast", from: "09:00", to: "09:30", light: "heat", pause: "Breakfast on the platform. Flask, eggs, the sheet so far. The river goes on without you." },
     { name: "Heat", from: "09:30", to: "11:30", light: "heat" },
     { name: "Camp", from: "11:30", to: "15:30", pause: "Back to camp for the hottest part of the day. Lunch, a siesta, and the cards copied. Out again at half three." },
     { name: "Last light", from: "15:30", to: "18:45", light: "last" },
@@ -847,6 +856,11 @@ const DEFAULT_BODY = "older";
 const ISO_STEPS = BODIES.older.isoSteps;
 const ISO_CAP = BODIES.older.cap;
 const DIFFRACTION = BODIES.older.diffraction;
+// The highest ISO a shot two stops fast can reach and still cost nothing:
+// two steps under where the body's noise starts. On the DSLR that is 400,
+// the number the scorer had before there were two bodies; on the
+// mirrorless, clean to 6400, it is 1600.
+function freeIso(body) { return body.isoSteps[body.isoSteps.indexOf(body.noiseFrom) - 2]; }
 
 // Verdict words that differ on the sky scale: a stop "slow" is a longer
 // exposure, and the thing that moved was the Earth.
@@ -1086,7 +1100,7 @@ function score(exp, behaviour, framing, light, animal, scale, support, pull, bod
   else if (d === -1) { stars -= 1; lines.push(W.slow1); }
   else if (d <= -2)  { stars -= 2; lines.push(W.slow2); }
   else if (d === 1)  { lines.push(W.fast1); }
-  else if (iso <= 400) { lines.push(W.fastfree); }
+  else if (iso <= freeIso(body)) { lines.push(W.fastfree); }
   else               { stars -= 1; lines.push(W.fast2); }
   if (exp.dropped && d < 0) lines.push(W.aDropped);
   if (framing.cut)   { stars -= 1; lines.push(W.cut); }
@@ -1214,7 +1228,7 @@ function missFor(fault, animal, rnd, clock) {
 }
 
 const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, SPEED, ANIMALS, RANGES, BANK, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, HOURS, hourOf, atHour, missFor, skyAt, STILL, DAYS, CLOCK_RATE,
-                APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
+                APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, freeIso, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
                 SEAT_WORDS, emptyWords, score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, evAt, EDGE_DROP, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
 
@@ -1676,7 +1690,7 @@ function fire() {
   const why = !framing || !framing.inside ? "miss" : framing.dark ? "dark" : null;
   const dd = why ? 0 : shutterIndex(exp.shutter, scaleFor(state.range)) - shutterIndex(v.asked, scaleFor(state.range));
   const body = BODIES[state.body];
-  const fault = why || (exp.under >= 0.5 ? "dark" : dd <= -1 ? "slow" : framing.cut ? "cut" : framing.fill < 0.10 ? "small" : (dd >= 1 && exp.iso > 400) ? "fast" : exp.aperture >= body.diffraction.plain ? "diffraction" : exp.iso >= body.noiseFrom ? "noise" : null);
+  const fault = why || (exp.under >= 0.5 ? "dark" : dd <= -1 ? "slow" : framing.cut ? "cut" : framing.fill < 0.10 ? "small" : (dd >= 1 && exp.iso > freeIso(body)) ? "fast" : exp.aperture >= body.diffraction.plain ? "diffraction" : exp.iso >= body.noiseFrom ? "noise" : null);
   (state.day = state.day || []).push({ stars: v.stars, keeper: v.keeper, animal: a ? a.key : null, behaviour: a ? behaviour : null, fault: v.keeper && v.stars === 3 ? null : fault });
   // a folder plate shows the frame the author got wrong the same way, if there is one
   const miss = !v.keeper && fault ? missFor(fault, a ? a.key : null, state.rnd, state.clock) : null;

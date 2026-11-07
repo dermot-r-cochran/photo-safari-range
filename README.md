@@ -79,8 +79,8 @@ Cats and elephants do not run from a jeep. Nothing is killed on the range.
 ## The day
 
 A safari day runs on a clock, a minute and a half of the day for each
-second at the keyboard: out at first light, breakfast under a tree at
-nine, the heat until half eleven, back to camp for lunch and a siesta
+second at the keyboard: out at first light, breakfast at
+nine (under a tree on the drive, on the platform at the hide), the heat until half eleven, back to camp for lunch and a siesta
 through the hottest hours, out again at half three, and the gate at
 sunset. South Luangwa adds a sundowner and the night drive. Beech Wood
 is a club walkabout: ten till two with a coffee stop at half twelve, and
@@ -176,7 +176,9 @@ what to do about the animal.
   *`tools/check.js`, checks "the camera" ("S at last light, 1/2000: wide
   open and the ISO up") and "the one rule, in the README's numbers" (a
   stop slow costs one star and two stops slow two; two stops fast costs
-  nothing while the light paid for it and a star once the ISO did).*
+  nothing while the light paid for it and a star once the ISO did, and
+  the light pays up to two steps under where the body's noise starts:
+  ISO 400 on the DSLR, 1600 on the mirrorless).*
 - **Framing.** An animal cut by the frame edge loses a star; a speck loses
   a star; an animal that fills the working pull is the plate you wanted.
   Tighter is head and shoulders, and the note is the field's: long glass
