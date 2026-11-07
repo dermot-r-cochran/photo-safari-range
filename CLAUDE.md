@@ -133,6 +133,17 @@ free except for the ISO it costs, and the verdict names the noise at 1600
 or more. Change a threshold only when the field notes in
 `dermot-cochran-photography` change; say which note.
 
+`tools/check.js` pins these numbers under *the one rule, in the README's
+numbers* (added 2026-11-07 on the next-improvement question): the shutter
+each behaviour asks, on the animal the README names it for, the stars a
+slow stop, a cut and a speck cost, and the two stops fast that cost
+nothing in the heat and a star at last light. Until then the scorer check held only
+the shape (a match is three stars, a keeper is two), so the walking shutter
+could go to 1/500, or the star a cut costs go altogether, and every check
+stayed green; a run against each of those breaks found exactly that. A
+threshold change now fails the check until the number in it changes too,
+which is where the note from the field goes.
+
 ## No makes or models
 
 Dermot's rule, 2026-09-17: the game (and the tutorial) name no camera or
