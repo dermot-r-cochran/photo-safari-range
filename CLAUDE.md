@@ -296,6 +296,20 @@ the legs after it come at their own times. A light window is not held:
 it changes over the finder as before. The check holds `stopsFor` to the
 legs' own words and `clockAfter` to never turning the clock back.
 
+`tools/check-play.js` plays the hold itself (added 2026-11-08 on the
+next-improvement question; until then the README said the hold had no
+test): on the Zambezi Hide, where the camera is up from the first minute
+and nothing drives, it runs the clock to a few minutes before breakfast,
+puts an animal of the cast in the frame (sweeping the aim across the bank
+if none is there), and crosses into the break with the camera up on it,
+holding the page to each promise above: no card, the HUD and the guide
+say the break waits, the clock runs on, C brings the card at a time after
+the leg's start, Continue goes on to the heat and never back. The day's
+second break is held the same way and taken at once with N. Run against a page with the hold removed,
+the card rewinding the clock to the leg's start, the camera-down release
+removed, or the HUD's *waits* dropped, it fails on each. The one route
+it does not play is the subject leaving the frame.
+
 ## The sky follows the hour and the weather; short grass; a jeep
 
 Dermot, 2026-09-25, three notes in a row: *show sunrise and sunsets in
@@ -480,7 +494,8 @@ camp as the page opens (a sheet saved by an earlier version reads back,
 with a numeric shutter and an animal the cast no longer has), every range
 from its camp button, thirty seconds of the outing, every key the pad
 prints, a shot, a kept plate, the break card and Continue, the end card
-and its tally, Esc, and a body chosen at camp. The stub lives in the tool;
+and its tally, Esc, a break held for a shot (see *A break never
+interrupts a shot*), and a body chosen at camp. The stub lives in the tool;
 the page gets no test hook, and a new document API the page section uses
 is added to the stub when the check fails with a TypeError naming it.
 
