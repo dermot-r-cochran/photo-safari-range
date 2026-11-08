@@ -282,6 +282,85 @@ try {
   fail("the clock with the camera down: " + String(e.stack || e).slice(0, 300));
 }
 
+// ---- a break never interrupts a shot: the stop is held while the camera is up on a subject ----
+// On the hide, where the camera is up from the first minute and nothing
+// drives, the clock is run to a few minutes before a break and an animal is
+// put in the frame (the aim swept across the bank if none is there); then
+// the clock crosses into the break with the camera up on it. No card may
+// come: the HUD names the leg waiting, the guide says it can wait, and the
+// clock runs on. C puts the camera down and the card comes on the next
+// tick, at the clock's own time, not the leg's start; Continue goes on to
+// the leg after the break, never back. The day's second break is taken at
+// once with N from the same hold. A subject leaving the frame has no test.
+try {
+  const k = "zambezi", Rk = R.RANGES[k], day = R.dayFor(k);
+  const where = Rk.name + ", a break held for a shot";
+  button($("range-pick"), Rk.name).onclick();
+  const aimAt = (x, y) => stage.dispatch("pointermove", { target: byId.scene, clientX: x, clientY: y });
+  const cameraUp = () => $("hud").textContent.includes("Space: shoot");
+  const focused = () => cameraUp() && castNamed($("asked").textContent, k);
+  // the camera up on an animal of the cast: the hide's is up already unless
+  // a card put it down, else Space; the aim swept if the frame is empty
+  const findSubject = () => {
+    if (!cameraUp()) { key(" "); run(0.05); }
+    for (let y = 0.35; y <= 0.85 && !focused(); y += 0.15) for (let x = 0.06; x <= 0.95 && !focused(); x += 0.08) { aimAt(x * byId.scene.width, y * byId.scene.height); run(0.05); }
+    return focused();
+  };
+  // the clock to a minute, a second at a time and then a frame at a time, so it does not overshoot
+  const runTo = (min) => { for (let i = 0; i < 400 && hudClock() < min - 2; i++) run(1); for (let i = 0; i < 100 && hudClock() < min; i++) run(0.05); };
+  const cardClock = () => { const mm = $("pause").innerHTML.match(/· (\d\d):(\d\d)<\/h2>/); return mm ? Number(mm[1]) * 60 + Number(mm[2]) : null; };
+  // cross into the stop with the camera up on a subject; true when the leg is held as the page promises
+  const holdInto = (stopAt) => {
+    const stop = day[stopAt];
+    runTo(R.hm(stop.from) - 5);
+    if (!findSubject()) { fail(where + ": could not put an animal of the cast in the frame before " + stop.name + ": " + $("asked").textContent); return false; }
+    const waitLine = R.WORDS.wait.replace("{leg}", stop.name);
+    let said = false;
+    for (let i = 0; i < 200 && (hudClock() < R.hm(stop.from) || i < 2); i++) { run(0.05); if (!$("radio").hidden && $("radio").innerHTML.includes(waitLine)) said = true; }
+    let held = true;
+    if (!$("pause").hidden) { fail(where + ": the card for " + stop.name + " came while the camera was up on a subject"); held = false; }
+    if (!$("hud").textContent.includes(stop.name + " waits")) { fail(where + ": the HUD does not say " + stop.name + " waits: " + $("hud").textContent); held = false; }
+    if (!said) { fail(where + ": the guide did not say the break can wait: " + $("radio").innerHTML); held = false; }
+    return held;
+  };
+  const stopAt = day.findIndex(l => l.pause);
+  const stop = day[stopAt];
+  if (holdInto(stopAt)) {
+    // the clock runs on while the break waits
+    const c1 = hudClock(); run(1); const c2 = hudClock();
+    if (!(c2 > c1)) fail(where + ": the clock stood still while " + stop.name + " waited: " + $("hud").textContent);
+    if (!$("pause").hidden) fail(where + ": the card came before the camera was down");
+    // C puts the camera down: the card comes, at the clock's own time
+    key("c"); run(0.1);
+    const p = $("pause");
+    if (p.hidden || !p.textContent.includes(stop.pause)) fail(where + ": C did not bring the card for " + stop.name + ": " + (p.hidden ? "no card" : p.textContent));
+    const cc = cardClock();
+    if (cc === null || cc <= R.hm(stop.from) || cc < c2) fail(where + ": the card's clock was turned back: " + p.innerHTML.slice(0, 80));
+    const cont = button(p, "Continue");
+    if (!cont) fail(where + ": the held break's card has no Continue");
+    else { cont.onclick(); run(0.2); }
+    if (hudClock() < R.hm(stop.to) || hudClock() < cc) fail(where + ": Continue turned the clock back: " + $("hud").textContent);
+    if (!$("hud").textContent.includes(day[stopAt + 1].name)) fail(where + ": after the held break the HUD does not name " + day[stopAt + 1].name + ": " + $("hud").textContent);
+  }
+  // the next break, held the same way and taken at once with N
+  const nextAt = day.findIndex((l, i) => i > stopAt && l.pause);
+  if (nextAt > 0 && holdInto(nextAt)) {
+    const next = day[nextAt];
+    key("n"); run(0.05);
+    const p = $("pause");
+    if (p.hidden || !p.textContent.includes(next.pause)) fail(where + ": N did not take the held " + next.name + " at once: " + (p.hidden ? "no card" : p.textContent));
+    const cont = button(p, "Continue");
+    if (cont) { cont.onclick(); run(0.2); }
+    if (hudClock() < R.hm(next.to)) fail(where + ": Continue after the held " + next.name + " turned the clock back: " + $("hud").textContent);
+  }
+  key("escape"); run(0.2);
+  const pack = button($("pause"), "Pack up"); if (pack) pack.onclick();
+  if ($("camp").hidden) fail("could not pack up after the hold check");
+  ok();
+} catch (e) {
+  fail("a break held for a shot: " + (e.stack || e).toString().split("\n").slice(0, 3).join(" | "));
+}
+
 // ---- a body chosen at camp carries onto the range ----
 try {
   const other = Object.keys(R.BODIES).find(b => b !== R.bodyFor("amber"));

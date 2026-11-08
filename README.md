@@ -104,9 +104,13 @@ once). The clock runs on while it waits, so a late break is a short one.
 pack-up": the clock starts at the day's first leg and runs at that rate,
 N brings the break card with the leg's own words, Continue resumes on the
 leg after it, N reaches the end card with the day's tally, and Esc packs
-up from the end card as the pad's button does; `tools/check.js`, checks "days"
-(a held break never rewinds the clock); the hold itself has no test
-yet.*
+up from the end card as the pad's button does; check "a break never
+interrupts a shot": with the camera up on a subject as the clock crosses
+into a break, no card comes, the HUD names the break waiting, the guide
+says it can wait, the clock runs on, C brings the card at the clock's own
+time and Continue goes on to the leg after, and N takes a held break at
+once; `tools/check.js`, checks "days" (a held break never rewinds the
+clock); the subject leaving the frame has no test yet.*
 
 ## The camera
 
@@ -336,7 +340,9 @@ so every run is the same. Then it does what a player does: reads the camp
 (a sheet saved by an earlier version of the page reads back), picks each
 range by its button, lets thirty seconds run, presses every key the pad
 prints, fires, keeps a plate, takes the break card and the end card, and
-packs up. It found three things on its first run (5 November 2026): the
+packs up; then, on the hide, it keeps the camera up on a subject as the
+clock crosses into a break and holds the page to its promise that the
+break waits. It found three things on its first run (5 November 2026): the
 spotter, the Asked panel and the guide's tips were mute on a second range
 for as long as the first had run, Esc did nothing on a card though the
 pad prints it, and the clock on the HUD stood still while the camera was
