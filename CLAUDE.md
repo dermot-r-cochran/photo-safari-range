@@ -305,10 +305,20 @@ if none is there), and crosses into the break with the camera up on it,
 holding the page to each promise above: no card, the HUD and the guide
 say the break waits, the clock runs on, C brings the card at a time after
 the leg's start, Continue goes on to the heat and never back. The day's
-second break is held the same way and taken at once with N. Run against a page with the hold removed,
-the card rewinding the clock to the leg's start, the camera-down release
-removed, or the HUD's *waits* dropped, it fails on each. The one route
-it does not play is the subject leaving the frame.
+second break is held the same way and taken at once with N. Then the hide
+is sat again from camp and breakfast held a second time, and this time
+nothing is pressed: the aim moves a pixel with the subject still in the
+frame and the break is still held, then goes to a piece of empty sky (the
+top of the picture, swept until the Asked panel says nothing is in the
+frame), and the card comes on its own without a key, at the clock's own
+time, with the HUD's *waits* gone and Continue going on to the heat
+(added 2026-11-09; until then this was the one route the check did not
+play). Run against a page with the hold removed, the card rewinding the
+clock to the leg's start (caught on both routes), the camera-down release
+removed, the HUD's *waits* dropped, the release keyed on the camera alone
+so a subject leaving the frame brings no card, the focus kept on a
+subject the frame no longer holds, *waits* left on the HUD under the
+card, or any move of the aim releasing the hold, it fails on each.
 
 ## The sky follows the hour and the weather; short grass; a jeep
 

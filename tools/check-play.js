@@ -291,12 +291,17 @@ try {
 // clock runs on. C puts the camera down and the card comes on the next
 // tick, at the clock's own time, not the leg's start; Continue goes on to
 // the leg after the break, never back. The day's second break is taken at
-// once with N from the same hold. A subject leaving the frame has no test.
+// once with N from the same hold. Then the hide is sat a second time and
+// the first break held again, and this time nothing is pressed: the aim
+// moves a pixel with the subject still in the frame and the break is still
+// held, then goes to a piece of empty sky, the subject is out of the frame,
+// and the card comes on its own, at the clock's own time.
 try {
   const k = "zambezi", Rk = R.RANGES[k], day = R.dayFor(k);
   const where = Rk.name + ", a break held for a shot";
   button($("range-pick"), Rk.name).onclick();
-  const aimAt = (x, y) => stage.dispatch("pointermove", { target: byId.scene, clientX: x, clientY: y });
+  let aim = null; // where the aim was last put, so it can be moved a pixel
+  const aimAt = (x, y) => { aim = { x, y }; stage.dispatch("pointermove", { target: byId.scene, clientX: x, clientY: y }); };
   const cameraUp = () => $("hud").textContent.includes("Space: shoot");
   const focused = () => cameraUp() && castNamed($("asked").textContent, k);
   // the camera up on an animal of the cast: the hide's is up already unless
@@ -352,6 +357,46 @@ try {
     const cont = button(p, "Continue");
     if (cont) { cont.onclick(); run(0.2); }
     if (hudClock() < R.hm(next.to)) fail(where + ": Continue after the held " + next.name + " turned the clock back: " + $("hud").textContent);
+  }
+  // the subject leaving the frame releases the hold without a key: the hide
+  // sat again from camp, the first break held again, then the aim moved to a
+  // piece of empty sky (the top of the picture, swept until the Asked panel
+  // says nothing is in the frame, or until the card has already come)
+  key("escape"); run(0.2);
+  const packed = button($("pause"), "Pack up"); if (packed) packed.onclick();
+  if ($("camp").hidden) fail(where + ": could not pack up before the second sit");
+  button($("range-pick"), Rk.name).onclick();
+  aimAt(byId.scene.width / 2, byId.scene.height * 0.7); run(0.05);
+  const emptyFrame = () => cameraUp() && $("asked").textContent === R.emptyWords(k, "frame");
+  const released = () => !$("pause").hidden || emptyFrame();
+  const findSky = () => {
+    for (let y = 0.02; y <= 0.3 && !released(); y += 0.07) for (let x = 0.02; x <= 0.98 && !released(); x += 0.08) { aimAt(x * byId.scene.width, y * byId.scene.height); run(0.05); }
+    return released();
+  };
+  if (holdInto(stopAt)) {
+    // a second with the subject held, so the clock is past the leg's start before the release
+    run(1); const c0 = hudClock();
+    // the aim moving is not the subject leaving: a pixel's move with the
+    // subject still in the frame, and the break is still held
+    aimAt(aim.x + 1, aim.y); run(0.1);
+    if (!$("pause").hidden) fail(where + ": the card came on the aim moving a pixel with the subject still in the frame");
+    else if (!focused()) fail(where + ": a pixel's move of the aim lost the subject: " + $("asked").textContent);
+    else if (!$("hud").textContent.includes(stop.name + " waits")) fail(where + ": the HUD dropped " + stop.name + " waits on the aim moving a pixel: " + $("hud").textContent);
+    if (!findSky()) fail(where + ": could not find a piece of empty sky to aim at: " + $("asked").textContent);
+    else {
+      // the camera is still up, with nothing in the frame, until the next tick brings the card
+      if ($("pause").hidden && !cameraUp()) fail(where + ": the camera went down on its own when the subject left the frame");
+      run(0.1);
+      const p = $("pause");
+      if (p.hidden || !p.textContent.includes(stop.pause)) fail(where + ": the subject leaving the frame did not bring the card for " + stop.name + ", with no key pressed: " + (p.hidden ? "no card" : p.textContent));
+      const cc = cardClock();
+      if (cc === null || cc <= R.hm(stop.from) || cc < c0) fail(where + ": the card's clock was turned back when the subject left the frame (held to " + R.clockLabel(c0) + "): " + p.innerHTML.slice(0, 80));
+      if ($("hud").textContent.includes(stop.name + " waits")) fail(where + ": the HUD still says " + stop.name + " waits after the subject left the frame: " + $("hud").textContent);
+      const cont = button(p, "Continue");
+      if (cont) { cont.onclick(); run(0.2); }
+      if (hudClock() < R.hm(stop.to) || hudClock() < cc) fail(where + ": Continue after the released " + stop.name + " turned the clock back: " + $("hud").textContent);
+      if (!$("hud").textContent.includes(day[stopAt + 1].name)) fail(where + ": after the released break the HUD does not name " + day[stopAt + 1].name + ": " + $("hud").textContent);
+    }
   }
   key("escape"); run(0.2);
   const pack = button($("pause"), "Pack up"); if (pack) pack.onclick();
