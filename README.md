@@ -108,9 +108,10 @@ up from the end card as the pad's button does; check "a break never
 interrupts a shot": with the camera up on a subject as the clock crosses
 into a break, no card comes, the HUD names the break waiting, the guide
 says it can wait, the clock runs on, C brings the card at the clock's own
-time and Continue goes on to the leg after, and N takes a held break at
-once; `tools/check.js`, checks "days" (a held break never rewinds the
-clock); the subject leaving the frame has no test yet.*
+time and Continue goes on to the leg after, N takes a held break at
+once, and the subject leaving the frame brings the card on its own, with
+no key pressed, at the clock's own time; `tools/check.js`, checks "days"
+(a held break never rewinds the clock).*
 
 ## The camera
 
@@ -342,7 +343,8 @@ range by its button, lets thirty seconds run, presses every key the pad
 prints, fires, keeps a plate, takes the break card and the end card, and
 packs up; then, on the hide, it keeps the camera up on a subject as the
 clock crosses into a break and holds the page to its promise that the
-break waits. It found three things on its first run (5 November 2026): the
+break waits, and that the card comes on its own when the subject leaves
+the frame. It found three things on its first run (5 November 2026): the
 spotter, the Asked panel and the guide's tips were mute on a second range
 for as long as the first had run, Esc did nothing on a card though the
 pad prints it, and the clock on the HUD stood still while the camera was
