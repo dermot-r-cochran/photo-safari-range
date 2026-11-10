@@ -237,6 +237,15 @@ for (const k in R.LIGHTS) {
   if (!blown.lines.includes(R.WORDS.over)) fail("a blown frame is not named");
   const diff = R.score(R.exposeFor("M", "1/60", 16, "heat", "resting", "day", lens, null), "resting", { inside: true, cut: false, fill: 0.3 }, "heat", null, "day");
   if (!diff.lines.includes(R.WORDS.diffPlain) || diff.stars === 3) fail("f/16 did not cost a star for diffraction");
+  // the f/16 line names each body's own pixels, never another body's
+  for (const k in R.BODIES) {
+    const b = R.BODIES[k];
+    if (typeof b.pixels !== "string" || !/megapixels$/.test(b.pixels)) fail("body " + k + " has no pixels words");
+    const d = R.score(R.exposeFor("M", "1/60", 16, "heat", "resting", "day", lens, null, b), "resting", { inside: true, cut: false, fill: 0.3 }, "heat", null, "day", null, null, b);
+    const line = d.lines.find(l => l.startsWith("f/16 or smaller"));
+    if (!line || !line.includes(b.pixels)) fail("body " + k + "'s f/16 line does not name its own pixels");
+    for (const o in R.BODIES) if (o !== k && R.BODIES[o].pixels !== b.pixels && line && line.includes(R.BODIES[o].pixels)) fail("body " + k + "'s f/16 line names body " + o + "'s pixels");
+  }
   // every pull's depth words are strings in known bands, and the macro 1:1 says millimetre at f/8
   for (const k in R.RANGES) for (const p of R.pullsFor(k)) if (p.depth) for (const band in p.depth) {
     if (!["wide", "mid", "stopped", "narrow"].includes(band)) fail("pull " + p.name + " on " + k + " has depth band " + band);
