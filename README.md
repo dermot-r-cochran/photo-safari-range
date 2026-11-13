@@ -163,7 +163,13 @@ subject and only now and then: a dark frame at the cap, a blown one, A
 on a mover, ISO paid for speed the subject doesn't need, f/16, the
 beanbag when the light falls. Every line comes off the same exposure model
 as the verdict, so it is never wrong about the numbers, and never says
-what to do about the animal.
+what to do about the animal. *`tools/check.js`, check "the guide and the
+verdict agree on the ISO, on both bodies" (the guide says the ISO is
+paying for speed only where the verdict takes the star for it, never where
+the verdict says the light paid: from ISO 1600 on the DSLR, 3200 on the
+mirrorless); `tools/check-play.js`, check "the guide and the verdict agree
+on the ISO, on the body the page opens with"; the guide's other lines have
+no test against the verdict yet.*
 
 ## What it teaches
 
@@ -344,7 +350,10 @@ prints, fires, keeps a plate, takes the break card and the end card, and
 packs up; then, on the hide, it keeps the camera up on a subject as the
 clock crosses into a break and holds the page to its promise that the
 break waits, and that the card comes on its own when the subject leaves
-the frame. It found three things on its first run (5 November 2026): the
+the frame; and it keeps the shutter two stops fast at the most ISO the
+light pays for, until the guide has spoken or had its ten seconds, and
+holds the guide to not calling that ISO paid. It found three things on
+its first run (5 November 2026): the
 spotter, the Asked panel and the guide's tips were mute on a second range
 for as long as the first had run, Esc did nothing on a card though the
 pad prints it, and the clock on the HUD stood still while the camera was
