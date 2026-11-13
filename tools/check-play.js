@@ -425,5 +425,80 @@ try {
   fail("the body choice: " + (e.stack || e).toString().split("\n").slice(0, 3).join(" | "));
 }
 
+// ---- the guide and the verdict agree on the ISO, on the body the page opens with ----
+// On the hide, on the range's own body and in S, the shutter is kept two
+// stops or more faster than the subject in the frame asks, at the shutter
+// where the ISO is the body's free ISO exactly: the most speed the verdict
+// lets the light pay for. The check waits there until the guide has spoken
+// of those settings, or for longer than its ten seconds between tips, which
+// is the guide having nothing to say of them. It may say what it likes
+// except that the ISO is paying for the speed, because the plate fired at
+// the end, on the same settings, says the light paid. (2026-11-13: the page
+// said both, the guide from the DSLR's number.)
+try {
+  const k = "zambezi", Rk = R.RANGES[k], day = R.dayFor(k), body = R.BODIES[R.bodyFor(k)], free = R.freeIso(body);
+  const where = Rk.name + ", the guide against the verdict";
+  const paying = R.ADVICE.map(a => a.text).find(t => typeof t === "string" && /paying ISO/.test(t));
+  const scale = R.SCALES[R.scaleFor(k)];
+  $("plates").innerHTML = "";
+  button($("range-pick"), Rk.name).onclick();
+  key("s"); // the mode a new player has; the ranges above left the dial on M
+  const aimAt = (x, y) => stage.dispatch("pointermove", { target: byId.scene, clientX: x, clientY: y });
+  const focused = () => $("hud").textContent.includes("Space: shoot") && castNamed($("asked").textContent, k);
+  const findSubject = () => {
+    for (let y = 0.35; y <= 0.85 && !focused(); y += 0.15) for (let x = 0.06; x <= 0.95 && !focused(); x += 0.08) { aimAt(x * byId.scene.width, y * byId.scene.height); run(0.05); }
+    return focused();
+  };
+  // the LCD's own readout: the shutter the subject asks, the shutter set, the ISO the camera would use
+  const lcd = (label) => { const s = $("lcd").children.find(c => c.innerHTML.startsWith("<small>" + label + "</small>")); return s ? s.textContent.slice(label.length) : null; };
+  const shutterAt = () => scale.indexOf($("val-shutter").textContent);
+  const iso = () => parseInt(lcd("ISO"), 10);
+  // the asked shutter's place on the scale, when the settings stand where
+  // the light pays for the most speed (two stops or more past the asked
+  // shutter, at the free ISO); else null. It reads and changes nothing.
+  const paidByLight = () => {
+    if (!focused()) return null;
+    const asked = scale.indexOf(lcd("asks"));
+    return asked >= 0 && shutterAt() >= asked + 2 && iso() === free ? asked : null;
+  };
+  // the shutter wheel turned to put the settings there, if the light allows it
+  const settle = () => {
+    const asked = focused() ? scale.indexOf(lcd("asks")) : -1;
+    if (asked < 0 || asked + 2 >= scale.length) return;
+    for (let i = 0; i < scale.length && shutterAt() !== asked + 2; i++) key(shutterAt() < asked + 2 ? "]" : "[");
+    while (iso() < free && shutterAt() < scale.length - 1) key("]");
+  };
+  const breakfast = R.hm(day[day.findIndex(l => l.pause)].from);
+  let held = 0, before = null, shown = "", spoke = null;
+  for (let i = 0; i < 4000 && !spoke && held < 10.5 && hudClock() < breakfast - 5 && $("pause").hidden; i++) {
+    if (!focused()) findSubject();
+    run(0.05);
+    // a line the guide newly said in a frame that began and ended on those
+    // settings, with the same shutter asked, was said of them
+    const now = $("radio").hidden ? "" : $("radio").innerHTML;
+    if (now && now !== shown && now.startsWith("<b>Guide</b>") && before !== null && paidByLight() === before) spoke = now;
+    shown = now;
+    settle();
+    before = paidByLight();
+    held = before !== null ? held + 0.05 : 0;
+  }
+  if (!paying) fail(where + ": the guide has no line for ISO paid for speed");
+  else if (before === null || !(spoke || held >= 10.5)) fail(where + ": could not keep a subject two stops fast at ISO " + free + " until the guide spoke, or for its ten seconds, before breakfast: " + $("hud").textContent);
+  else {
+    if (spoke && spoke.includes(paying)) fail(where + ": two stops fast at ISO " + free + " on the " + body.name + ", which the verdict calls free, and the guide said: " + paying);
+    // the verdict on the same settings: the light paid, not the ISO
+    key(" "); run(0.05);
+    const card = $("plates").children[0];
+    if (!card) fail(where + ": Space did not make a plate");
+    else if (!card.textContent.includes("ISO " + free + " ·") || !card.textContent.includes(R.WORDS.fastfree)) fail(where + ": the plate at these settings does not say the light paid at ISO " + free + ": " + card.textContent.slice(0, 300));
+  }
+  key("escape"); run(0.2);
+  const pack = button($("pause"), "Pack up"); if (pack) pack.onclick();
+  if ($("camp").hidden) fail("could not pack up after the guide check");
+  ok();
+} catch (e) {
+  fail("the guide against the verdict: " + (e.stack || e).toString().split("\n").slice(0, 3).join(" | "));
+}
+
 console.log(checks + " checks, " + fails + " failures");
 process.exit(fails ? 1 : 0);

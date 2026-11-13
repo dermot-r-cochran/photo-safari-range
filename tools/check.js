@@ -277,6 +277,53 @@ for (const k in R.LIGHTS) {
     if (t !== null && typeof t !== "string") fail("advice is not words for " + mode + " " + light + " " + b);
     checks++;
   }
+  // the guide and the verdict agree on the ISO, on both bodies: the guide
+  // says the ISO is paying for speed only where the verdict on the same
+  // exposure takes the star for it, never where the verdict says the light
+  // paid. Walked over every day range's lens, cast and support, every mode,
+  // shutter and stop, and the light from the lamp's level to the heat's.
+  // (2026-11-13: the line was said from ISO 1600 on either body, and 1600
+  // is free on the mirrorless, so the default hide's guide and its verdict
+  // said opposite things of one shot.)
+  {
+    const paying = R.ADVICE.map(a => a.text).find(t => typeof t === "string" && /paying ISO/.test(t));
+    if (!paying) fail("the guide has no line for ISO paid for speed the subject does not need");
+    const clean = { inside: true, cut: false, fill: 0.3 };
+    for (const k in R.BODIES) {
+      const body = R.BODIES[k];
+      let said = 0, free = 0, bad = 0, first = null;
+      for (const rk in R.RANGES) {
+        if (R.scaleFor(rk) !== "day") continue;
+        const zl = R.lensFor(rk, k), seat = R.RANGES[rk].seat;
+        const behaviours = [...new Set(Object.keys(R.RANGES[rk].cast).flatMap(a => Object.keys(R.ANIMALS[a].states)))];
+        for (let ev = 6; ev <= 13; ev++) for (const mode of ["S", "A", "M"]) for (const s of R.SCALES.day) for (const N of R.lensApertures(zl)) for (const b of behaviours) for (const support of [null, seat === "walk" ? "tripod" : "beanbag"]) {
+          const e = R.exposeFor(mode, s, N, { key: "heat", ev }, b, "day", zl, support, body);
+          const v = R.score(e, b, clean, "heat", null, "day", support, null, body);
+          if (v.lines.includes(R.WORDS.fastfree)) free++;
+          if (R.advise(e, b, "day", support, R.pullsFor(rk)[1], seat, body) !== paying) continue;
+          said++;
+          if (!v.lines.includes(R.WORDS.fast2)) { bad++; first = first || (mode + " " + e.shutter + " f/" + e.aperture + " ISO " + e.iso + " on a " + b + " subject at EV " + ev + ", " + R.RANGES[rk].name + ": the verdict says " + v.lines.join(" ")); }
+        }
+      }
+      if (bad) fail("on the " + body.name + " the guide says the ISO is paying for speed where the verdict does not charge it, " + bad + " times; the first: " + first);
+      if (!said || !free) fail("the walk of the guide against the verdict on the " + body.name + " never met " + (said ? "a shot the light paid for" : "the guide's line") + ", so it proves nothing");
+      ok();
+    }
+    // and in numbers: a walking subject two stops fast in S. On the
+    // mirrorless at first light that is ISO 1600, free, and the guide does
+    // not call it paying; at last light it is 3200 and the guide does. On
+    // the DSLR the line comes at 1600, where it always did, and not at 800,
+    // a stop of light more, though the verdict takes its star from there.
+    const walk = (body, light, lens) => { const e = R.exposeFor("S", "1/1000", 8, light, "walking", "day", lens, null, body); return { iso: e.iso, paying: R.advise(e, "walking", "day", null, R.PULLS[1], "hide", body) === paying }; };
+    const zl = R.lensFor("zambezi", "newer");
+    const n1 = walk(R.BODIES.newer, "first", zl), n2 = walk(R.BODIES.newer, "last", zl), o1 = walk(R.BODIES.older, "first", lens);
+    if (n1.iso !== 1600 || n1.paying) fail("on the mirrorless a walking subject two stops fast at first light is ISO " + n1.iso + " and the guide " + (n1.paying ? "says" : "does not say") + " the ISO is paying; it is 1600, free, and the guide does not");
+    if (n2.iso !== 3200 || !n2.paying) fail("on the mirrorless a walking subject two stops fast at last light is ISO " + n2.iso + " and the guide " + (n2.paying ? "says" : "does not say") + " the ISO is paying; it is 3200, and the guide does");
+    if (o1.iso !== 1600 || !o1.paying) fail("on the DSLR a walking subject two stops fast at first light is ISO " + o1.iso + " and the guide " + (o1.paying ? "says" : "does not say") + " the ISO is paying; it is 1600, and the guide does");
+    const o0 = walk(R.BODIES.older, { key: "first", ev: R.LIGHTS.first.ev + 1 }, lens);
+    if (o0.iso !== 800 || o0.paying) fail("on the DSLR a walking subject two stops fast a stop of light above first light is ISO " + o0.iso + " and the guide " + (o0.paying ? "says" : "does not say") + " the ISO is paying; it is 800, and the guide does not until 1600");
+    ok();
+  }
   ok();
 }
 // pulls, the default set and any range's own

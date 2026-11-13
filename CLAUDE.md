@@ -457,6 +457,30 @@ while it stays in the plate; the finder draws the eye box at the head end
 the animal faces. The bodies are Dermot's own ([[camera-gear]] in his
 memory): don't add a body he does not carry.
 
+The guide takes the body too (2026-11-13, on the next-improvement
+question). `advise` has a last argument, the body, defaulting to the DSLR
+like the rest, each rule's `when` receives it, and the page hands it
+`BODIES[state.body]`. Until then the line *You are paying ISO for speed the
+subject does not need* was said from ISO 1600 on either body, and 1600 is
+the mirrorless's free ISO: on the default hide, two stops fast at first
+light, the guide said the ISO was paying and the verdict on the same shot
+said the light had paid. The line is said from 1600 as before and never at
+or under `freeIso(body)`, so from 1600 on the DSLR and from 3200 on the
+mirrorless. No other rule changed; where the ISO line now falls silent on
+the mirrorless, the next rule that applies is said, or nothing.
+`tools/check.js` walks both bodies
+over every day range's lens, cast and support, every mode, shutter and
+stop and the light from the lamp's level to the heat's, and holds the
+guide to saying it only where the verdict takes the star; it pins the four
+numbers (the mirrorless silent at 1600 and speaking at 3200, the DSLR
+silent at 800 and speaking at 1600). `tools/check-play.js` plays it on the
+hide: the shutter kept two stops fast at the free ISO until the guide has
+spoken of those settings or had its ten seconds, then the plate. Run
+against the page as it was, a page that does not hand the guide the body,
+an `advise` that ignores it, the line keyed on `noiseFrom`, on the free
+ISO alone, or a step off, a check fails on each; the page not handing the
+body over is caught by the play check alone.
+
 ## Adding to the world
 
 An animal: add to `ANIMALS` with `name`, `latin`, `size`, `shape` (one of
@@ -505,7 +529,9 @@ with a numeric shutter and an animal the cast no longer has), every range
 from its camp button, thirty seconds of the outing, every key the pad
 prints, a shot, a kept plate, the break card and Continue, the end card
 and its tally, Esc, a break held for a shot (see *A break never
-interrupts a shot*), and a body chosen at camp. The stub lives in the tool;
+interrupts a shot*), a body chosen at camp, and the guide's ISO line
+against the verdict on the hide's own body (see *The two bodies*). The
+stub lives in the tool;
 the page gets no test hook, and a new document API the page section uses
 is added to the stub when the check fails with a TypeError naming it.
 

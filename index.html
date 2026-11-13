@@ -1056,6 +1056,12 @@ function exposeFor(mode, shutter, aperture, light, behaviour, scale, lens, suppo
 // The guide's advice: general words about the settings, spoken when the
 // camera comes up on a subject, from the same exposure model. The first
 // rule that applies is the one said; `text` may be a function of the seat.
+// A rule's `when` takes the body too. The line about paying ISO for speed
+// is said from ISO 1600, as it always was, and never at or under the
+// body's free ISO (freeIso, the number the verdict holds): until
+// 2026-11-13 it was said at 1600 on either body, so on the mirrorless,
+// where 1600 is free, the guide said the ISO was paying and the verdict
+// on the same shot said the light had paid.
 const ADVICE = [
   { when: (e) => e.under >= 0.5,
     text: "Dark: the ISO is at its cap. Open the aperture, or a slower shutter if the subject can take it." },
@@ -1063,7 +1069,7 @@ const ADVICE = [
     text: "Too much light for ISO 100 at that setting. A faster shutter, or a smaller stop." },
   { when: (e, b, scale, support) => e.mode === "A" && !STILL[b] && shutterIndex(e.shutter, scale) < shutterIndex(askedFor(b, support, scale), scale),
     text: "In A the camera sets the shutter for the light, not the subject. For a mover, S, and the shutter it asks for." },
-  { when: (e, b, scale, support) => shutterIndex(e.shutter, scale) - shutterIndex(askedFor(b, support, scale), scale) >= 2 && e.iso >= 1600,
+  { when: (e, b, scale, support, pull, seat, body) => shutterIndex(e.shutter, scale) - shutterIndex(askedFor(b, support, scale), scale) >= 2 && e.iso >= 1600 && e.iso > freeIso(body),
     text: "You are paying ISO for speed the subject does not need. Come down to the shutter it asks for." },
   { when: (e) => e.aperture >= DIFFRACTION.plain,
     text: "f/16 buys depth with diffraction on this body. f/8 to f/11 is where the pixels are sharpest." },
@@ -1074,8 +1080,9 @@ const ADVICE = [
   { when: (e, b, scale, support, pull) => e.mode !== "A" && !STILL[b] && e.aperture <= 4 && pull && pull.depth && pull.depth.wide,
     text: "Wide open on a mover: focus on the eye, because nothing behind it will be sharp." }
 ];
-function advise(exp, behaviour, scale, support, pull, seat) {
-  for (const a of ADVICE) if (a.when(exp, behaviour, scale || "day", support, pull, seat)) return typeof a.text === "function" ? a.text(seat) : a.text;
+function advise(exp, behaviour, scale, support, pull, seat, body) {
+  body = body || BODIES[DEFAULT_BODY];
+  for (const a of ADVICE) if (a.when(exp, behaviour, scale || "day", support, pull, seat, body)) return typeof a.text === "function" ? a.text(seat) : a.text;
   return null;
 }
 
@@ -1629,7 +1636,7 @@ function refreshFocus() {
       B.verb + " — " + asked + (asked !== B.asked ? " <span class='dim'>(" + B.asked + " in the hand)</span>" : "") + "<br><span class='dim'>" + B.note + "</span>";
     // the guide, on the settings, now and then
     if (state.t > (state.nextTip || 0)) {
-      const tip = advise(previewExposure(), a.behaviour, scaleFor(state.range), state.support, pullsFor(state.range)[state.pull], RANGES[state.range].seat);
+      const tip = advise(previewExposure(), a.behaviour, scaleFor(state.range), state.support, pullsFor(state.range)[state.pull], RANGES[state.range].seat, BODIES[state.body]);
       if (tip) { say("Guide", tip); state.nextTip = state.t + 10; }
     }
   } else $("asked").textContent = emptyWords(state.range, "frame");
