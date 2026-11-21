@@ -365,3 +365,10 @@ The engine is MIT (`LICENSE`); the range content — the animals, notes,
 ranges, plate captions and verdict words — is CC BY 4.0
 (`CONTENT-LICENSE.md`); the photographs are CC BY-NC-ND 4.0
 (`LICENSE-PHOTOS.md`), the portfolio's own terms.
+
+`provenance.json` lists how each picture and clip here was made
+(generated, photograph, composite and so on), with its IPTC digital source
+type and the record that says so. It covers the files as they stood on 21
+November 2026, which are not re-tagged; a generated or altered file added
+from now on also carries the tag in the file itself, where the format
+allows.
