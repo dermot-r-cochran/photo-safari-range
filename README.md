@@ -239,9 +239,13 @@ no test against the verdict yet.*
   resting lion at 1/15 instead of 1/60, and the ISO comes down with it;
   a moving subject asks the same shutter on a support as off it. The
   driver won't drive on while the beanbag is on the sill, and the guide
-  waits while the tripod is up. *`tools/check.js`, check "a support lowers
+  waits while the tripod is up. *`tools/check.js`, checks "a support lowers
   the floor for a still subject by two stops and leaves a moving one
-  alone"; the driver and the guide waiting have no test yet.*
+  alone" and "the support's line follows the seat" (the driver answers in
+  the jeep and the guide on foot; in the hide, where nothing drives, nobody
+  answers as a driver or switches an engine off); `tools/check-play.js`,
+  check "the support is answered in the seat's own voice" (B on every
+  range, on and off); the driver and the guide waiting have no test yet.*
 - **The country is a subject too.** A flat-topped acacia stands on the
   range like anything else and asks for the hand-held floor, about 1/30 at
   the wide end on this body, or 1/125 when the wind is in the canopy. A
@@ -347,13 +351,15 @@ so every run is the same. Then it does what a player does: reads the camp
 (a sheet saved by an earlier version of the page reads back), picks each
 range by its button, lets thirty seconds run, presses every key the pad
 prints, fires, keeps a plate, takes the break card and the end card, and
-packs up; then, on the hide, it keeps the camera up on a subject as the
-clock crosses into a break and holds the page to its promise that the
-break waits, and that the card comes on its own when the subject leaves
-the frame; and it keeps the shutter two stops fast at the most ISO the
-light pays for, until the guide has spoken or had its ten seconds, and
-holds the guide to not calling that ISO paid. It found three things on
-its first run (5 November 2026): the
+packs up; it rests the camera on each seat's support and takes it back,
+and holds whoever answers to the seat's own voice; then, on the hide, it
+keeps the camera up on a subject as the clock crosses into a break and
+holds the page to its promise that the break waits, and that the card
+comes on its own when the subject leaves the frame; and it keeps the
+shutter two stops fast at the most ISO the light pays for, until the
+guide has spoken or had its ten seconds, and holds the guide to not
+calling that ISO paid. It found three things on its first run
+(5 November 2026): the
 spotter, the Asked panel and the guide's tips were mute on a second range
 for as long as the first had run, Esc did nothing on a card though the
 pad prints it, and the clock on the HUD stood still while the camera was

@@ -601,6 +601,36 @@ for (const k in R.RANGES) {
   }
   ok();
 }
+// the support's line follows the seat: B rests the camera on the beanbag
+// or the tripod, and whoever answers is someone the seat has. Only the
+// jeep has a driver and an engine; the walking guide answers on foot and
+// names the tripod; the hide names its beanbag and nobody there drives
+// (2026-11-23: the hide got the jeep's two lines, so on the page as it
+// opens the guide's advice for a still subject at first light, rest the
+// camera on the beanbag, was answered by a driver switching off an engine
+// and then driving on). At the tripod seat the tripod is always up and
+// nobody answers.
+for (const k in R.RANGES) {
+  const seat = R.RANGES[k].seat;
+  if (seat === "tripod") {
+    if (R.supportWords(k, true) || R.supportWords(k, false)) fail("range " + k + " sits the tripod, which is always up, but somebody answers the support there");
+    ok();
+    continue;
+  }
+  for (const on of [true, false]) {
+    const w = R.supportWords(k, on), what = on ? "going on" : "coming off";
+    if (!w || !w.who || !w.text) { fail("range " + k + " sits " + seat + " and nobody answers the support " + what); continue; }
+    const said = w.who + ": " + w.text;
+    const jeep = /\b(driver|drive|driving|engine)\b/i.test(said);
+    if (seat !== "drive" && jeep) fail("range " + k + " sits " + seat + " but the support " + what + " is answered from a jeep: " + said);
+    if (seat === "drive" && w.who !== "Driver") fail("range " + k + " drives but the support " + what + " is not answered by the driver: " + said);
+    if (seat === "walk" && w.who !== "Guide") fail("range " + k + " walks but the support " + what + " is not answered by the guide: " + said);
+    if (on && !(seat === "walk" ? /\btripod\b/i : /\bbeanbag\b/i).test(w.text)) fail("range " + k + " sits " + seat + " but the support going on does not name the " + (seat === "walk" ? "tripod" : "beanbag") + ": " + said);
+  }
+  const up = R.supportWords(k, true), down = R.supportWords(k, false);
+  if (up && down && up.text === down.text) fail("range " + k + " says the same thing with the support on and off");
+  ok();
+}
 
 // spawn plan: deterministic, spaced, valid
 for (const k in R.RANGES) {
