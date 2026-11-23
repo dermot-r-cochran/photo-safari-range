@@ -386,6 +386,32 @@ looking at the tyres. `DAYS.hide` keeps the drive's hours with its own
 breakfast, on the platform, and the check holds a range that does not
 drive to a day whose pause and end words name no driver, drive or tyres.
 
+The support's answer follows the seat on the same rule (2026-11-23, on
+the next-improvement question, found on a cold play of the page as it
+opens). B rests the camera on the beanbag or the tripod and somebody says
+so. The two lines sat in the page section, keyed on walk against
+everything else, so the hide got the jeep's: at first light on the hide
+the guide's advice for a still subject, at the settings the page opens
+with, is *rest the camera on the beanbag*, and pressing B was answered by
+*Driver: Beanbag on the sill. Engine off.*, and taking the camera back by
+*Camera in the hand. Driving on.*, on a range whose own note says there
+is nothing to drive. `SEAT_WORDS` now carries a `support`
+per seat (who answers, and the line `on` and `off`), `supportWords(range,
+on)` in the pure section reads it, and `toggleSupport` says what it
+returns. The jeep's and the walker's lines are word for word what they
+were. The hide's are the jeep's with the engine and the driving cut, said
+by the spotter, who already speaks the hide's calls and its held breaks.
+The tripod seat has none, since the tripod is always up there and B does
+nothing. `tools/check.js` holds every seat but the jeep to an answer with
+no driver, drive or engine in it, the jeep to its driver, the walker to
+the guide and the tripod, and the tripod seat to silence;
+`tools/check-play.js` sets out on every range, presses B on and off with
+no time run (so no tip of the guide's is due to speak over the answer),
+and holds the radio to the seat's own words. Run against the hide given
+the jeep's lines, a page that ignores the data, the hide with no answer,
+or one of its two lines left as it was, a check fails on each; the page
+ignoring the data is caught by the play check alone.
+
 ## Three mode buttons, the range sets out, the level follows the clock
 
 Dermot, 2026-09-19, three directions in one line. **The mode dial is
@@ -528,10 +554,11 @@ camp as the page opens (a sheet saved by an earlier version reads back,
 with a numeric shutter and an animal the cast no longer has), every range
 from its camp button, thirty seconds of the outing, every key the pad
 prints, a shot, a kept plate, the break card and Continue, the end card
-and its tally, Esc, a break held for a shot (see *A break never
-interrupts a shot*), a body chosen at camp, and the guide's ISO line
-against the verdict on the hide's own body (see *The two bodies*). The
-stub lives in the tool;
+and its tally, Esc, B pressed on and off on every seat (see *The Asked
+panel's empty lines follow the seat too*), a break held for a shot (see
+*A break never interrupts a shot*), a body chosen at camp, and the
+guide's ISO line against the verdict on the hide's own body (see *The two
+bodies*). The stub lives in the tool;
 the page gets no test hook, and a new document API the page section uses
 is added to the stub when the check fails with a TypeError naming it.
 

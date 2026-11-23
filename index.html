@@ -956,11 +956,25 @@ const WORDS = {
    and at the tripod nothing moves but the subjects, so those lines say
    wait, in the guide's own words from the start of the sit. Added
    2026-10-28: until then every seat was told to drive closer, the hide
-   included, and the hide is where the page opens. */
+   included, and the hide is where the page opens.
+
+   `support` is who answers when the camera goes onto the seat's support
+   (B) and what they say, `on` as it goes on and `off` as it comes back
+   into the hand. The jeep's driver switches the engine off and drives on;
+   the walking guide waits and walks on; in the hide there is no driver and
+   no engine, so the spotter says where the camera is and no more. The
+   tripod seat has none: the tripod is always up there and B does nothing.
+   Added 2026-11-23: until then the two lines sat in the page section and
+   the hide got the jeep's, so on the page as it opens the guide's advice
+   for a still subject at first light (rest the camera on the beanbag) was
+   answered by a driver switching off an engine, and then driving on. */
 const SEAT_WORDS = {
-  drive:  { frame: "Nothing in the frame. Move the aim, or drive closer.", range: "Nothing on the range yet. Drive on." },
-  walk:   { frame: "Nothing in the frame. Move the aim, or walk closer.",  range: "Nothing on the range yet. Walk on." },
-  hide:   { frame: "Nothing in the frame. Move the aim. Sit still; the water brings them.", range: "Nothing at the water yet. Sit still; the water brings them." },
+  drive:  { frame: "Nothing in the frame. Move the aim, or drive closer.", range: "Nothing on the range yet. Drive on.",
+            support: { who: "Driver", on: "Beanbag on the sill. Engine off.", off: "Camera in the hand. Driving on." } },
+  walk:   { frame: "Nothing in the frame. Move the aim, or walk closer.",  range: "Nothing on the range yet. Walk on.",
+            support: { who: "Guide", on: "Tripod up. I will wait.", off: "Tripod down. Walking on." } },
+  hide:   { frame: "Nothing in the frame. Move the aim. Sit still; the water brings them.", range: "Nothing at the water yet. Sit still; the water brings them.",
+            support: { who: "Spotter", on: "Beanbag on the sill.", off: "Camera in the hand." } },
   tripod: { frame: "Nothing in the frame. Move the aim. The Earth turns; that is the movement.", range: "Nothing in the sky yet. Your eyes take twenty minutes." }
 };
 
@@ -983,6 +997,15 @@ const STILL = { resting: 1, sentinel: 1, drinking: 1, feeding: 1, standing: 1, s
 function emptyWords(rangeKey, where) {
   const seat = (RANGES[rangeKey] || {}).seat;
   return (SEAT_WORDS[seat] || SEAT_WORDS.drive)[where];
+}
+// Who answers when the camera goes onto the seat's support, or comes off
+// it, and what they say: { who, text }, or null at a seat with no support
+// to put it on or take it off. A seat without words of its own gets the
+// jeep's, like the empty lines above.
+function supportWords(rangeKey, on) {
+  const seat = (RANGES[rangeKey] || {}).seat;
+  const s = (SEAT_WORDS[seat] || SEAT_WORDS.drive).support;
+  return s ? { who: s.who, text: on ? s.on : s.off } : null;
 }
 function askedFor(behaviour, support, scale) {
   const B = BEHAVIOURS[behaviour];
@@ -1236,7 +1259,7 @@ function missFor(fault, animal, rnd, clock) {
 
 const RANGE = { SCALES, SHUTTERS, BEHAVIOURS, SPEED, ANIMALS, RANGES, BANK, LIGHTS, DEFAULT_LIGHTS, SCALE_WORDS, PULLS, WORDS, COACH, PLATES, MISSES, HOURS, hourOf, atHour, missFor, skyAt, STILL, DAYS, CLOCK_RATE,
                 APERTURES, ISO_STEPS, ISO_CAP, MODES, DIFFRACTION, BODIES, DEFAULT_BODY, freeIso, bodyFor, ADVICE, advise, apertureBand, tSeconds, snapShutter, isoStep, evOf, isoNeeded, lensApertures, exposeFor, lensFor,
-                SEAT_WORDS, emptyWords, score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, evAt, EDGE_DROP, pick, mulberry };
+                SEAT_WORDS, emptyWords, supportWords, score, askedFor, measureFrame, spawnPlan, plateFor, wantedFor, lightsFor, pullsFor, scaleFor, shutterIndex, shutterLabel, hm, clockLabel, dayFor, legAt, stopsFor, clockAfter, evAt, EDGE_DROP, pick, mulberry };
 if (typeof globalThis !== "undefined") globalThis.RANGE = RANGE;
 
 // ---- page section: everything below needs a document ----
@@ -2188,9 +2211,9 @@ function toggleSupport() {
   const seat = RANGES[state.range].seat;
   if (seat === "tripod") return;
   state.support = state.support ? null : supportFor(seat);
-  say(seat === "walk" ? "Guide" : "Driver", state.support
-    ? (state.support === "tripod" ? "Tripod up. I will wait." : "Beanbag on the sill. Engine off.")
-    : (seat === "walk" ? "Tripod down. Walking on." : "Camera in the hand. Driving on."));
+  // answered in the seat's own voice: the hide has no driver and no engine
+  const w = supportWords(state.range, !!state.support);
+  if (w) say(w.who, w.text);
   if (state.camera) refreshFocus(); else { refreshRange(); drawHud(); }
 }
 

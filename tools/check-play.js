@@ -266,6 +266,41 @@ for (const k in R.RANGES) {
   }
 }
 
+// ---- the support is answered in the seat's own voice ----
+// B puts the camera on the seat's support and takes it off again, and each
+// is answered by someone the seat has, in the words the world data gives
+// that seat: only the jeep has a driver and an engine. (2026-11-23: on the
+// hide, where the page opens and the guide's advice for a still subject
+// at first light is to rest the camera on the beanbag, a driver answered,
+// switched an engine off, and then drove on.) At the tripod seat the
+// tripod is always up, B does nothing and nobody speaks. Each range is set
+// out on for this alone and packed up with no time run, so the guide's
+// tips, which would speak over the answer, are not yet due, and no other
+// outing is moved.
+for (const k in R.RANGES) {
+  const Rk = R.RANGES[k], seat = Rk.seat, where = Rk.name + " (" + seat + "), the support";
+  try {
+    button($("range-pick"), Rk.name).onclick();
+    let was = $("radio").innerHTML;
+    for (const on of [true, false]) {
+      key("b");
+      const said = $("radio").innerHTML, w = R.supportWords(k, on), what = on ? "on the support" : "back in the hand";
+      if (seat === "tripod") { if (said !== was) fail(where + ": B at the tripod seat was answered: " + said); continue; }
+      if ($("radio").hidden || said === was) fail(where + ": B, the camera " + what + ", was not answered");
+      else if (!w || said !== "<b>" + w.who + "</b><br>" + w.text) fail(where + ": B, the camera " + what + ", was not answered in the seat's own words: " + said);
+      if (seat !== "drive" && /\b(driver|drive|driving|engine)\b/i.test(said)) fail(where + ": B, the camera " + what + ", was answered from a jeep: " + said);
+      if (on !== /on the (beanbag|tripod)/.test($("lcd").textContent)) fail(where + ": after B the LCD does not show the camera " + what + ": " + $("lcd").textContent);
+      was = said;
+    }
+    key("escape");
+    if ($("camp").hidden) { fail(where + ": Esc with no shot fired did not pack up"); const pack = button($("pause"), "Pack up"); if (pack) pack.onclick(); }
+    ok();
+  } catch (e) {
+    fail(where + ": " + String(e.stack || e).slice(0, 300));
+    try { if ($("camp").hidden) { key("escape"); const pack = button($("pause"), "Pack up"); if (pack) pack.onclick(); } } catch (e2) { /* the next range reports its own */ }
+  }
+}
+
 // ---- with the camera down, only the clock redraws the HUD ----
 // on a trip of its own after the ranges, so these seconds move no range's seeded spawn
 try {
